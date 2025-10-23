@@ -7,7 +7,7 @@ import { createRoot } from "react-dom/client";
 import store from "./app/store/store";
 import { Provider } from "react-redux";
 
-const appName = import.meta.env.VITE_APP_NAME || "Barangay Residence Management System";
+const appName = import.meta.env.VITE_APP_NAME || "Barangay Residence Management System :)";
 window.global = window;
 
 createInertiaApp({
