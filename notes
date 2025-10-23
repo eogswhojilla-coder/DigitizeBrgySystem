@@ -1,0 +1,53 @@
+php artisan make:model --controller --migration NameOfTableModelController
+
+php artisan migrate:fresh --seed
+
+php artisan migrate - To migrate the database
+
+git add .
+git commit -m "sample commit"
+git push
+
+Backend step by step
+
+1. Create datebase " Go to terminal and type php artisan make:migration blotter "
+2. Go to migration file and add the fields you want
+3. Go to model and add the fillable fields
+4. Go to controller and create the store function
+5. Go to api.php and create the api resource
+
+6. put useform <form></form> in all forms or registration form
+7. Go to services and Create Services "position-service.js"
+8. Go to api.php then create api "Route::resource('positions', PositionController::class);"
+9. Go to Controller and create store function
+
+public function store(Request $request)
+{
+Position::create($request->all());
+return response()->json(['message' => 'Barangay information created successfully'], 200);
+}
+
+10. Then you go to your UI for addPostion then put this
+
+const submitForm = async (data) => {
+await create_positions_service(data);
+reset();
+onClose();
+};
+
+
+
+---how to show Data from the database---
+
+1. Go to services and create function for fetching data
+export const fetch_positions_service = async () => {
+const response = await axios.get('/api/positions');
+return response.data;
+};
+2.create slice and thunk.(Just copy from other slice and thunk and change the name)
+3. Go to store.js and add the slice
+4 Go to your UI and use useEffect add thunk fetch data - Always put the useEffect to the page or general page 
+useEffect(() => {
+        store.dispatch(get_barangay_residents_thunk());
+    }, []);
+5. go to your UI and use useSelector to get the data from the store - Your TablePage
