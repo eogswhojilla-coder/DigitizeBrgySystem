@@ -48,17 +48,15 @@ Route::middleware('auth:sanctum')->prefix('administrator')->group(function () {
         Route::get('official_end_term', function () {
             return Inertia::render('administrator/barangay_residents/official_end_term/page');
         });
-       
     });
 
     Route::prefix('resident')->group(function () {
         Route::get('archive_resident', function () {
             return Inertia::render('administrator/resident/archive_resident/page');
         });
-          Route::get('list_of_resident', function () {
+        Route::get('list_of_resident', function () {
             return Inertia::render('administrator/resident/list_of_resident/page');
         });
-
     });
 
     Route::prefix('certificate')->group(function () {
@@ -110,8 +108,14 @@ Route::middleware('auth:sanctum')->prefix('administrator')->group(function () {
     Route::get('blotter_record', function () {
         return Inertia::render('administrator/blotter_record/page');
     });
-    Route::get('announcement', function () {
-        return Inertia::render('administrator/announcement/page');
+
+    Route::prefix('announcement')->group(function () {
+        Route::get('add_announcement', function () {
+            return Inertia::render('administrator/announcement/add_announcement/page');
+        });
+        Route::get('announcement_list', function () {
+            return Inertia::render('administrator/announcement/announcement_list/page');
+        });
     });
 
     Route::get('reports', function () {

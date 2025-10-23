@@ -223,11 +223,25 @@ export default function Layout({ children }) {
             icon: <FcDataRecovery className="h-6 w-6" />,
             current: isCurrentMain == "blotter_record",
         },
-        {
-            name: "Announcement",
-            href: "/administrator/announcement",
-            icon: <FcAdvertising older className="h-6 w-6" />,
+       {
+         name: "Announcement",
+            href: "#",
+            icon: <FcAdvertising className="h-6 w-6  text-yellow-600" />,
             current: isCurrentMain == "announcement",
+            children: [
+                {
+                    name: "Add Announcement",
+                    href: "/administrator/announcement/add_announcement",
+                    icon: <FcAdvertising  className="h-6 w-6  text-blue-600" />,
+                    current: isCurrentSub == "add_announcement",
+                },
+                {
+                    name: "Announcement List",
+                    href: "/administrator/announcement/announcement_list",
+                    icon: <CheckCircle className="h-6 w-6 text-blue-600" />,
+                    current: isCurrentSub == "announcement_list",
+                },
+            ],
         },
         {
             name: "Reports",

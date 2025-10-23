@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Bell, Calendar, Send } from "lucide-react";
-import Layout from "../layout";
+import Layout from "../../layout";
 
 function AnnouncementForm() {
     const [title, setTitle] = useState("");
