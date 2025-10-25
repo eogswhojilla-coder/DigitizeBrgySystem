@@ -7,6 +7,7 @@ import  positionsSlice  from "../redux/position-slice";
 import  administratorSlice  from "../redux/administrator-slice";
 import  blotterSlice  from "../redux/blotter-slice";
 import  barangayOfficialSlice  from "../redux/barangay-official-slice";
+import certificateTypeSlice from "../redux/certificate-type-slice";
 
 
 const store = configureStore({
@@ -19,8 +20,7 @@ const store = configureStore({
         administrators:administratorSlice,
         blotters:blotterSlice,
         // barangay_residents:barangayOfficialSlice,
-
-     
+        certificateTypes: certificateTypeSlice,
     },
 });
 

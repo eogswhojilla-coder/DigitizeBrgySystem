@@ -13,7 +13,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind('DNS2D', function($app) {
+            return new \Milon\Barcode\DNS2D();
+        });
     }
 
     /**

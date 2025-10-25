@@ -4,10 +4,11 @@ import Layout from '../../layout'
 export default function ListAnnouncement() {
   return (
     <Layout>
-        ListAnnouncement
+        List Announcement
     </Layout>
 
 
     
   )
 }
+    

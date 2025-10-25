@@ -51,4 +51,23 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function resident()
+    {
+        return $this->hasOne(BarangayResident::class);
+    }
+    
+    public function getFullNameAttribute()
+    {
+        return trim(implode(' ', array_filter([
+            $this->first_name,
+            $this->middle_name,
+            $this->last_name
+        ])));
+    }
+
+    public function getPositionAttribute()
+    {
+        return $this->user_type === 'admin' ? 'Barangay Secretary' : 'Staff';
+    }
 }

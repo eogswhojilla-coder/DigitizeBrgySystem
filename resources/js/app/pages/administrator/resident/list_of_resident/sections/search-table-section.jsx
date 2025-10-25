@@ -1,8 +1,9 @@
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/Input";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 
-export default function SearchTableSection() {
+export default function SearchTableSection({ onFilterChange }) {
     const [filters, setFilters] = useState({
         firstName: "",
         middleName: "",
@@ -15,6 +16,12 @@ export default function SearchTableSection() {
         senior: "",
         residentNumber: "",
     });
+
+    const handleFilterChange = (field, value) => {
+        const newFilters = { ...filters, [field]: value };
+        setFilters(newFilters);
+        onFilterChange(newFilters);
+    };
     return (
         <div>
             <div className="flex items-center mb-4">

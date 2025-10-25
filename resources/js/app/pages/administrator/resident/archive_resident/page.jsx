@@ -124,8 +124,9 @@ const ResidentList = () => {
             ))
           )}
         </div>
-       <div className="mt-4"> <PaginationSection/></div>
+       
       </div>
+      <div className="mt-4"> <PaginationSection/></div>
     </div>
   );
 };

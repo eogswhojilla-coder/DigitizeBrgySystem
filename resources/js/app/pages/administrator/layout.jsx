@@ -118,7 +118,7 @@ export default function Layout({ children }) {
             current: isCurrentMain == "certificate",
             children: [
                 {
-                    name: "Certificate layout",
+                    name: "Certificate Type",
                     href: "/administrator/certificate/certificate_layout",
                     icon: <PiCertificateDuotone className="h-6 w-6" />,
                     current: isCurrentSub == "certificate_layout",
@@ -128,6 +128,32 @@ export default function Layout({ children }) {
                     href: "/administrator/certificate/certificate_pending",
                     icon: <FcPrint className="h-6 w-6" />,
                     current: isCurrentSub == "certificate_pending",
+                },
+                  {
+                    name: "Certificate ",
+                    href: "/administrator/certificate/certificate",
+                    icon: <FcPrint className="h-6 w-6" />,
+                    current: isCurrentSub == "certificate",
+                },
+            ],
+        },
+        {
+            name: "Announcement",
+            href: "#",
+            icon: <FcAdvertising className="h-6 w-6  text-yellow-600" />,
+            current: isCurrentMain == "announcement",
+            children: [
+                {
+                    name: "Add Announcement",
+                    href: "/administrator/announcement/add_announcement",
+                    icon: <FcAdvertising className="h-6 w-6  text-blue-600" />,
+                    current: isCurrentSub == "add_announcement",
+                },
+                {
+                    name: "Announcement List",
+                    href: "/administrator/announcement/announcement_list",
+                    icon: <CheckCircle className="h-6 w-6 text-blue-600" />,
+                    current: isCurrentSub == "announcement_list",
                 },
             ],
         },
@@ -176,10 +202,12 @@ export default function Layout({ children }) {
                     icon: <HomeIcon className="h-6 w-6  text-blue-600" />,
                     current: isCurrentSub == "household_details",
                 },
-                 {
+                {
                     name: "List of Family",
                     href: "/administrator/family_profile/list_of_family",
-                    icon: <MdOutlineFamilyRestroom className="h-6 w-6  text-blue-600" />,
+                    icon: (
+                        <MdOutlineFamilyRestroom className="h-6 w-6  text-blue-600" />
+                    ),
                     current: isCurrentSub == "list_of_family",
                 },
             ],
@@ -223,26 +251,7 @@ export default function Layout({ children }) {
             icon: <FcDataRecovery className="h-6 w-6" />,
             current: isCurrentMain == "blotter_record",
         },
-       {
-         name: "Announcement",
-            href: "#",
-            icon: <FcAdvertising className="h-6 w-6  text-yellow-600" />,
-            current: isCurrentMain == "announcement",
-            children: [
-                {
-                    name: "Add Announcement",
-                    href: "/administrator/announcement/add_announcement",
-                    icon: <FcAdvertising  className="h-6 w-6  text-blue-600" />,
-                    current: isCurrentSub == "add_announcement",
-                },
-                {
-                    name: "Announcement List",
-                    href: "/administrator/announcement/announcement_list",
-                    icon: <CheckCircle className="h-6 w-6 text-blue-600" />,
-                    current: isCurrentSub == "announcement_list",
-                },
-            ],
-        },
+
         {
             name: "Reports",
             href: "/administrator/reports",

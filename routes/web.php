@@ -66,7 +66,11 @@ Route::middleware('auth:sanctum')->prefix('administrator')->group(function () {
         Route::get('certificate_pending', function () {
             return Inertia::render('administrator/certificate/certificate_pending/page');
         });
+        Route::get('certificate', function () {
+            return Inertia::render('administrator/certificate/certificate/page');
+        });
     });
+    
 
 
     Route::prefix('users')->group(function () {

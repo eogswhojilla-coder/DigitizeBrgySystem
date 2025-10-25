@@ -123,4 +123,18 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Municipality Information
+    |--------------------------------------------------------------------------
+    |
+    | These values are used in generating certificates and other official documents.
+    | They should be set in the .env file for each deployment.
+    |
+    */
+
+    'municipality' => env('MUNICIPALITY_NAME', 'Sample Municipality'),
+    'province' => env('PROVINCE_NAME', 'Sample Province'),
+    'barangay' => env('BARANGAY_NAME', 'Sample Barangay'),
+
 ];
