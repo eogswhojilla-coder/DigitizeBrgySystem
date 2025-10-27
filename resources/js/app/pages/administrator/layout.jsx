@@ -7,6 +7,7 @@ import {
     FcAdvertising,
     FcAssistant,
     FcBusinessman,
+    FcCalendar,
     FcConferenceCall,
     FcCustomerSupport,
     FcDataConfiguration,
@@ -48,6 +49,7 @@ import { GiFamilyHouse, GiFamilyTree } from "react-icons/gi";
 import { PiCertificateDuotone } from "react-icons/pi";
 import { FaHouseUser } from "react-icons/fa";
 import ToastProvider from "@/app/_components/toast";
+import { DocumentArrowDownIcon, DocumentCheckIcon } from "@heroicons/react/24/outline";
 
 export default function Layout({ children }) {
     const isCurrentMain = window.location.pathname.split("/")[2];
@@ -132,7 +134,7 @@ export default function Layout({ children }) {
                   {
                     name: "Certificate ",
                     href: "/administrator/certificate/certificate",
-                    icon: <FcPrint className="h-6 w-6" />,
+                    icon: <DocumentCheckIcon  className="h-6 w-6" />,
                     current: isCurrentSub == "certificate",
                 },
             ],
@@ -154,6 +156,12 @@ export default function Layout({ children }) {
                     href: "/administrator/announcement/announcement_list",
                     icon: <CheckCircle className="h-6 w-6 text-blue-600" />,
                     current: isCurrentSub == "announcement_list",
+                },
+                {
+                    name: "Calendar",
+                    href: "/administrator/announcement/calendar",
+                    icon: <FcCalendar  className="h-6 w-6 text-blue-600" />,
+                    current: isCurrentSub == "calendar",
                 },
             ],
         },

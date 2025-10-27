@@ -120,6 +120,9 @@ Route::middleware('auth:sanctum')->prefix('administrator')->group(function () {
         Route::get('announcement_list', function () {
             return Inertia::render('administrator/announcement/announcement_list/page');
         });
+         Route::get('calendar', function () {
+            return Inertia::render('administrator/announcement/calendar/page');
+        });
     });
 
     Route::get('reports', function () {

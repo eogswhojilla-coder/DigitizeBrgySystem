@@ -14,7 +14,7 @@ class BarangayResidentController extends Controller
     }
     public function index()
     {
-        $barangay_residents = BarangayResident::orderBy('id','desc')->paginate(5);
+        $barangay_residents = BarangayResident::orderBy('id','desc')->paginate(10);
         return response()->json($barangay_residents, 200);
     }
     public function destroy(Request $request, $id)
