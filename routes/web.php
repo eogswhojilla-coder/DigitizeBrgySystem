@@ -8,32 +8,28 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     if (Auth::check()) {
-        $user = Auth::user(); // ✅ Get the logged-in user
+        $user = Auth::user();
 
-        if ($user->role === 'admin') {
+        if ($user->user_type === 'admin') {  // Changed from role to user_type
             return redirect('/administrator/dashboard');
-        } elseif ($user->role === 'resident') {
-            return redirect('/resident-portal/dashboard/');
+        } elseif ($user->user_type === 'resident') {  // Changed from role to user_type
+            return redirect('/resident/dashboard');
         }
     }
 
-    // If not logged in → go to login page
     return Inertia::render('auth/login/page');
 })->name('login');
-
-
-
 
 // Register Route
 Route::get('/auth/register', function () {
     return Inertia::render('auth/register/page');
 })->name('register');
 
-Route::middleware('auth:sanctum')->prefix('administrator')->group(function () {
+// ADMIN ROUTES - Protected by auth:sanctum AND role:admin
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('administrator/dashboard/page');
     })->name('dashboard');
-
 
     Route::prefix('barangay_residents')->group(function () {
         Route::get('new_official', function () {
@@ -70,8 +66,6 @@ Route::middleware('auth:sanctum')->prefix('administrator')->group(function () {
             return Inertia::render('administrator/certificate/certificate/page');
         });
     });
-    
-
 
     Route::prefix('users')->group(function () {
         Route::get('{type}', function () {
@@ -103,8 +97,6 @@ Route::middleware('auth:sanctum')->prefix('administrator')->group(function () {
         });
     });
 
-
-
     Route::get('position', function () {
         return Inertia::render('administrator/position/page');
     });
@@ -120,7 +112,7 @@ Route::middleware('auth:sanctum')->prefix('administrator')->group(function () {
         Route::get('announcement_list', function () {
             return Inertia::render('administrator/announcement/announcement_list/page');
         });
-         Route::get('calendar', function () {
+        Route::get('calendar', function () {
             return Inertia::render('administrator/announcement/calendar/page');
         });
     });
@@ -140,6 +132,7 @@ Route::middleware('auth:sanctum')->prefix('administrator')->group(function () {
             return Inertia::render('administrator/inventory/view_inventory_report/page');
         });
     });
+
     Route::get('system_logs', function () {
         return Inertia::render('administrator/system_logs/page');
     });
@@ -148,21 +141,19 @@ Route::middleware('auth:sanctum')->prefix('administrator')->group(function () {
         return Inertia::render('administrator/backup_reports/page');
     });
 
-
-
-
-
-
-
-
     Route::get('settings', function () {
         return Inertia::render('administrator/settings/page');
     });
 });
 
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+// RESIDENT ROUTES - Protected by auth:sanctum AND role:resident
+Route::middleware(['auth:sanctum', 'role:resident'])->prefix('resident')->group(function () {
+    Route::get('dashboard', function () {
+        return Inertia::render('resident/dashboard/page');
+    })->name('resident.dashboard');
+    
+    // Add more resident routes here as needed
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -171,3 +162,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+    

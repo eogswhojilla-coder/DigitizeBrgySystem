@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AddfamilyMembersController;
 use App\Http\Controllers\AdministratorController;
+use App\Http\Controllers\AnnouncementCalendarController;
 use App\Http\Controllers\BarangayInformationController;
 use App\Http\Controllers\BarangayResidentController;
 use App\Http\Controllers\BlotterController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\InventoriesController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\Api\CertificateRequestController;
 use App\Http\Controllers\Api\CertificateTypeController;
+use App\Http\Controllers\AnnouncementController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,10 +33,14 @@ Route::resource('family_members', FamilyMemberController::class);
 Route::resource('administrator', AdministratorController::class);
 Route::resource('households', HouseholdController::class);
 
+
 // Certificate Types
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('certificate-types', CertificateTypeController::class);
-    
+
+    Route::resource('announcement', AnnouncementController::class);
+    Route::resource('announcement_calendar', AnnouncementCalendarController::class);
+
     // Certificate Requests
     Route::get('certificate-requests', [CertificateRequestController::class, 'index']);
     Route::post('certificate-requests', [CertificateRequestController::class, 'store']);

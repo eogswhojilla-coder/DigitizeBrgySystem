@@ -32,32 +32,37 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-
-        return redirect()->intended(route('dashboard', absolute: false));
-        
+        $user = $request->user();
+        if ($user->user_type == 'admin') {
+            return redirect()->intended(route('dashboard', absolute: false));
+        } else  if ($user->user_type == 'resident') {
+            return redirect()->intended(route('resident.dashboard', absolute: false));
+        } else {
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
     }
-// {
-//         $request->authenticate();
+    // {
+    //         $request->authenticate();
 
-//         $request->session()->regenerate();
+    //         $request->session()->regenerate();
 
-//         $user = $request->user();
-        
-//         // Redirect based on account_type
-//         if ($user->account_type == 1) {
-//             return redirect()->intended(route('administrator.dashboard', absolute: false));
-//         } else if ($user->account_type == 2) {
-//             return redirect()->intended(route('users.dashboard', absolute: false));
-//         }
+    //         $user = $request->user();
 
-//     }
+    //         // Redirect based on account_type
+    //         if ($user->account_type == 1) {
+    //             return redirect()->intended(route('administrator.dashboard', absolute: false));
+    //         } else if ($user->account_type == 2) {
+    //             return redirect()->intended(route('users.dashboard', absolute: false));
+    //         }
 
-
+    //     }
 
 
 
 
-    
+
+
+
 
     /**
      * Destroy an authenticated session.

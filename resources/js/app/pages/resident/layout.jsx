@@ -1,35 +1,7 @@
 import SidebarSection from "@/app/_sections/sidebar-section";
 import TopbarSection from "@/app/_sections/topbar-section";
-import {
-    FcAssistant,
-    FcBusinessman,
-    FcConferenceCall,
-    FcCustomerSupport,
-    FcDataConfiguration,
-    FcDataRecovery,
-    FcDepartment,
-    FcFilingCabinet,
-    FcHome,
-    FcLibrary,
-    FcList,
-    FcNews,
-    FcNook,
-    FcOpenedFolder,
-    FcOrganization,
-    FcPortraitMode,
-    FcPrint,
-    FcPrivacy,
-    FcRatings,
-    FcReadingEbook,
-    FcTemplate,
-    FcTimeline,
-    FcViewDetails,
-} from "react-icons/fc";
-import FloatingButtonSection from "./_sections/floating-button-section";
-import { LiaLandmarkSolid } from "react-icons/lia";
-import { Boxes, BoxIcon, CheckCircle, FileText, HomeIcon, List, Package, UserPlus2Icon, UserPlusIcon, UsersIcon, Warehouse } from "lucide-react";
-import { GiFamilyHouse, GiFamilyTree, } from 'react-icons/gi';
-import { PiCertificateDuotone } from "react-icons/pi";
+import { FcTemplate } from "react-icons/fc";
+
 
 export default function Layout({ children }) {
     const isCurrentMain = window.location.pathname.split("/")[2];

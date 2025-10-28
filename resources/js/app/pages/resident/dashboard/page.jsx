@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Layout from "../layout";
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import { H1Icon, UserCircleIcon } from "@heroicons/react/24/outline";
@@ -20,6 +19,7 @@ import {
     Download,
     BarChart3
 } from 'lucide-react';
+import Layout from "../layout";
 
 export default function Page() {
     const [open, setOpen] = useState(false);

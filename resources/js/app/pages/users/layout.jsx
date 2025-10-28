@@ -28,24 +28,8 @@ import {
     FcTimeline,
     FcViewDetails,
 } from "react-icons/fc";
-import FloatingButtonSection from "./_sections/floating-button-section";
-import { LiaLandmarkSolid } from "react-icons/lia";
-import {
-    Boxes,
-    BoxIcon,
-    CheckCircle,
-    FileText,
-    HomeIcon,
-    List,
-    Package,
-    UserPlus2Icon,
-    UserPlusIcon,
-    UsersIcon,
-    Warehouse,
-} from "lucide-react";
-import { GiFamilyHouse, GiFamilyTree } from "react-icons/gi";
 import { PiCertificateDuotone } from "react-icons/pi";
-import { FaHouseUser } from "react-icons/fa";
+
 import ToastProvider from "@/app/_components/toast";
 
 export default function Layout({ children }) {

@@ -30,8 +30,7 @@ import {
     FcTimeline,
     FcViewDetails,
 } from "react-icons/fc";
-import FloatingButtonSection from "./_sections/floating-button-section";
-import { LiaLandmarkSolid } from "react-icons/lia";
+
 import {
     Boxes,
     BoxIcon,
@@ -49,7 +48,10 @@ import { GiFamilyHouse, GiFamilyTree } from "react-icons/gi";
 import { PiCertificateDuotone } from "react-icons/pi";
 import { FaHouseUser } from "react-icons/fa";
 import ToastProvider from "@/app/_components/toast";
-import { DocumentArrowDownIcon, DocumentCheckIcon } from "@heroicons/react/24/outline";
+import {
+    DocumentArrowDownIcon,
+    DocumentCheckIcon,
+} from "@heroicons/react/24/outline";
 
 export default function Layout({ children }) {
     const isCurrentMain = window.location.pathname.split("/")[2];
@@ -131,10 +133,10 @@ export default function Layout({ children }) {
                     icon: <FcPrint className="h-6 w-6" />,
                     current: isCurrentSub == "certificate_pending",
                 },
-                  {
+                {
                     name: "Certificate ",
                     href: "/administrator/certificate/certificate",
-                    icon: <DocumentCheckIcon  className="h-6 w-6" />,
+                    icon: <DocumentCheckIcon className="h-6 w-6" />,
                     current: isCurrentSub == "certificate",
                 },
             ],
@@ -160,7 +162,7 @@ export default function Layout({ children }) {
                 {
                     name: "Calendar",
                     href: "/administrator/announcement/calendar",
-                    icon: <FcCalendar  className="h-6 w-6 text-blue-600" />,
+                    icon: <FcCalendar className="h-6 w-6 text-blue-600" />,
                     current: isCurrentSub == "calendar",
                 },
             ],

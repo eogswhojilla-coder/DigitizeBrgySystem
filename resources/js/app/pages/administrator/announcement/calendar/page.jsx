@@ -1,8 +1,17 @@
-import React from 'react'
-import Layout from '../../layout'
+import React, { useEffect } from "react";
+
+import CalendarSection from "./_sections/calendar-section";
+import store from "@/app/store/store";
+import { get_announcement_calendar_thunk } from "@/app/redux/announcement-thunk";
+import Layout from "../../layout";
 
 export default function Page() {
-  return (
-    <Layout>Calendar</Layout>
-  )
+    useEffect(() => {
+        store.dispatch(get_announcement_calendar_thunk());
+    }, []);
+    return (
+        <Layout>
+            <CalendarSection />
+        </Layout>
+    );
 }
