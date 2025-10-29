@@ -41,14 +41,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('announcement', AnnouncementController::class);
     Route::resource('announcement_calendar', AnnouncementCalendarController::class);
 
-    // Certificate Requests
-    Route::get('certificate-requests', [CertificateRequestController::class, 'index']);
-    Route::post('certificate-requests', [CertificateRequestController::class, 'store']);
-    Route::get('certificate-requests/{certificateRequest}', [CertificateRequestController::class, 'show']);
-    Route::patch('certificate-requests/{certificateRequest}/verify', [CertificateRequestController::class, 'verify']);
-    Route::patch('certificate-requests/{certificateRequest}/approve', [CertificateRequestController::class, 'approve']);
-    Route::patch('certificate-requests/{certificateRequest}/reject', [CertificateRequestController::class, 'reject']);
-    Route::patch('certificate-requests/{certificateRequest}/payment', [CertificateRequestController::class, 'updatePayment']);
+    // Admin Certificate Requests
+    Route::get('admin/certificate-requests', [CertificateRequestController::class, 'index']);
+    Route::get('admin/certificate-requests/{certificateRequest}', [CertificateRequestController::class, 'show']);
+    Route::patch('admin/certificate-requests/{certificateRequest}/verify', [CertificateRequestController::class, 'verify']);
+    Route::patch('admin/certificate-requests/{certificateRequest}/approve', [CertificateRequestController::class, 'approve']);
+    Route::patch('admin/certificate-requests/{certificateRequest}/reject', [CertificateRequestController::class, 'reject']);
+    Route::patch('admin/certificate-requests/{certificateRequest}/payment', [CertificateRequestController::class, 'updatePayment']);
 
     // Direct Certificate Generation
     Route::post('certificates/generate-direct', [App\Http\Controllers\Api\CertificateController::class, 'generateDirect']);
@@ -58,4 +57,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('certificates/{certificate}', [App\Http\Controllers\Api\CertificateController::class, 'show']);
     Route::post('certificates/generate/{certificate}', [App\Http\Controllers\Api\CertificateController::class, 'generate']);
     Route::get('certificates/{certificate}/download', [App\Http\Controllers\Api\CertificateController::class, 'download']);
+
+    // Resident Portal APIs
+    Route::get('certificate-types', [App\Http\Controllers\Api\ResidentController::class, 'getCertificateTypes']);
+    Route::get('my-certificate-requests', [App\Http\Controllers\Api\ResidentController::class, 'getMyCertificateRequests']);
+    Route::post('certificate-requests', [App\Http\Controllers\Api\ResidentController::class, 'submitCertificateRequest']);
+
+    // Resident Inventory Borrow APIs
+    Route::get('inventories/available', [App\Http\Controllers\Api\ResidentController::class, 'getAvailableInventories']);
+    Route::get('my-borrow-requests', [App\Http\Controllers\Api\ResidentController::class, 'getMyBorrowRequests']);
+    Route::post('borrow-requests', [App\Http\Controllers\Api\ResidentController::class, 'submitBorrowRequest']);
+
+    // Resident Blotter Notifications
+    Route::get('my-blotter-notifications', [App\Http\Controllers\Api\ResidentController::class, 'getMyBlotterNotifications']);
+    
+    // Resident Profile
+    Route::get('my-profile', [App\Http\Controllers\Api\ResidentController::class, 'getMyProfile']);
+    Route::put('my-profile', [App\Http\Controllers\Api\ResidentController::class, 'updateMyProfile']);
 });

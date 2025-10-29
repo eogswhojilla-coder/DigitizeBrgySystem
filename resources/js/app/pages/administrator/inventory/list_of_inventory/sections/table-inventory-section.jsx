@@ -1,202 +1,248 @@
 import React, { useState } from "react";
-import Button from "@/app/_components/button";
-import { Plus, Edit, Trash2, Package, Search, Filter } from "lucide-react";
+import { Edit, Trash2, Package } from "lucide-react";
 import { useSelector } from "react-redux";
+import Table from "@/app/_components/table";
 import DeleteSection from "./delete-section";
+import EditSection from "./edit-section";
+
 export default function TableInventorySection() {
     const { inventories } = useSelector((store) => store.inventories);
-    const [items, setItems] = useState([
-        {
-            id: 1,
-            name: "Shovel",
-            description: "Heavy-duty garden shovel for digging",
-            quantity: 5,
-            condition: "Good",
-            location: "Tool Shed A",
-            status: "Active",
-            dateAdded: "2024-01-15",
-        },
-    ]);
+    const [editingItem, setEditingItem] = useState(null);
+    const [showEditForm, setShowEditForm] = useState(false);
 
     const handleEdit = (item) => {
-        setFormData({
-            name: item.name,
-            description: item.description,
-            quantity: item.quantity.toString(),
-            condition: item.condition,
-            location: item.location,
-            status: item.status,
-        });
         setEditingItem(item);
-        setShowForm(true);
+        setShowEditForm(true);
     };
 
-    const handleDelete = (id) => {
-        if (window.confirm("Are you sure you want to delete this item?")) {
-            setItems(items.filter((item) => item.id !== id));
-        }
-    };
-
-    const handleRetire = (id) => {
-        setItems(
-            items.map((item) =>
-                item.id === id ? { ...item, status: "Retired" } : item
-            )
-        );
+    const handleCloseEdit = () => {
+        setEditingItem(null);
+        setShowEditForm(false);
     };
 
     const getStatusColor = (status) => {
         switch (status) {
             case "Active":
-                return "bg-green-100 text-green-800 border-green-300";
+                return "bg-green-100 text-green-800 border border-green-300";
             case "Damaged":
-                return "bg-yellow-100 text-yellow-800 border-yellow-300";
+                return "bg-yellow-100 text-yellow-800 border border-yellow-300";
             case "Retired":
-                return "bg-red-100 text-red-800 border-red-300";
+                return "bg-red-100 text-red-800 border border-red-300";
             default:
-                return "bg-gray-100 text-gray-800 border-gray-300";
+                return "bg-gray-100 text-gray-800 border border-gray-300";
         }
     };
 
     const getConditionColor = (condition) => {
         switch (condition) {
             case "New":
-                return "text-green-600";
+                return "text-green-600 font-semibold";
             case "Good":
-                return "text-blue-600";
+                return "text-blue-600 font-semibold";
             case "Fair":
-                return "text-yellow-600";
+                return "text-yellow-600 font-semibold";
             case "Poor":
-                return "text-red-600";
+                return "text-red-600 font-semibold";
             default:
                 return "text-gray-600";
         }
     };
-    console.log("inventories", inventories);
+
+    const getCategoryBadge = (category) => {
+        const colors = {
+            Furniture: "bg-purple-100 text-purple-800",
+            Equipment: "bg-blue-100 text-blue-800",
+            "Event Supplies": "bg-pink-100 text-pink-800",
+            "Sports Equipment": "bg-green-100 text-green-800",
+            "Office Supplies": "bg-orange-100 text-orange-800",
+            "Medical Supplies": "bg-red-100 text-red-800",
+            Tools: "bg-gray-100 text-gray-800",
+            Electronics: "bg-indigo-100 text-indigo-800",
+            Other: "bg-gray-100 text-gray-600",
+        };
+
+        return colors[category] || "bg-gray-100 text-gray-600";
+    };
+
+    const columns = [
+        {
+            header: "Item Name",
+            accessor: "name",
+            cell: (item) => (
+                <div>
+                    <div className="font-medium text-gray-900">{item.name}</div>
+                    <div className="text-xs text-gray-500">
+                        Added: {new Date(item.created_at).toLocaleDateString()}
+                    </div>
+                </div>
+            ),
+        },
+        {
+            header: "Category",
+            accessor: "category",
+            cell: (item) => (
+                <span
+                    className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full ${getCategoryBadge(
+                        item.category
+                    )}`}
+                >
+                    {item.category || "Uncategorized"}
+                </span>
+            ),
+        },
+        {
+            header: "Description",
+            accessor: "description",
+            cell: (item) => (
+                <div
+                    className="text-sm text-gray-700 max-w-xs truncate"
+                    title={item.description}
+                >
+                    {item.description || "No description"}
+                </div>
+            ),
+        },
+        {
+            header: "Quantity",
+            accessor: "quantity",
+            cell: (item) => (
+                <div className="text-center">
+                    <div className="text-sm font-bold text-gray-900">
+                        {item.quantity || 0}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                        Min: {item.minimum_quantity || 5}
+                    </div>
+                </div>
+            ),
+        },
+        {
+            header: "Borrowed",
+            accessor: "borrowed",
+            cell: (item) => (
+                <div className="text-center">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {item.borrowed || 0}
+                    </span>
+                </div>
+            ),
+        },
+        {
+            header: "Damaged",
+            accessor: "damaged",
+            cell: (item) => (
+                <div className="text-center">
+                    {item.damaged > 0 ? (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            {item.damaged}
+                        </span>
+                    ) : (
+                        <span className="text-gray-400">0</span>
+                    )}
+                </div>
+            ),
+        },
+        {
+            header: "Condition",
+            accessor: "condition",
+            cell: (item) => (
+                <span
+                    className={`text-sm ${getConditionColor(item.condition)}`}
+                >
+                    {item.condition}
+                </span>
+            ),
+        },
+        {
+            header: "Location",
+            accessor: "location",
+            cell: (item) => (
+                <div className="text-sm text-gray-700">
+                    {item.location || "Not specified"}
+                </div>
+            ),
+        },
+        {
+            header: "Status",
+            accessor: "status",
+            cell: (item) => (
+                <span
+                    className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+                        item.status
+                    )}`}
+                >
+                    {item.status}
+                </span>
+            ),
+        },
+        {
+            header: "Actions",
+            accessor: "actions",
+            cell: (item) => (
+                <div className="flex items-center space-x-2">
+                    <button
+                        onClick={() => handleEdit(item)}
+                        className="text-blue-600 hover:text-blue-900 transition-colors p-1 hover:bg-blue-50 rounded"
+                        title="Edit item"
+                    >
+                        <Edit className="h-4 w-4" />
+                    </button>
+                    <DeleteSection data={item} />
+                </div>
+            ),
+        },
+    ];
+
+    const inventoryData = inventories?.data || inventories || [];
+
     return (
         <div>
             <div className="bg-white rounded-lg shadow-sm">
                 <div className="p-6 border-b border-gray-200">
-                    <h2 className="text-xl font-semibold text-gray-900">
-                        Inventory Items ({inventories.length})
-                    </h2>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h2 className="text-xl font-semibold text-gray-900">
+                                Inventory Items
+                            </h2>
+                            <p className="text-sm text-gray-600 mt-1">
+                                Total: {inventoryData.length} items
+                            </p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <Package className="h-5 w-5 text-blue-600" />
+                            <span className="text-sm font-medium text-gray-700">
+                                Stock Overview
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
-                {inventories.length === 0 ? (
+                {inventoryData.length === 0 ? (
                     <div className="text-center py-12">
                         <Package className="mx-auto h-12 w-12 text-gray-400" />
                         <h3 className="mt-2 text-sm font-medium text-gray-900">
                             No items found
                         </h3>
                         <p className="mt-1 text-sm text-gray-500">
-                            {items.length === 0
-                                ? "Get started by adding your first item."
-                                : "Try adjusting your search or filter."}
+                            Get started by adding your first inventory item.
                         </p>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead className="bg-blue-600">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        Name
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        Description
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        Quantity
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        Condition
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        Location
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        Status
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {inventories?.data?.map((item) => (
-                                    <tr
-                                        key={item.id}
-                                        className="hover:bg-gray-50"
-                                    >
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="font-medium text-gray-900">
-                                                {item.name}
-                                            </div>
-                                            <div className="text-sm text-gray-500">
-                                                Added {item.dateAdded}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="text-sm text-gray-900 max-w-xs truncate">
-                                                {item.description ||
-                                                    "No description"}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {item.quantity}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                className={`text-sm font-medium ${getConditionColor(
-                                                    item.condition
-                                                )}`}
-                                            >
-                                                {item.condition}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">
-                                                {item.location ||
-                                                    "Not specified"}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full border ${getStatusColor(
-                                                    item.status
-                                                )}`}
-                                            >
-                                                {item.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                            <button
-                                                onClick={() => handleEdit(item)}
-                                                className="text-blue-600 hover:text-blue-900 inline-flex items-center"
-                                            >
-                                                <Edit className="h-4 w-4" />
-                                            </button>
-
-                                            {item.status !== "Retired" && (
-                                                <button
-                                                    onClick={() =>
-                                                        handleRetire(item.id)
-                                                    }
-                                                    className="text-yellow-600 hover:text-yellow-900"
-                                                    title="Mark as Retired"
-                                                ></button>
-                                            )}
-                                            <DeleteSection data={item} />
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    <Table
+                        columns={columns}
+                        data={inventoryData}
+                        emptyMessage="No inventory items found. Add your first item to get started."
+                    />
                 )}
             </div>
+
+            {/* Edit Modal */}
+            {showEditForm && editingItem && (
+                <EditSection
+                    item={editingItem}
+                    onClose={handleCloseEdit}
+                />
+            )}
         </div>
     );
 }

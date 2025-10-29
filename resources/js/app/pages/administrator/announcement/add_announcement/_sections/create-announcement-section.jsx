@@ -89,7 +89,7 @@ export default function CreateAnnouncementSection() {
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
                 title="Create Announcement"
-                width="w-3/5"
+                width="max-w-4xl"
             >
                 <form
                     className="flex flex-col gap-4"

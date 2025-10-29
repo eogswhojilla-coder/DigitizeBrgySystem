@@ -9,7 +9,7 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Link } from "@inertiajs/react";
 import React, { Fragment } from "react";
 
-export default function HeaderMenuSection({ userNavigation }) {
+export default function ResidentHeaderMenuSection({ userNavigation }) {
     return (
         <Menu as="div" className="relative">
             <MenuButton className="-m-1.5 flex items-center p-1.5">
@@ -24,7 +24,7 @@ export default function HeaderMenuSection({ userNavigation }) {
                         aria-hidden="true"
                         className="ml-4 text-sm/6 font-semibold text-gray-900"
                     >
-                        Administrator
+                        Profile
                     </span>
                     <ChevronDownIcon
                         aria-hidden="true"
@@ -44,9 +44,12 @@ export default function HeaderMenuSection({ userNavigation }) {
             >
                 <MenuItems className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                     <MenuItem>
-                        <a className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
+                        <Link
+                            href="/resident/profile"
+                            className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
+                        >
                             Settings
-                        </a>
+                        </Link>
                     </MenuItem>
                     <MenuItem>
                         <Link

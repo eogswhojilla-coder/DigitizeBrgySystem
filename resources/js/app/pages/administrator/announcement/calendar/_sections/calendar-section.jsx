@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import { Badge, Calendar } from "antd";
+import { Calendar } from "antd";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
+import ViewDaySection from "./view-day-section";
 dayjs.extend(isBetween);
 
 const CalendarSection = () => {
@@ -74,6 +75,13 @@ const CalendarSection = () => {
                 listData.push({
                     type: "success",
                     content: announcement.name || "Untitled Event",
+                    name: announcement.name,
+                    description: announcement.description,
+                    start: announcement.start_at,
+                    end: announcement.end_at,
+                    start_at: announcement.start_at,
+                    end_at: announcement.end_at,
+                    ...announcement
                 });
             }
         });
@@ -86,15 +94,7 @@ const CalendarSection = () => {
             const listData = getListData(value);
             if (!listData?.length) return null;
 
-            return (
-                <ul className="events m-0 p-0 list-none">
-                    {listData.map((item, index) => (
-                        <li key={index}>
-                            <Badge status={item.type} text={item.content} />
-                        </li>
-                    ))}
-                </ul>
-            );
+            return <ViewDaySection data={listData} />;
         } catch (error) {
             console.error("❌ Calendar cell render error:", error);
             return null;
@@ -102,21 +102,26 @@ const CalendarSection = () => {
     };
 
     return (
-        <div>
-            <h2 className="text-xl font-bold mb-4">Announcement Calendar</h2>
+        <div className="p-4">
+            <h2 className="text-2xl font-bold mb-4">📅 Announcement Calendar</h2>
+            
             {calendarsData.length === 0 && (
                 <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
-                    <p className="font-bold">No announcements found</p>
+                    <p className="font-bold">⚠️ No announcements found</p>
                     <p className="text-sm">Create an announcement first to see it on the calendar.</p>
                 </div>
             )}
+            
             {calendarsData.length > 0 && (
                 <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                    <p className="font-bold">Found {calendarsData.length} announcement(s)</p>
-                    <p className="text-sm">Check browser console for detailed debug info.</p>
+                    <p className="font-bold">✅ Found {calendarsData.length} announcement(s)</p>
+                    <p className="text-sm">Click on dates with badges to view details. Check browser console for debug info.</p>
                 </div>
             )}
-            <Calendar cellRender={(current) => cell_data(current)} />
+            
+            <div className="bg-white rounded-lg shadow-lg p-4">
+                <Calendar cellRender={(current) => cell_data(current)} />
+            </div>
         </div>
     );
 };

@@ -2,44 +2,38 @@
 
 namespace App\Models;
 
-use App\Enums\CertificateRequestStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CertificateRequest extends Model
+class BorrowRequest extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id',
-        'certificate_type_id',
+        'inventory_id',
         'request_number',
+        'quantity',
+        'borrow_date',
+        'return_date',
+        'actual_return_date',
+        'contact_number',
         'purpose',
-        'valid_id_path',  // Add this line
-        'source',
         'status',
-        'remarks',
-        'verified_by',
-        'verified_at',
         'approved_by',
         'approved_at',
         'rejected_by',
         'rejected_at',
-        'released_by',
-        'released_at',
-        'is_paid',
-        'amount_paid'
+        'remarks',
     ];
 
     protected $casts = [
-        'status' => CertificateRequestStatus::class,
-        'verified_at' => 'datetime',
+        'borrow_date' => 'date',
+        'return_date' => 'date',
+        'actual_return_date' => 'date',
         'approved_at' => 'datetime',
         'rejected_at' => 'datetime',
-        'released_at' => 'datetime',
-        'is_paid' => 'boolean',
-        'amount_paid' => 'decimal:2'
     ];
 
     public function user()
@@ -47,19 +41,9 @@ class CertificateRequest extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function certificateType()
+    public function inventory()
     {
-        return $this->belongsTo(CertificateType::class);
-    }
-
-    public function certificate()
-    {
-        return $this->hasOne(Certificate::class);
-    }
-
-    public function verifiedBy()
-    {
-        return $this->belongsTo(User::class, 'verified_by');
+        return $this->belongsTo(Inventories::class, 'inventory_id');
     }
 
     public function approvedBy()
@@ -70,11 +54,6 @@ class CertificateRequest extends Model
     public function rejectedBy()
     {
         return $this->belongsTo(User::class, 'rejected_by');
-    }
-
-    public function releasedBy()
-    {
-        return $this->belongsTo(User::class, 'released_by');
     }
 
     protected static function boot()
@@ -100,6 +79,6 @@ class CertificateRequest extends Model
 
         $sequence = $latest ? intval(substr($latest->request_number, -5)) + 1 : 1;
         
-        return sprintf('REQ-%s%s%s-%05d', $year, $month, $day, $sequence);
+        return sprintf('BRW-%s%s%s-%05d', $year, $month, $day, $sequence);
     }
 }

@@ -152,7 +152,25 @@ Route::middleware(['auth:sanctum', 'role:resident'])->prefix('resident')->group(
         return Inertia::render('resident/dashboard/page');
     })->name('resident.dashboard');
     
-    // Add more resident routes here as needed
+    Route::get('announcements', function () {
+        return Inertia::render('resident/announcements/page');
+    })->name('resident.announcements');
+    
+    Route::get('certificate-request', function () {
+        return Inertia::render('resident/certificate-request/page');
+    })->name('resident.certificate-request');
+    
+    Route::get('inventory-borrow', function () {
+        return Inertia::render('resident/inventory-borrow/page');
+    })->name('resident.inventory-borrow');
+    
+    Route::get('blotter-notifications', function () {
+        return Inertia::render('resident/blotter-notifications/page');
+    })->name('resident.blotter-notifications');
+    
+    Route::get('profile', function () {
+        return Inertia::render('resident/profile/page');
+    })->name('resident.profile');
 });
 
 Route::middleware('auth')->group(function () {
@@ -162,4 +180,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
-    

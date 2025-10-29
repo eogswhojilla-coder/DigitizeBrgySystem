@@ -252,16 +252,23 @@ export default function NewOfficialLayout({ children, register, errors }) {
                 </div>
 
                 <div className="w-full">
-                    <Input
+                   
+                     <div className="space-y-2">
+                    <Select
                         register={register("pwd", {
                             required: "Field is required",
                         })}
                         error={errors?.pwd?.message}
-                        label="PWD"
-                        placeholder="Enter PWD"
-                        type="text"
                         name="pwd"
+                        label="PWD Status"
+                        options={[
+                            { value: "", label: "Select" },
+                            { value: "yes", label: "Yes" },
+                            { value: "no", label: "No" },
+                        ]}
                     />
+                </div>
+                    
                 </div>
                 <div className="space-y-2">
                     <Select

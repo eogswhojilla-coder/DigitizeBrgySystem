@@ -80,10 +80,10 @@ export default function SidebarSection({ navigation }) {
                 <div className="flex grow flex-col border-r border-gray-300 bg-white px-1.5 pb-4 shadow-md">
                     <div className="flex h-20 justify-center p-0 w-70  items-center">
                         <img
-                            className=" h-auto w-max"
-                            src="/images/Blogo.png"
+                            
+                            src="/images/logo_brgy_2.png"
                             alt="Your Company"
-                        />
+                        /> 
                     </div>
                     <SidebarDesktopSection
                         setOpenIndex={setOpenIndex}
