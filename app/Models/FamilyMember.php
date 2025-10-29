@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class FamilyMember extends Model
 {
-      protected $fillable = [
+    protected $fillable = [
         'family_id',
         'residentId',
         'isExistingResident',
@@ -15,4 +15,14 @@ class FamilyMember extends Model
         'role',
         'searchTerm',
     ];
+
+    public function family()
+    {
+        return $this->belongsTo(Families::class, 'family_id');
+    }
+
+    public function resident()
+    {
+        return $this->belongsTo(BarangayResident::class, 'residentId');
+    }
 }

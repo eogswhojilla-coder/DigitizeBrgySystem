@@ -13,29 +13,20 @@ class CertificateGenerationService
     {
         try {
             Log::info('Loading certificate relationships');
-            // Load all necessary relationships
-            $certificate->load(['certificateRequest.user.resident', 'certificateRequest.certificateType', 'issuedBy']);
+            // Load necessary relationships
+            $certificate->load(['certificateRequest.certificateType', 'issuedBy']);
             
             Log::info('Preparing PDF data', [
                 'certificate_id' => $certificate->id,
-                'resident' => $certificate->certificateRequest->user->resident->full_name ?? 'N/A',
                 'type' => $certificate->certificateRequest->certificateType->name ?? 'N/A'
             ]);
 
-            // Determine resident data source
-            $user = $certificate->certificateRequest->user;
-            $resident = $user->resident;
-
-            $residentData = $resident ? [
-                'full_name' => $resident->full_name,
-                'address' => $resident->address,
-                'age' => $resident->age,
-                'civil_status' => $resident->civil_status,
-            ] : [
-                'full_name' => $certificate->metadata['resident_name'] ?? $user->full_name,
+            // Use metadata for resident data (for direct generation)
+            $residentData = [
+                'full_name' => $certificate->metadata['resident_name'] ?? 'N/A',
                 'address' => $certificate->metadata['resident_address'] ?? 'N/A',
                 'age' => $certificate->metadata['age'] ?? 'N/A',
-                'civil_status' => $certificate->metadata['civil_status'] ?? 'N/A',
+                'civil_status' => $certificate->metadata['civil_status'] ?? 'Single',
             ];
 
             Log::info('Loading PDF view');
@@ -55,12 +46,6 @@ class CertificateGenerationService
                 'isHtml5ParserEnabled' => true,
                 'isRemoteEnabled' => true,
                 'defaultFont' => 'DejaVu Sans',
-                'enable_php' => true,
-                'enable_javascript' => true,
-                'dpi' => 150,
-                'debugPng' => true,
-                'debugKeepTemp' => true,
-                'logOutputFile' => storage_path('logs/pdf.log')
             ]);
 
             Log::info('Saving PDF to storage');

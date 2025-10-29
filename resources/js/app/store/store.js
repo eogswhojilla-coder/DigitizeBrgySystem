@@ -9,6 +9,7 @@ import blotterSlice from "../redux/blotter-slice";
 import barangayOfficialSlice from "../redux/barangay-official-slice";
 import certificateTypeSlice from "../redux/certificate-type-slice";
 import announcementSlice from "../redux/announcement-slice"; // ✅ Add this import
+import familySlice from "../redux/family-slice";
 
 const store = configureStore({
     reducer: {
@@ -22,6 +23,7 @@ const store = configureStore({
         // barangay_residents:barangayOfficialSlice,
         certificateTypes: certificateTypeSlice,
         announcements: announcementSlice, // ✅ Add this line
+        families: familySlice.reducer,
     },
 });
 

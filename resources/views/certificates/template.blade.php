@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,25 +56,20 @@
             margin-bottom: 20px;
             font-size: 12px;
         }
-        .qr-code {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            width: 100px;
-            height: 100px;
-        }
     </style>
 </head>
 <body>
     <div class="watermark">BRGY CERTIFICATE</div>
     
     <div class="header">
-        <img src="{{ public_path('images/logo.png') }}" alt="Barangay Logo" class="logo">
+        @if(file_exists(public_path('images/logo.png')))
+            <img src="{{ public_path('images/logo.png') }}" alt="Barangay Logo" class="logo">
+        @endif
         <div>
             Republic of the Philippines<br>
-            Province of {{ config('app.province') }}<br>
-            Municipality of {{ config('app.municipality') }}<br>
-            <strong>BARANGAY {{ config('app.barangay') }}</strong>
+            Province of {{ config('app.province', 'Sample Province') }}<br>
+            Municipality of {{ config('app.municipality', 'Sample Municipality') }}<br>
+            <strong>BARANGAY {{ strtoupper(config('app.barangay', 'Sample Barangay')) }}</strong>
         </div>
     </div>
 
@@ -90,9 +86,11 @@
     <div class="content">
         TO WHOM IT MAY CONCERN:<br><br>
 
-        This is to certify that <strong>{{ $resident->full_name }}</strong>, {{ $resident->age }} years old,
-        {{ $resident->civil_status }}, is a bonafide resident of {{ $resident->address }}, Barangay {{ config('app.barangay') }},
-        {{ config('app.municipality') }}, {{ config('app.province') }}.<br><br>
+        This is to certify that <strong>{{ $resident->full_name }}</strong>,
+        @if($resident->age != 'N/A') {{ $resident->age }} years old, @endif
+        @if($resident->civil_status != 'N/A') {{ $resident->civil_status }}, @endif
+        is a bonafide resident of {{ $resident->address }}, Barangay {{ config('app.barangay', 'Sample Barangay') }},
+        {{ config('app.municipality', 'Sample Municipality') }}, {{ config('app.province', 'Sample Province') }}.<br><br>
 
         This certification is being issued upon the request of the above-named person for the purpose of
         <strong>{{ $purpose }}</strong>.<br><br>
@@ -102,20 +100,20 @@
         @endif
 
         Issued this {{ $certificate->issued_at->format('jS') }} day of {{ $certificate->issued_at->format('F, Y') }}
-        at the Office of the Barangay {{ config('app.barangay') }}, {{ config('app.municipality') }},
-        {{ config('app.province') }}.
+        at the Office of the Barangay {{ config('app.barangay', 'Sample Barangay') }}, {{ config('app.municipality', 'Sample Municipality') }},
+        {{ config('app.province', 'Sample Province') }}.
     </div>
 
     <div class="footer">
         <div class="signature">
             <div class="signature-line"></div>
             {{ $issuedBy->full_name }}<br>
-            {{ $issuedBy->position }}
+            <small>{{ $issuedBy->position }}</small>
         </div>
     </div>
 
-    <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG($certificate->certificate_number, 'QRCODE') }}"
-         alt="QR Code"
-         class="qr-code">
+    <div style="margin-top: 100px; text-align: center; font-size: 10px;">
+        Certificate Number: {{ $certificate->certificate_number }}
+    </div>
 </body>
 </html>

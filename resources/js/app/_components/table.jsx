@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Table = ({ columns, data }) => {
+const Table = ({ columns, data, emptyMessage = "No data found" }) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200 border border-gray-300 shadow-sm">
@@ -17,15 +17,23 @@ const Table = ({ columns, data }) => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {data?.map((row, rowIndex) => (
-            <tr key={rowIndex} className="hover:bg-gray-50">
-              {columns.map((col, colIndex) => (
-                <td key={colIndex} className="px-6 py-3 text-sm text-gray-800">
-                  {row[col.accessor]}
-                </td>
-              ))}
+          {!data || data.length === 0 ? (
+            <tr>
+              <td colSpan={columns?.length} className="px-6 py-4 text-center text-sm text-gray-500">
+                {emptyMessage}
+              </td>
             </tr>
-          ))}
+          ) : (
+            data?.map((row, rowIndex) => (
+              <tr key={rowIndex} className="hover:bg-gray-50">
+                {columns.map((col, colIndex) => (
+                  <td key={colIndex} className="px-6 py-3 text-sm text-gray-800">
+                    {col.cell ? col.cell(row) : row[col.accessor]}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
