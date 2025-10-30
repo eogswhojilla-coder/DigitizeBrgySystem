@@ -9,6 +9,7 @@ import {
     Shield,
     Calendar
 } from "lucide-react";
+import { FcAdvertising, FcDataRecovery, FcRatings, FcTemplate } from "react-icons/fc";
 
 
 export default function Layout({ children }) {
@@ -19,31 +20,31 @@ export default function Layout({ children }) {
         {
             name: "Dashboard",
             href: "/resident/dashboard",
-            icon: <Home className="h-6 w-6" />,
+            icon: <FcTemplate className="h-6 w-6" />,
             current: isCurrentMain == "dashboard",
         },
         {
             name: "Announcements",
             href: "/resident/announcements",
-            icon: <Bell className="h-6 w-6" />,
+            icon: <FcAdvertising className="h-6 w-6" />,
             current: isCurrentMain == "announcements",
         },
         {
             name: "Certificate Request",
             href: "/resident/certificate-request",
-            icon: <FileText className="h-6 w-6" />,
+            icon: <FcRatings className="h-6 w-6" />,
             current: isCurrentMain == "certificate-request",
         },
         {
             name: "Inventory Borrow",
             href: "/resident/inventory-borrow",
-            icon: <Package className="h-6 w-6" />,
+            icon: <Package className="h-6 w-6  text-yellow-600" />,
             current: isCurrentMain == "inventory-borrow",
         },
         {
             name: "Blotter Notifications",
             href: "/resident/blotter-notifications",
-            icon: <Shield className="h-6 w-6" />,
+            icon: <FcDataRecovery className="h-6 w-6" />,
             current: isCurrentMain == "blotter-notifications",
         },
         {

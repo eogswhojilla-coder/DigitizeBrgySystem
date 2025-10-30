@@ -214,6 +214,9 @@ export default function Page() {
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option value="">Select certificate type</option>
+                                    <option value="">Barangay Certificate</option>
+                                    <option value="">Certificate of Residency</option>
+                                    <option value="">Barangay Indigency</option>
                                     {certificateTypes.map((type) => (
                                         <option key={type.id} value={type.id}>
                                             {type.name} - ₱{parseFloat(type.fee).toFixed(2)}
