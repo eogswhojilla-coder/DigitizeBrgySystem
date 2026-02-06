@@ -38,22 +38,29 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->grou
         Route::get('list_of_official', function () {
             return Inertia::render('administrator/barangay_residents/list_of_official/page');
         });
+       
         Route::get('list_of_official/{id}', function () {
             return Inertia::render('administrator/barangay_residents/list_of_official/id/page');
+        });
+          Route::get('list_of_resident', function () {
+            return Inertia::render('administrator/barangay_residents/list_of_resident/page');
+        });
+         Route::get('archive_resident', function () {
+            return Inertia::render('administrator/barangay_residents/archive_resident/page');
         });
         Route::get('official_end_term', function () {
             return Inertia::render('administrator/barangay_residents/official_end_term/page');
         });
     });
 
-    Route::prefix('resident')->group(function () {
-        Route::get('archive_resident', function () {
-            return Inertia::render('administrator/resident/archive_resident/page');
-        });
-        Route::get('list_of_resident', function () {
-            return Inertia::render('administrator/resident/list_of_resident/page');
-        });
-    });
+    // Route::prefix('resident')->group(function () {
+    //     Route::get('archive_resident', function () {
+    //         return Inertia::render('administrator/resident/archive_resident/page');
+    //     });
+    //     Route::get('list_of_resident', function () {
+    //         return Inertia::render('administrator/resident/list_of_resident/page');
+    //     });
+    // });
 
     Route::prefix('certificate')->group(function () {
         Route::get('certificate_layout', function () {

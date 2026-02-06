@@ -5,53 +5,35 @@ import "react-toastify/dist/ReactToastify.css"; // <- global CSS for react-toast
 import { MdOutlineFamilyRestroom } from "react-icons/md";
 import {
     FcAdvertising,
-    FcAssistant,
-    FcBusinessman,
     FcCalendar,
     FcConferenceCall,
     FcCustomerSupport,
-    FcDataConfiguration,
     FcDataRecovery,
     FcDepartment,
-    FcFilingCabinet,
-    FcHome,
-    FcLibrary,
     FcList,
-    FcNews,
     FcNook,
     FcOpenedFolder,
-    FcOrganization,
     FcPortraitMode,
     FcPrint,
-    FcPrivacy,
     FcRatings,
     FcReadingEbook,
     FcTemplate,
-    FcTimeline,
-    FcViewDetails,
 } from "react-icons/fc";
 
 import {
-    Boxes,
-    BoxIcon,
     CheckCircle,
     FileText,
     HomeIcon,
     List,
     Package,
     UserPlus2Icon,
-    UserPlusIcon,
     UsersIcon,
-    Warehouse,
 } from "lucide-react";
 import { GiFamilyHouse, GiFamilyTree } from "react-icons/gi";
 import { PiCertificateDuotone } from "react-icons/pi";
-import { FaHouseUser } from "react-icons/fa";
+import { FaUserPlus, FaUsers, FaUsersCog } from "react-icons/fa";
 import ToastProvider from "@/app/_components/toast";
-import {
-    DocumentArrowDownIcon,
-    DocumentCheckIcon,
-} from "@heroicons/react/24/outline";
+import { DocumentCheckIcon } from "@heroicons/react/24/outline";
 
 export default function Layout({ children }) {
     const isCurrentMain = window.location.pathname.split("/")[2];
@@ -71,18 +53,24 @@ export default function Layout({ children }) {
             current: isCurrentMain == "barangay_residents",
             children: [
                 {
-                    name: "New Resident",
+                    name: "Add New Resident",
 
                     href: "/administrator/barangay_residents/new_official",
-                    icon: <FcBusinessman className="h-6 w-6" />,
+                    icon: <FaUserPlus className="h-6 w-6 text-blue-500" />,
                     current: isCurrentSub == "new_official",
                 },
 
                 {
                     name: "List of Officials",
                     href: "/administrator/barangay_residents/list_of_official",
-                    icon: <FcViewDetails className="h-6 w-6" />,
+                    icon: <FaUsersCog className="h-6 w-6 text-blue-500" />,
                     current: isCurrentSub == "list_of_official",
+                },
+                {
+                    name: "List of Residents",
+                    href: "/administrator/barangay_residents/list_of_resident",
+                    icon: <FaUsers className="h-6 w-6 text-blue-500" />,
+                    current: isCurrentSub == "list_of_resident",
                 },
                 {
                     name: "Officials End Term",
@@ -90,30 +78,36 @@ export default function Layout({ children }) {
                     icon: <FcDataRecovery className="h-6 w-6" />,
                     current: isCurrentSub == "official_end_term",
                 },
-            ],
-        },
-        {
-            name: "Resident",
-            href: "#",
-            icon: <FaHouseUser className="h-6 w-6  text-blue-300" />,
-
-            current: isCurrentMain == "resident",
-            children: [
-                {
-                    name: "List of Residents",
-                    href: "/administrator/resident/list_of_resident",
-                    icon: <FcList className="h-6 w-6 " />,
-
-                    current: isCurrentSub == "list_of_resident",
-                },
                 {
                     name: "Archive of Residents",
-                    href: "/administrator/resident/archive_resident",
-                    icon: <FcDataConfiguration className="h-6 w-6" />,
+                    href: "/administrator/barangay_residents/archive_resident",
+                    icon: <FcList className="h-6 w-6" />,
                     current: isCurrentSub == "archive_resident",
                 },
             ],
         },
+        // {
+        //     name: "Resident",
+        //     href: "#",
+        //     icon: <FaHouseUser className="h-6 w-6  text-blue-300" />,
+
+        //     current: isCurrentMain == "resident",
+        //     children: [
+        //         {
+        //             name: "List of Residents",
+        //             href: "/administrator/resident/list_of_resident",
+        //             icon: <FcList className="h-6 w-6 " />,
+
+        //             current: isCurrentSub == "list_of_resident",
+        //         },
+        //         {
+        //             name: "Archive of Residents",
+        //             href: "/administrator/resident/archive_resident",
+        //             icon: <FcDataConfiguration className="h-6 w-6" />,
+        //             current: isCurrentSub == "archive_resident",
+        //         },
+        //     ],
+        // },
 
         {
             name: "Certificate",
