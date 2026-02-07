@@ -33,11 +33,13 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
         $user = $request->user();
-        if ($user->user_type == 'admin') {
+        
+        if ($user->user_type == 'admin' || $user->user_type == 'secretary') {
             return redirect()->intended(route('dashboard', absolute: false));
-        } else  if ($user->user_type == 'resident') {
+        } else if ($user->user_type == 'resident') {
             return redirect()->intended(route('resident.dashboard', absolute: false));
         } else {
+            // Default to admin dashboard
             return redirect()->intended(route('dashboard', absolute: false));
         }
     }

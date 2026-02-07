@@ -1,4 +1,3 @@
-"use client";
 
 import store from "@/app/store/store";
 import React from "react";

@@ -8,78 +8,34 @@ export default function TableSection() {
     const [searchTerm, setSearchTerm] = useState("");
     const [positionFilter, setPositionFilter] = useState("ALL POSITION");
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const { officials } = useSelector((store) => store.barangay_residents);
+    const { officials } = useSelector((store) => store.barangay_officials);
 
-    // ✅ Static fallback data
-    const residents = [
-        {
-            id: 1,
-            image: "/api/placeholder/40/40",
-            position: "KAGAWAD",
-            positionColor: "bg-green-500",
-            officialNumber: "040520251157345802",
-            name: "Christine M. Maquilang",
-            pwd: "NO",
-            singleParent: "NO",
-            voters: "YES",
-            status: "ACTIVE",
-        },
-        {
-            id: 2,
-            image: "/api/placeholder/40/40",
-            position: "CHAIRMAN",
-            positionColor: "bg-green-600",
-            officialNumber: "040320251137084573",
-            name: "Wacky D. Hojilla",
-            pwd: "NO",
-            singleParent: "NO",
-            voters: "YES",
-            status: "ACTIVE",
-        },
-        {
-            id: 3,
-            image: "/api/placeholder/40/40",
-            position: "SK KAGAWAD",
-            positionColor: "bg-green-400",
-            officialNumber: "040520251153333372",
-            name: "Ayesha M. Dela cruz",
-            pwd: "NO",
-            singleParent: "NO",
-            voters: "YES",
-            status: "ACTIVE",
-        },
-        {
-            id: 4,
-            image: "/api/placeholder/40/40",
-            position: "SECRETARY",
-            positionColor: "bg-purple-500",
-            officialNumber: "040820251500582572",
-            name: "Wakin D. Hojilla",
-            pwd: "NO",
-            singleParent: "NO",
-            voters: "YES",
-            status: "ACTIVE",
-        },
-        {
-            id: 5,
-            image: "/api/placeholder/40/40",
-            position: "KAGAWAD",
-            positionColor: "bg-green-500",
-            officialNumber: "040520251151410491",
-            name: "Janvee M. Romano",
-            pwd: "NO",
-            singleParent: "NO",
-            voters: "YES",
-            status: "ACTIVE",
-        },
-    ];
+    // Helper function to get position color
+    const getPositionColor = (position) => {
+        const pos = position?.toUpperCase() || '';
+        if (pos.includes('CHAIRMAN') || pos.includes('CAPTAIN')) return 'bg-red-600';
+        if (pos.includes('KAGAWAD')) return 'bg-green-500';
+        if (pos.includes('SK')) return 'bg-green-400';
+        if (pos.includes('SECRETARY')) return 'bg-purple-500';
+        if (pos.includes('TREASURER')) return 'bg-blue-500';
+        return 'bg-gray-500';
+    };
 
-    // ✅ Normalize officials
+    // ✅ Normalize officials data from API
     const data = Array.isArray(officials?.data)
-        ? officials.data
-        : Array.isArray(officials)
-        ? officials
-        : residents;
+        ? officials.data.map(official => ({
+            id: official.id,
+            image: official.profileImage ? `/images/residents/${official.profileImage}` : "/api/placeholder/40/40",
+            position: official.position || 'N/A',
+            positionColor: getPositionColor(official.position),
+            officialNumber: official.residentId || 'N/A',
+            name: `${official.firstName || ''} ${official.middleName ? official.middleName.charAt(0) + '.' : ''} ${official.lastName || ''}`.trim(),
+            pwd: official.pwd === 'yes' ? 'YES' : 'NO',
+            singleParent: official.singleParent === 'yes' ? 'YES' : 'NO',
+            voters: official.voters === 'yes' || official.voters === 'registered' ? 'YES' : 'NO',
+            status: 'ACTIVE',
+        }))
+        : [];
 
     // ✅ Safe filtering by search and position
     const filteredOfficials = data.filter((o) => {
@@ -149,8 +105,12 @@ export default function TableSection() {
     // Transform data for table
     const tableData = filteredOfficials.map((official) => ({
         image: (
-            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                <span className="text-gray-600 text-xs">IMG</span>
+            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
+                {official.image && official.image !== '/api/placeholder/40/40' ? (
+                    <img src={official.image} alt={official.name} className="w-full h-full object-cover" />
+                ) : (
+                    <span className="text-gray-600 text-xs">IMG</span>
+                )}
             </div>
         ),
         position: (
@@ -186,12 +146,15 @@ export default function TableSection() {
         action: (
             <div className="flex space-x-2">
                 <button
-                    onClick={() => console.log("Edit", official.id)}
+                    onClick={() => router.visit(`/administrator/barangay_residents/list_of_official/${official.id}`)}
                     className="p-1 text-yellow-600 hover:bg-yellow-50 rounded transition-colors"
                 >
                     <Edit2 className="w-4 h-4" />
                 </button>
-                <button className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors">
+                <button 
+                    onClick={() => console.log("Delete", official.id)}
+                    className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                >
                     <X className="w-4 h-4" />
                 </button>
             </div>

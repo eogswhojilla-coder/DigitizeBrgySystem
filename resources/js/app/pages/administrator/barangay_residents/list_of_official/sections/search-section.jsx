@@ -1,81 +1,19 @@
 import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
 
 export default function SearchSection() {
-
     const [searchTerm, setSearchTerm] = useState('');
-    const officials = [
-        {
-            id: 1,
-            image: '/api/placeholder/40/40',
-            position: 'KAGAWAD',
-            positionColor: 'bg-green-500',
-            officialNumber: '040520251157345802',
-            name: 'Christine M. Maquilang',
-            pwd: 'NO',
-            singleParent: 'NO',
-            voters: 'YES',
-            status: 'ACTIVE'
-        },
-        {
-            id: 2,
-            image: '/api/placeholder/40/40',
-            position: 'CHAIRMAN',
-            positionColor: 'bg-green-600',
-            officialNumber: '040320251137084573',
-            name: 'Wacky D. Hojilla',
-            pwd: 'NO',
-            singleParent: 'NO',
-            voters: 'YES',
-            status: 'ACTIVE'
-        },
-        {
-            id: 3,
-            image: '/api/placeholder/40/40',
-            position: 'SK KAGAWAD',
-            positionColor: 'bg-green-400',
-            officialNumber: '040520251153333372',
-            name: 'Ayesha M. Dela cruz',
-            pwd: 'NO',
-            singleParent: 'NO',
-            voters: 'YES',
-            status: 'ACTIVE'
-        },
-        {
-            id: 4,
-            image: '/api/placeholder/40/40',
-            position: 'SECRETARY',
-            positionColor: 'bg-purple-500',
-            officialNumber: '040820251500582572',
-            name: 'Wakin D. Hojilla',
-            pwd: 'NO',
-            singleParent: 'NO',
-            voters: 'YES',
-            status: 'ACTIVE'
-        },
-        {
-            id: 5,
-            image: '/api/placeholder/40/40',
-            position: 'KAGAWAD',
-            positionColor: 'bg-green-500',
-            officialNumber: '040520251151410491',
-            name: 'Janvee M. Romano',
-            pwd: 'NO',
-            singleParent: 'NO',
-            voters: 'YES',
-            status: 'ACTIVE'
-        }
-    ];
-    const filteredOfficials = officials.filter(official =>
-        official.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        official.position.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const { officials } = useSelector((store) => store.barangay_officials);
+    
+    // Get total count from API response
+    const totalOfficials = officials?.total || officials?.data?.length || 0;
     return (
         <>
             <div className="flex justify-between items-center mb-6 bg-gray-100 p-4 rounded-lg border">
                 <div className="flex items-center">
                     <span className="text-gray-700 font-semibold">NUMBER OF OFFICIAL</span>
                     <span className="ml-2 bg-gray-600 text-white px-2 py-1 rounded text-sm">
-                        {filteredOfficials.length}
+                        {totalOfficials}
                     </span>
                 </div>
                 <div className="flex items-center">

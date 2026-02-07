@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class BarangayResident extends Model
 {
     protected $fillable = [
-
+            'residentId',
+            'isOfficial',
 
             // Basic Info
            'position',

@@ -1,8 +1,9 @@
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
+import Radio from "@/app/_components/radio";
 import React, { useState } from "react";
 
-export default function NewOfficialLayout({ children, register, errors }) {
+export default function NewOfficialLayout({ children, register, errors, onIsOfficialChange }) {
     const [isOfficial, setIsOfficial] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
     const [formData, setFormData] = useState({
@@ -126,7 +127,13 @@ export default function NewOfficialLayout({ children, register, errors }) {
                 </div>
                 <div class="flex items-center mb-4">
                     <input
-                        onChange={() => setIsOfficial(!isOfficial)}
+                        onChange={() => {
+                            const newValue = !isOfficial;
+                            setIsOfficial(newValue);
+                            if (onIsOfficialChange) {
+                                onIsOfficialChange(newValue);
+                            }
+                        }}
                         id="default-checkbox"
                         type="checkbox"
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 "

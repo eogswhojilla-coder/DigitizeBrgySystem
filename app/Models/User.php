@@ -25,6 +25,8 @@ class User extends Authenticatable
         'email_verified_at',
         'username',
         'user_type',
+        'status',
+        'barangay_resident_id',
         'contact',
         'image',
         'password',
@@ -54,7 +56,7 @@ class User extends Authenticatable
 
     public function resident()
     {
-        return $this->hasOne(BarangayResident::class);
+        return $this->belongsTo(BarangayResident::class, 'barangay_resident_id');
     }
     
     public function getFullNameAttribute()

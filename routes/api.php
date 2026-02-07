@@ -5,6 +5,7 @@ use App\Http\Controllers\AdministratorController;
 use App\Http\Controllers\AnnouncementCalendarController;
 use App\Http\Controllers\BarangayInformationController;
 use App\Http\Controllers\BarangayResidentController;
+use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\BlotterController;
 
 use App\Http\Controllers\FamiliesController;
@@ -23,8 +24,18 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+// Registration routes
+Route::post('/register-resident', [RegistrationController::class, 'registerResident']);
+
+// Account approval routes (admin only)
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/pending-accounts', [RegistrationController::class, 'getPendingAccounts']);
+    Route::post('/approve-account/{id}', [RegistrationController::class, 'approveAccount']);
+    Route::post('/reject-account/{id}', [RegistrationController::class, 'rejectAccount']);
+});
 
 Route::resource('barangay_residents', BarangayResidentController::class);
+Route::resource('barangay_officials', BarangayResidentController::class);
 Route::resource('positions', PositionController::class);
 Route::resource('blotters', BlotterController::class);
 Route::resource('inventories', InventoriesController::class);

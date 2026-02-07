@@ -10,20 +10,22 @@ import barangayOfficialSlice from "../redux/barangay-official-slice";
 import certificateTypeSlice from "../redux/certificate-type-slice";
 import announcementSlice from "../redux/announcement-slice"; // ✅ Add this import
 import familySlice from "../redux/family-slice";
+import pendingAccountsSlice from "../redux/pending-accounts-slice";
 
 const store = configureStore({
     reducer: {
         app: appSlice,
         accounts: accountSlice,
         barangay_residents: barangayResidentSlice,
+        barangay_officials: barangayOfficialSlice,
         inventories: inventoriesSlice,
         positions: positionsSlice,
         administrators: administratorSlice,
         blotters: blotterSlice,
-        // barangay_residents:barangayOfficialSlice,
         certificateTypes: certificateTypeSlice,
         announcements: announcementSlice, // ✅ Add this line
         families: familySlice.reducer,
+        pendingAccounts: pendingAccountsSlice,
     },
 });
 

@@ -4,7 +4,7 @@ import OtherInfoSection from "./other-info-section";
 import GuardianSection from "./guardian-section";
 import AccountSection from "./account-section";
 import { useForm } from "react-hook-form";
-import { create_barangay_residents_service } from "@/app/services/barangay-resident-service";
+import { register_resident_service } from "@/app/services/registration-service";
 import Swal from "sweetalert2";
 import Button from "@/app/_components/button";
 import NewResidentLayout from "../layout-resident";
@@ -95,17 +95,34 @@ export default function TabsSection() {
 
     const onSubmit = async (data) => {
         try {
-            await create_barangay_residents_service(data);
+            const response = await register_resident_service(data);
+            
             await Swal.fire({
                 icon: "success",
-                title: "Your work has been saved",
-                showConfirmButton: false,
-                timer: 1500,
+                title: "Registration Successful!",
+                text: response?.data?.message || "Please wait for admin approval to access your account.",
+                confirmButtonColor: "#3b82f6",
             });
+            
             reset();
             setActiveTab("basic");
             setCompletedSteps(["basic"]);
-        } catch (error) {}
+            
+            // Redirect to login page after successful registration
+            setTimeout(() => {
+                router.visit(route("login"));
+            }, 2000);
+            
+        } catch (error) {
+            console.error('Registration error:', error);
+            
+            await Swal.fire({
+                icon: "error",
+                title: "Registration Failed!",
+                text: error?.response?.data?.message || "An error occurred during registration. Please try again.",
+                confirmButtonColor: "#3b82f6",
+            });
+        }
     };
 
     return (

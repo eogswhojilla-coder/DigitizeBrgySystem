@@ -12,10 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('inventories', function (Blueprint $table) {
-            $table->string('category')->nullable()->after('name');
-            $table->integer('borrowed')->default(0)->after('status');
-            $table->integer('damaged')->default(0)->after('borrowed');
-            $table->integer('minimum_quantity')->default(5)->after('damaged');
+            if (!Schema::hasColumn('inventories', 'category')) {
+                $table->string('category')->nullable()->after('name');
+            }
+            if (!Schema::hasColumn('inventories', 'borrowed')) {
+                $table->integer('borrowed')->default(0)->after('status');
+            }
+            if (!Schema::hasColumn('inventories', 'damaged')) {
+                $table->integer('damaged')->default(0)->after('borrowed');
+            }
+            if (!Schema::hasColumn('inventories', 'minimum_quantity')) {
+                $table->integer('minimum_quantity')->default(5)->after('damaged');
+            }
         });
     }
 

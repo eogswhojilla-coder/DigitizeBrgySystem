@@ -6,12 +6,14 @@ import GuardianSection from "./guardian-section";
 import AccountSection from "./account-section";
 import { useForm } from "react-hook-form";
 import { create_barangay_residents_service } from "@/app/services/barangay-resident-service";
+import { create_barangay_officials_service } from "@/app/services/barangay-official";
 import Swal from "sweetalert2";
 import Button from "@/app/_components/button";
 
 export default function TabsSection() {
     const [activeTab, setActiveTab] = useState("basic");
     const [completedSteps, setCompletedSteps] = useState(["basic"]); // Track completed steps
+    const [isOfficial, setIsOfficial] = useState(false);
 
     const {
         register,
@@ -89,17 +91,40 @@ export default function TabsSection() {
 
     const onSubmit = async (data) => {
         try {
-            await create_barangay_residents_service(data);
+            // Add isOfficial to the data
+            const submitData = { ...data, isOfficial };
+            
+            // Call the appropriate service based on isOfficial checkbox
+            let response;
+            if (isOfficial) {
+                response = await create_barangay_officials_service(submitData);
+            } else {
+                response = await create_barangay_residents_service(submitData);
+            }
+            
             await Swal.fire({
                 icon: "success",
-                title: "Your work has been saved",
+                title: "Success!",
+                text: response?.data?.message || "Your work has been saved",
                 showConfirmButton: false,
                 timer: 1500,
             });
+            
             reset();
             setActiveTab("basic");
             setCompletedSteps(["basic"]);
-        } catch (error) {}
+            setIsOfficial(false);
+            
+        } catch (error) {
+            console.error('Submission error:', error);
+            
+            await Swal.fire({
+                icon: "error",
+                title: "Error!",
+                text: error?.response?.data?.error || error?.response?.data?.message || "Failed to save. Please try again.",
+                confirmButtonColor: "#3b82f6",
+            });
+        }
     };
 
     return (
@@ -189,7 +214,11 @@ export default function TabsSection() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <NewOfficialLayout errors={errors} register={register}>
+                    <NewOfficialLayout 
+                        errors={errors} 
+                        register={register}
+                        onIsOfficialChange={setIsOfficial}
+                    >
                         {activeTab === "basic" && (
                             <BasicInfoSection
                                 errors={errors}

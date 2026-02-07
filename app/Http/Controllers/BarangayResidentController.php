@@ -4,18 +4,94 @@ namespace App\Http\Controllers;
 
 use App\Models\BarangayResident;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BarangayResidentController extends Controller
 {
     public function store(Request $request)
     {
-        BarangayResident::create($request->all());
-        return response()->json(['message' => 'Barangay information created successfully'], 200);
+        try {
+            // Generate resident ID: mmddyyss format
+            $now = now();
+            $residentId = $now->format('mdys'); // month, day, year (2 digits), seconds
+            
+            // Get all data except sensitive/file fields
+            $data = $request->except(['profileImage', 'confirmPassword', 'image']);
+            
+            // Add auto-generated fields
+            $data['residentId'] = $residentId;
+            $data['isOfficial'] = filter_var($request->input('isOfficial', false), FILTER_VALIDATE_BOOLEAN);
+            
+            // Handle password hashing if present
+            if (!empty($data['password'])) {
+                $data['password'] = bcrypt($data['password']);
+            } else {
+                unset($data['password']);
+            }
+            
+            // Handle image upload if present
+            if ($request->hasFile('profileImage')) {
+                $image = $request->file('profileImage');
+                $imageName = time() . '_' . uniqid() . '.' . $image->extension();
+                $image->move(public_path('images/residents'), $imageName);
+                $data['profileImage'] = $imageName;
+            }
+            
+            // If not official, clear position-related fields
+            if (!$data['isOfficial']) {
+                $data['position'] = null;
+                $data['startDate'] = null;
+                $data['endDate'] = null;
+            }
+            
+            // Clean empty strings to null
+            foreach ($data as $key => $value) {
+                if ($value === '' || $value === 'null') {
+                    $data[$key] = null;
+                }
+            }
+            
+            $resident = BarangayResident::create($data);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Barangay information created successfully',
+                'data' => $resident,
+                'residentId' => $residentId
+            ], 201);
+            
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Database error creating resident: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Database error occurred',
+                'error' => $e->getMessage()
+            ], 500);
+            
+        } catch (\Exception $e) {
+            Log::error('Error creating resident: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error creating resident',
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => basename($e->getFile())
+            ], 500);
+        }
     }
     
     public function index(Request $request)
     {
         $query = BarangayResident::query();
+
+        // Filter by isOfficial based on route
+        if ($request->is('api/barangay_officials*')) {
+            $query->where('isOfficial', true);
+        } elseif ($request->is('api/barangay_residents*')) {
+            $query->where('isOfficial', false);
+        }
 
         // Apply filters
         if ($request->has('firstName') && $request->firstName != '') {
@@ -35,11 +111,7 @@ class BarangayResidentController extends Controller
         }
 
         if ($request->has('age') && $request->age != '') {
-            // Calculate birth year range for age filter
-            $currentYear = date('Y');
-            $birthYear = $currentYear - $request->age;
-            $query->whereYear('dateOfBirth', '>=', $birthYear - 1)
-                  ->whereYear('dateOfBirth', '<=', $birthYear + 1);
+            $query->where('age', $request->age);
         }
 
         if ($request->has('status') && $request->status != '') {
@@ -55,7 +127,7 @@ class BarangayResidentController extends Controller
         }
 
         if ($request->has('residentNumber') && $request->residentNumber != '') {
-            $query->where('id', 'like', '%' . $request->residentNumber . '%');
+            $query->where('residentId', 'like', '%' . $request->residentNumber . '%');
         }
 
         $barangay_residents = $query->orderBy('id', 'desc')->paginate(10);
@@ -65,8 +137,21 @@ class BarangayResidentController extends Controller
     
     public function destroy(Request $request, $id)
     {
-        $barangay_residents = BarangayResident::find($id);
-        $barangay_residents->delete();
-        return response()->json($barangay_residents);
+        try {
+            $barangay_residents = BarangayResident::find($id);
+            
+            if (!$barangay_residents) {
+                return response()->json(['message' => 'Resident not found'], 404);
+            }
+            
+            $barangay_residents->delete();
+            
+            return response()->json(['message' => 'Resident deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error deleting resident',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

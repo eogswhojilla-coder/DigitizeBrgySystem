@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('calendar', function (Blueprint $table) {
+        Schema::create('announcement_calendars', function (Blueprint $table) {
             $table->id();
             $table->string('news_feed_id')->nullable();
             $table->string('type')->nullable();
@@ -18,6 +18,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('calendar');
+        Schema::dropIfExists('announcement_calendars');
     }
 };

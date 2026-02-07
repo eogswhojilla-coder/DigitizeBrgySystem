@@ -51,6 +51,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->grou
         Route::get('official_end_term', function () {
             return Inertia::render('administrator/barangay_residents/official_end_term/page');
         });
+         Route::get('account_approval', function () {
+            return Inertia::render('administrator/barangay_residents/account_approval/page');
+        });
     });
 
     // Route::prefix('resident')->group(function () {

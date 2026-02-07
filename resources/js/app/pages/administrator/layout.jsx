@@ -84,6 +84,12 @@ export default function Layout({ children }) {
                     icon: <FcList className="h-6 w-6" />,
                     current: isCurrentSub == "archive_resident",
                 },
+                 {
+                    name: "Account Approval",
+                    href: "/administrator/barangay_residents/account_approval",
+                    icon: <CheckCircle className="h-5 w-5 text-green-500" />,
+                    current: isCurrentSub == "account_approval",
+                },
             ],
         },
         // {

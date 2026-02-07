@@ -49,6 +49,20 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Check if account is approved
+        $user = Auth::user();
+        if ($user->user_type === 'resident' && $user->status !== 'approved') {
+            Auth::logout();
+            
+            $message = $user->status === 'pending' 
+                ? 'Your account is pending approval. Please wait for admin verification.'
+                : 'Your account has been rejected. Please contact the administrator.';
+            
+            throw ValidationException::withMessages([
+                'email' => $message,
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 
