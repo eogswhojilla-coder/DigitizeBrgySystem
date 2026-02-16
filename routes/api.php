@@ -19,6 +19,7 @@ use App\Http\Controllers\AnnouncementController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -86,3 +87,33 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('my-profile', [App\Http\Controllers\Api\ResidentController::class, 'getMyProfile']);
     Route::put('my-profile', [App\Http\Controllers\Api\ResidentController::class, 'updateMyProfile']);
 });
+
+// Route::middleware(['api'])->group(function () {
+//     Route::get('/residents', function () {
+//         try {
+//             $residents = DB::table('list_of_resident')
+//                 ->select(
+//                     'id',
+//                     'first_name',
+//                     'middle_name',
+//                     'last_name',
+//                     'purok',
+//                     DB::raw('TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) as age')
+//                 )
+//                 ->get();
+            
+//             return response()->json([
+//                 'success' => true,
+//                 'data' => $residents
+//             ], 200);
+//         } catch (\Exception $e) {
+//             \Log::error('Error fetching residents: ' . $e->getMessage());
+            
+//             return response()->json([
+//                 'success' => false,
+//                 'message' => 'Error fetching residents',
+//                 'error' => $e->getMessage()
+//             ], 500);
+//         }
+//     });
+// });

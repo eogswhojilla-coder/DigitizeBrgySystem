@@ -12,7 +12,6 @@ import {
     Building,
 } from "lucide-react";
 import Button from "@/app/_components/button";
-import Select from "@/app/_components/select";
 import Input from "@/app/_components/input";
 import { create_households_service } from "@/app/services/households-service";
 import Swal from "sweetalert2";
@@ -252,7 +251,7 @@ export default function AddHouseholdDetailSection() {
                             {existingFamilies.map((family) => (
                                 <option key={family.id} value={family.id}>
                                     {family.familyNumber} - {family.headOfFamily}{" "}
-                                    ({family.sitio}, {family.street})
+                                    ({family.zone}, {family.street})
                                 </option>
                             ))}
                         </select>
@@ -281,7 +280,7 @@ export default function AddHouseholdDetailSection() {
                                     </p>
                                     <p className="text-orange-800">
                                         <strong>Address:</strong>{" "}
-                                        {selectedFamilyDetails.sitio},{" "}
+                                        {selectedFamilyDetails.zone},{" "}
                                         {selectedFamilyDetails.street}
                                         {selectedFamilyDetails.houseNumber &&
                                             `, House #${selectedFamilyDetails.houseNumber}`}

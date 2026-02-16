@@ -29,7 +29,7 @@ import {
     UserPlus2Icon,
     UsersIcon,
 } from "lucide-react";
-import { GiFamilyHouse, GiFamilyTree } from "react-icons/gi";
+import { GiFamilyTree } from "react-icons/gi";
 import { PiCertificateDuotone } from "react-icons/pi";
 import { FaUserPlus, FaUsers, FaUsersCog } from "react-icons/fa";
 import ToastProvider from "@/app/_components/toast";
@@ -84,7 +84,7 @@ export default function Layout({ children }) {
                     icon: <FcList className="h-6 w-6" />,
                     current: isCurrentSub == "archive_resident",
                 },
-                 {
+                {
                     name: "Account Approval",
                     href: "/administrator/barangay_residents/account_approval",
                     icon: <CheckCircle className="h-5 w-5 text-green-500" />,
@@ -92,6 +92,13 @@ export default function Layout({ children }) {
                 },
             ],
         },
+        // {
+        //     name: "User Approval",
+        //     href: "/administrator/account_approval",
+        //     icon: <CheckCircle className="h-6 w-6" />,
+        //     current: isCurrentMain == "account_approval",
+        // },
+
         // {
         //     name: "Resident",
         //     href: "#",

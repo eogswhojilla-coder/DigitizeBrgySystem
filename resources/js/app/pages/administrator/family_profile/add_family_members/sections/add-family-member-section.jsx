@@ -263,7 +263,7 @@ export default function AddFamilyMemberSection() {
                             {existingFamilies.map((family) => (
                                 <option key={family.id} value={family.id}>
                                     {family.familyNumber} - {family.headOfFamily}{" "}
-                                    ({family.sitio}, {family.street})
+                                    ({family.zone}, {family.street})
                                 </option>
                             ))}
                         </select>
@@ -279,7 +279,7 @@ export default function AddFamilyMemberSection() {
                     <div className="mt-3 p-3 bg-blue-50 rounded-md">
                         <p className="text-sm text-blue-800">
                             <strong>Selected Family:</strong>{" "}
-                            {selectedFamily.headOfFamily} - {selectedFamily.sitio}
+                            {selectedFamily.headOfFamily} - {selectedFamily.zone}
                             , {selectedFamily.street}
                         </p>
                     </div>

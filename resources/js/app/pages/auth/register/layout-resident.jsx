@@ -64,9 +64,9 @@ export default function NewResidentLayout({ children, register, errors }) {
 
     const handleRemoveImage = () => {
         setImagePreview(null);
-        const input = document.getElementById('profileImage');
+        const input = document.getElementById("profileImage");
         if (input) {
-            input.value = '';
+            input.value = "";
         }
     };
 
@@ -108,7 +108,9 @@ export default function NewResidentLayout({ children, register, errors }) {
                                         d="M12 4v16m8-8H4"
                                     />
                                 </svg>
-                                <span className="text-xs text-gray-500">Upload Photo</span>
+                                <span className="text-xs text-gray-500">
+                                    Upload Photo
+                                </span>
                             </label>
                         )}
                         <input
@@ -121,7 +123,9 @@ export default function NewResidentLayout({ children, register, errors }) {
                         />
                     </div>
                     <p className="text-xs text-center text-gray-500">
-                        {imagePreview ? "Click × to remove image" : "Click to upload profile picture"}
+                        {imagePreview
+                            ? "Click × to remove image"
+                            : "Click to upload profile picture"}
                     </p>
                 </div>
                 <div class="flex items-center mb-4">
@@ -252,15 +256,18 @@ export default function NewResidentLayout({ children, register, errors }) {
                 </div>
 
                 <div className="w-full">
-                    <Input
+                    <Select
                         register={register("pwd", {
                             required: "Field is required",
                         })}
                         error={errors?.pwd?.message}
-                        label="PWD"
-                        placeholder="Enter PWD"
-                        type="text"
                         name="pwd"
+                        label="PWD"
+                        options={[
+                            { value: "", label: "Select Status" },
+                            { value: "yes", label: "Yes" },
+                            { value: "no", label: "No" },
+                        ]}
                     />
                 </div>
                 <div className="space-y-2">

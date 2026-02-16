@@ -18,7 +18,7 @@ export default function DeleteFamilySection({ family, isOpen, onClose, onConfirm
               onClick={onClose} 
               className="text-white hover:text-red-200 bg-white/20 hover:bg-white/30 rounded-lg p-2 transition-all duration-200"
             >
-              <X size={20} />
+              <X size={20} /> 
             </button>
           </div>
         </div>
@@ -36,7 +36,7 @@ export default function DeleteFamilySection({ family, isOpen, onClose, onConfirm
                 Family #{family.familyNumber} – {family.headOfFamily}
               </p>
               <p className="text-red-600 text-sm mt-1">
-                {family.members?.length || 0} family members • {family.sitio}
+                {family.members?.length || 0} family members • {family.zone}
               </p>
             </div>
             <p className="text-gray-600 text-sm">

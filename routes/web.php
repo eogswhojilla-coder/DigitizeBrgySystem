@@ -38,14 +38,14 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->grou
         Route::get('list_of_official', function () {
             return Inertia::render('administrator/barangay_residents/list_of_official/page');
         });
-       
+
         Route::get('list_of_official/{id}', function () {
             return Inertia::render('administrator/barangay_residents/list_of_official/id/page');
         });
-          Route::get('list_of_resident', function () {
+        Route::get('list_of_resident', function () {
             return Inertia::render('administrator/barangay_residents/list_of_resident/page');
         });
-         Route::get('archive_resident', function () {
+        Route::get('archive_resident', function () {
             return Inertia::render('administrator/barangay_residents/archive_resident/page');
         });
         Route::get('official_end_term', function () {
@@ -55,6 +55,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->grou
             return Inertia::render('administrator/barangay_residents/account_approval/page');
         });
     });
+    // Route::get('account_approval', function () {
+    //     return Inertia::render('administrator/account_approval/page');
+    // });
+
 
     // Route::prefix('resident')->group(function () {
     //     Route::get('archive_resident', function () {
@@ -161,23 +165,23 @@ Route::middleware(['auth:sanctum', 'role:resident'])->prefix('resident')->group(
     Route::get('dashboard', function () {
         return Inertia::render('resident/dashboard/page');
     })->name('resident.dashboard');
-    
+
     Route::get('announcements', function () {
         return Inertia::render('resident/announcements/page');
     })->name('resident.announcements');
-    
+
     Route::get('certificate-request', function () {
         return Inertia::render('resident/certificate-request/page');
     })->name('resident.certificate-request');
-    
+
     Route::get('inventory-borrow', function () {
         return Inertia::render('resident/inventory-borrow/page');
     })->name('resident.inventory-borrow');
-    
+
     Route::get('blotter-notifications', function () {
         return Inertia::render('resident/blotter-notifications/page');
     })->name('resident.blotter-notifications');
-    
+
     Route::get('profile', function () {
         return Inertia::render('resident/profile/page');
     })->name('resident.profile');

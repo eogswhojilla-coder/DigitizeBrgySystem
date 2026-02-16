@@ -17,7 +17,7 @@ class BarangayResidentsSeeder extends Seeder
     {
          $faker = Faker::create();
 
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             DB::table('barangay_residents')->insert([
                 'position'       => $faker->randomElement(['Barangay Captain', 'Kagawad', 'Resident']),
                 'startDate'      => $faker->date(),
