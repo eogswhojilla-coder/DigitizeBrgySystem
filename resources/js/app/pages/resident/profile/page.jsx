@@ -105,8 +105,6 @@ export default function Page() {
                         )}
                     </button>
                 </div>
-
-                {/* Profile Form */}
                 <div className="bg-white rounded-lg shadow-lg p-6">
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
