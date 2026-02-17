@@ -43,13 +43,13 @@ export default function TableAdministratorUserSection() {
         ),
         name: (
             <span className="font-medium">
-                {administrator.firstName} {administrator.middleName} {administrator.lastName}
+                {administrator.first_name} {administrator.middle_name} {administrator.last_name}
             </span>
         ),
         username: administrator.username,
         password: (
             <span className="font-mono text-gray-500">
-                {administrator.password}
+                ••••••••
             </span>
         ),
         action: (

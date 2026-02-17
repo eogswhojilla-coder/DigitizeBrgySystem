@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('complainant_not_resident')->nullable();
             $table->string('complainant_statement')->nullable();
             $table->string('respondent')->nullable();
+            $table->unsignedBigInteger('respondent_id')->nullable();
+            $table->foreign('respondent_id')->references('id')->on('barangay_residents')->onDelete('set null');
             $table->string('person_involved_resident')->nullable();
             $table->string('person_involved_not_resident')->nullable();
             $table->string('person_statement')->nullable();

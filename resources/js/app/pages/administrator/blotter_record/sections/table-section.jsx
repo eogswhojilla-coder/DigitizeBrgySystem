@@ -20,15 +20,15 @@ export default function TableSection() {
 
     const handleSelectItem = (id, checked) => {
         setSelectedItems((prev) =>
-            checked ? [...prev, id] : prev.filter((item) => item !== id)
+            checked ? [...prev, id] : prev.filter((item) => item !== id),
         );
     };
 
     // Filter blotters based on search term
     const filteredBlotters = data.filter((blotter) =>
         Object.values(blotter).some((value) =>
-            value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
+            value?.toString().toLowerCase().includes(searchTerm.toLowerCase()),
+        ),
     );
 
     // Define table columns
@@ -87,9 +87,7 @@ export default function TableSection() {
             <input
                 type="checkbox"
                 checked={selectedItems.includes(blotter.id)}
-                onChange={(e) =>
-                    handleSelectItem(blotter.id, e.target.checked)
-                }
+                onChange={(e) => handleSelectItem(blotter.id, e.target.checked)}
                 className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
         ),

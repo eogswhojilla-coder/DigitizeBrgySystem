@@ -18,6 +18,8 @@ import { create_blotters_service } from "@/app/services/blotter-service";
 import Swal from "sweetalert2";
 import store from "@/app/store/store";
 import { get_blotters_thunk } from "@/app/redux/blotter-thunk";
+import Select from "@/app/_components/select";
+import AutocompleteResident from "@/app/_components/autocomplete-resident";
 
 // Moved components outside to prevent redefinition on every render
 const EnhancedModal = ({ isOpen, onClose, children }) => {
@@ -161,7 +163,7 @@ export default function NewRecordSection() {
 
     const handleSelectItem = (id, checked) => {
         setSelectedItems((prev) =>
-            checked ? [...prev, id] : prev.filter((item) => item !== id)
+            checked ? [...prev, id] : prev.filter((item) => item !== id),
         );
     };
     const submitForm = async (data) => {
@@ -179,7 +181,7 @@ export default function NewRecordSection() {
         } catch (error) {
             console.error(
                 "Error saving blotter:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             Swal.fire({
                 icon: "error",
@@ -191,8 +193,8 @@ export default function NewRecordSection() {
 
     const filteredRecords = records.filter((record) =>
         Object.values(record).some((value) =>
-            value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
+            value.toString().toLowerCase().includes(searchTerm.toLowerCase()),
+        ),
     );
 
     return (
@@ -282,12 +284,12 @@ export default function NewRecordSection() {
                                 icon={Users}
                                 title="Respondent & Involved Persons"
                             >
-                                <InputField
+                                <AutocompleteResident
                                     label="Respondent"
-                                    id="respondent"
-                                    placeholder="Enter respondent's full name"
+                                    placeholder="Search for resident respondent..."
                                     register={register}
-                                    error={errors.respondent?.message}
+                                    name="respondent_id"
+                                    error={errors.respondent_id?.message}
                                     required
                                 />
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -362,14 +364,30 @@ export default function NewRecordSection() {
                                     required
                                 />
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <InputField
-                                        label="Current Status"
-                                        id="status"
-                                        placeholder="e.g., Under Investigation, Resolved, Pending"
-                                        register={register}
-                                        error={errors.status?.message}
-                                        required
-                                    />
+                                    <div className="mt-8">
+                                        <Select
+                                            register={register("status", {
+                                                required: "Field is required",
+                                            })}
+                                            error={errors?.status?.message}
+                                            name="status"
+                                            label="Current Status"
+                                            options={[
+                                                {
+                                                    value: "Pending",
+                                                    label: "Pending",
+                                                },
+                                                {
+                                                    value: "Under Investigation",
+                                                    label: "Under Investigation",
+                                                },
+                                                {
+                                                    value: "Resolved",
+                                                    label: "Resolved",
+                                                },
+                                            ]}
+                                        />
+                                    </div>
                                     <InputField
                                         label="Date Reported"
                                         id="date_reported"

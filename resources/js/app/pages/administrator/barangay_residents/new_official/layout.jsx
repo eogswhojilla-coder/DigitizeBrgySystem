@@ -1,11 +1,19 @@
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
 import Radio from "@/app/_components/radio";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { get_positions_thunk } from "@/app/redux/position-thunk";
 
 export default function NewOfficialLayout({ children, register, errors, onIsOfficialChange }) {
+    const dispatch = useDispatch();
+    const { positions } = useSelector((store) => store.positions);
     const [isOfficial, setIsOfficial] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
+
+    useEffect(() => {
+        dispatch(get_positions_thunk());
+    }, []);
     const [formData, setFormData] = useState({
         // Basic Info
         position: "",
@@ -155,36 +163,10 @@ export default function NewOfficialLayout({ children, register, errors, onIsOffi
                                 name="position"
                                 label="Position"
                                 error={errors?.position?.message}
-                                options={[
-                                    {
-                                        value: "barangay-captain",
-                                        label: "Barangay Captain",
-                                    },
-                                    {
-                                        value: "barangay-kagawad",
-                                        label: "Barangay Kagawad",
-                                    },
-                                    {
-                                        value: "barangay-sk-chairman",
-                                        label: "Barangay SK Chairman",
-                                    },
-                                    {
-                                        value: "barangay-sk-kagawad",
-                                        label: "Barangay SK Kagawad",
-                                    },
-                                    {
-                                        value: "barangay-secretary",
-                                        label: "Barangay Secretary",
-                                    },
-                                    {
-                                        value: "barangay-staff",
-                                        label: "Barangay Staff",
-                                    },
-                                    {
-                                        value: "barangay-security-personnel",
-                                        label: "Barangay Security Personnel",
-                                    },
-                                ]}
+                                options={(positions || []).map((position) => ({
+                                    value: position.id,
+                                    label: position.position,
+                                }))}
                             />
                         </div>
 

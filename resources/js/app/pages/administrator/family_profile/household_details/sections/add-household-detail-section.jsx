@@ -69,7 +69,7 @@ export default function AddHouseholdDetailSection() {
             if (formData.familyId) {
                 try {
                     const response = await axios.get(
-                        `/api/families/${formData.familyId}`
+                        `/api/families/${formData.familyId}`,
                     );
                     setSelectedFamilyDetails(response.data);
                 } catch (error) {
@@ -132,8 +132,8 @@ export default function AddHouseholdDetailSection() {
                 type === "checkbox"
                     ? checked
                     : type === "number" && value === ""
-                    ? ""
-                    : value,
+                      ? ""
+                      : value,
         });
 
         setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -250,8 +250,9 @@ export default function AddHouseholdDetailSection() {
                             </option>
                             {existingFamilies.map((family) => (
                                 <option key={family.id} value={family.id}>
-                                    {family.familyNumber} - {family.headOfFamily}{" "}
-                                    ({family.zone}, {family.street})
+                                    {family.familyNumber} -{" "}
+                                    {family.headOfFamily} ({family.zone},{" "}
+                                    {family.street})
                                 </option>
                             ))}
                         </select>
@@ -299,7 +300,11 @@ export default function AddHouseholdDetailSection() {
                                         <h4 className="font-semibold text-blue-900 mb-2 flex items-center">
                                             <Users className="w-4 h-4 mr-2" />
                                             Family Members (
-                                            {selectedFamilyDetails.members.length})
+                                            {
+                                                selectedFamilyDetails.members
+                                                    .length
+                                            }
+                                            )
                                         </h4>
                                         <div className="space-y-2">
                                             {selectedFamilyDetails.members.map(
@@ -311,19 +316,23 @@ export default function AddHouseholdDetailSection() {
                                                         <div>
                                                             <span className="font-medium text-blue-900">
                                                                 {index + 1}.{" "}
-                                                                {member.resident
-                                                                    ? `${member.resident.firstName} ${member.resident.middleName || ""} ${member.resident.lastName}`
-                                                                    : "N/A"}
+                                                                {member?.residentName ??
+                                                                    member?.newResidentName ??
+                                                                    "N/A"}
                                                             </span>
                                                             <span className="text-blue-700 ml-2">
-                                                                ({member.relationship})
+                                                                (
+                                                                {
+                                                                    member.relationship
+                                                                }
+                                                                )
                                                             </span>
                                                         </div>
                                                         <span className="text-xs bg-blue-100 px-2 py-1 rounded">
                                                             {member.role}
                                                         </span>
                                                     </div>
-                                                )
+                                                ),
                                             )}
                                         </div>
                                     </div>
@@ -333,9 +342,9 @@ export default function AddHouseholdDetailSection() {
                             {selectedFamilyDetails.household && (
                                 <div className="p-4 bg-yellow-50 border border-yellow-300 rounded-md">
                                     <p className="text-sm text-yellow-800">
-                                        <strong>⚠️ Note:</strong> This family already
-                                        has household details. Saving will update the
-                                        existing record.
+                                        <strong>⚠️ Note:</strong> This family
+                                        already has household details. Saving
+                                        will update the existing record.
                                     </p>
                                 </div>
                             )}
@@ -459,7 +468,11 @@ export default function AddHouseholdDetailSection() {
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                         {[
-                            { key: "electricity", label: "Electricity", icon: Zap },
+                            {
+                                key: "electricity",
+                                label: "Electricity",
+                                icon: Zap,
+                            },
                             { key: "water", label: "Water", icon: Droplets },
                             { key: "internet", label: "Internet", icon: Wifi },
                             { key: "cable", label: "Cable TV", icon: FileText },
@@ -483,7 +496,9 @@ export default function AddHouseholdDetailSection() {
                                         className="w-4 h-4"
                                     />
                                     <Icon className="w-4 h-4 text-gray-600" />
-                                    <span className="text-sm">{util.label}</span>
+                                    <span className="text-sm">
+                                        {util.label}
+                                    </span>
                                 </label>
                             );
                         })}

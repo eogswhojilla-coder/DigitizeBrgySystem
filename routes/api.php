@@ -37,6 +37,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::resource('barangay_residents', BarangayResidentController::class);
 Route::resource('barangay_officials', BarangayResidentController::class);
+Route::get('residents/search', [BarangayResidentController::class, 'search']);
 Route::resource('positions', PositionController::class);
 Route::resource('blotters', BlotterController::class);
 Route::resource('inventories', InventoriesController::class);

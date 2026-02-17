@@ -215,19 +215,27 @@ class ResidentController extends Controller
     {
         $user = Auth::user();
         
-        // Get blotters where user is involved
-        $blotters = Blotter::where(function ($query) use ($user) {
-                $query->where('complainant_resident', $user->id)
-                      ->orWhere('respondent', $user->id);
-            })
+        // Find the resident associated with this user
+        $resident = \App\Models\BarangayResident::where('username', $user->username)->first();
+        
+        if (!$resident) {
+            return response()->json([
+                'success' => true,
+                'data' => []
+            ]);
+        }
+        
+        // Get blotters where user is the respondent
+        $blotters = Blotter::where('respondent_id', $resident->id)
+            ->with('respondentResident')
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($blotter) {
                 return [
                     'id' => $blotter->id,
                     'case_number' => 'BLT-' . str_pad($blotter->id, 6, '0', STR_PAD_LEFT),
-                    'complainant_name' => $this->getResidentName($blotter->complainant_resident) ?? $blotter->complainant_not_resident,
-                    'respondent_name' => $this->getResidentName($blotter->respondent) ?? 'N/A',
+                    'complainant_name' => $blotter->complainant_resident ?? $blotter->complainant_not_resident,
+                    'respondent_name' => $blotter->respondent,
                     'incident_type' => $blotter->incident,
                     'incident_date' => $blotter->date_of_incident,
                     'incident_details' => $blotter->complainant_statement,

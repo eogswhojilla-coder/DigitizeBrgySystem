@@ -7,12 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Blotter extends Model
 {
     protected $fillable = [
-
-        
         'complainant_resident',
         'complainant_not_resident',
         'complainant_statement',
         'respondent',
+        'respondent_id', // ID of the resident who is the respondent
         'person_involved_resident',
         'person_involved_not_resident',
         'person_statement',
@@ -22,6 +21,11 @@ class Blotter extends Model
         'status',
         'date_reported',
         'remarks',
-
     ];
+
+    // Relationship to BarangayResident for the respondent
+    public function respondentResident()
+    {
+        return $this->belongsTo(BarangayResident::class, 'respondent_id');
+    }
 }

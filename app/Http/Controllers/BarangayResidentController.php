@@ -154,4 +154,22 @@ class BarangayResidentController extends Controller
             ], 500);
         }
     }
+
+    // Search residents for autocomplete
+    public function search(Request $request)
+    {
+        $searchTerm = $request->input('search', '');
+        
+        $residents = BarangayResident::where(function($query) use ($searchTerm) {
+            $query->where('firstName', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('middleName', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('lastName', 'like', '%' . $searchTerm . '%')
+                  ->orWhereRaw("CONCAT(firstName, ' ', middleName, ' ', lastName) like ?", ['%' . $searchTerm . '%'])
+                  ->orWhereRaw("CONCAT(firstName, ' ', lastName) like ?", ['%' . $searchTerm . '%']);
+        })
+        ->limit(10)
+        ->get(['id', 'firstName', 'middleName', 'lastName', 'residentId']);
+        
+        return response()->json($residents);
+    }
 }
