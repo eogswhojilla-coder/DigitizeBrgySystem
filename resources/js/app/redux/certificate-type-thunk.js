@@ -6,7 +6,9 @@ export const fetchCertificateTypes = createAsyncThunk(
     async () => {
         try {
             const response = await axios.get('/api/certificate-types');
-            return response.data;
+            // Handle both direct array and paginated response
+            const data = response.data.data || response.data;
+            return Array.isArray(data) ? data : [];
         } catch (error) {
             throw error.response?.data?.message || 'Failed to fetch certificate types';
         }

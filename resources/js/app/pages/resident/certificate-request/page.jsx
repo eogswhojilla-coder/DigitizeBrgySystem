@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Layout from "../layout";
-import { FileText, Upload, CheckCircle, Clock, XCircle, Info, DollarSign, List, ClipboardList } from 'lucide-react';
+import { FileText, Upload, CheckCircle, Clock, XCircle, Info, DollarSign, List, ClipboardList, Printer } from 'lucide-react';
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -41,6 +41,32 @@ export default function Page() {
             setMyRequests(response.data.data || response.data);
         } catch (error) {
             console.error("Error fetching requests:", error);
+        }
+    };
+
+    const handlePrintCertificate = async (requestId) => {
+        try {
+            const response = await axios.get(`/api/certificate-requests/${requestId}/print`, {
+                responseType: 'blob'
+            });
+            
+            // Create a blob URL and open in new tab
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            
+            // Clean up
+            setTimeout(() => window.URL.revokeObjectURL(url), 100);
+            
+            // Refresh requests to update status
+            fetchMyRequests();
+        } catch (error) {
+            console.error("Error printing certificate:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: error.response?.data?.message || "Failed to print certificate. Please try again.",
+            });
         }
     };
 
@@ -105,29 +131,54 @@ export default function Page() {
 
     const getStatusBadge = (status) => {
         switch (status) {
-            case "approved":
+            case "APPROVED":
                 return (
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                         <CheckCircle className="w-4 h-4 mr-1" />
                         Approved
                     </span>
                 );
-            case "pending":
+            case "PENDING_VERIFICATION":
                 return (
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                         <Clock className="w-4 h-4 mr-1" />
-                        Pending
+                        Pending Verification
                     </span>
                 );
-            case "rejected":
+            case "VERIFIED":
+                return (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <Info className="w-4 h-4 mr-1" />
+                        Verified
+                    </span>
+                );
+            case "REJECTED":
                 return (
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                         <XCircle className="w-4 h-4 mr-1" />
                         Rejected
                     </span>
                 );
+            case "FOR_RELEASE":
+                return (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                        <ClipboardList className="w-4 h-4 mr-1" />
+                        For Release
+                    </span>
+                );
+            case "RELEASED":
+                return (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                        Released
+                    </span>
+                );
             default:
-                return status;
+                return (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                        {status}
+                    </span>
+                );
         }
     };
 
@@ -394,6 +445,9 @@ export default function Page() {
                                             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
                                                 Status
                                             </th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                                Actions
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200">
@@ -416,6 +470,18 @@ export default function Page() {
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     {getStatusBadge(request.status)}
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    {(request.status === 'APPROVED' || request.status === 'FOR_RELEASE' || request.status === 'RELEASED') && (
+                                                        <button
+                                                            onClick={() => handlePrintCertificate(request.id)}
+                                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                                                            title="Print Certificate"
+                                                        >
+                                                            <Printer className="w-4 h-4" />
+                                                            Print
+                                                        </button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}

@@ -15,7 +15,7 @@ export default function TableSection() {
     const fetchCertificateRequests = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('/api/certificate-requests');
+            const response = await axios.get('/api/admin/certificate-requests');
             // Ensure data is normalized to an array
             const normalizedData = Array.isArray(response.data?.data) 
                 ? response.data.data 

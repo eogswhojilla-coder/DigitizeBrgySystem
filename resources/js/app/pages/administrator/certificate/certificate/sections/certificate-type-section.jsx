@@ -27,9 +27,12 @@ export default function CertificateTypeSection() {
         try {
             setIsLoading(true);
             const response = await axios.get("/api/certificate-types");
-            setTypes(response.data);
+            // Ensure data is always an array
+            const data = response.data.data || response.data;
+            setTypes(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Error fetching certificate types:", error);
+            setTypes([]); // Set empty array on error
         } finally {
             setIsLoading(false);
         }
@@ -85,7 +88,7 @@ export default function CertificateTypeSection() {
 
             <Table
                 columns={columns}
-                data={types}
+                data={Array.isArray(types) ? types : []}
                 emptyMessage="No certificate types found"
             />
 

@@ -8,6 +8,7 @@ use App\Models\CertificateRequest;
 use App\Models\CertificateType;
 use App\Models\Blotter;
 use App\Models\Inventories;
+use App\Enums\CertificateRequestStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -93,8 +94,8 @@ class ResidentController extends Controller
                 'certificate_type_id' => $request->certificate_type_id,
                 'purpose' => $request->purpose,
                 'valid_id_path' => $validIdPath,
-                'status' => 'pending',
-                'source' => 'online',
+                'status' => CertificateRequestStatus::PENDING_VERIFICATION,
+                'source' => 'ONLINE',
             ]);
 
             return response()->json([

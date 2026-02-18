@@ -61,6 +61,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('admin/certificate-requests/{certificateRequest}/approve', [CertificateRequestController::class, 'approve']);
     Route::patch('admin/certificate-requests/{certificateRequest}/reject', [CertificateRequestController::class, 'reject']);
     Route::patch('admin/certificate-requests/{certificateRequest}/payment', [CertificateRequestController::class, 'updatePayment']);
+    Route::get('admin/certificate-requests/{certificateRequest}/print', [CertificateRequestController::class, 'printCertificate']);
 
     // Direct Certificate Generation
     Route::post('certificates/generate-direct', [App\Http\Controllers\Api\CertificateController::class, 'generateDirect']);
@@ -75,6 +76,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('certificate-types', [App\Http\Controllers\Api\ResidentController::class, 'getCertificateTypes']);
     Route::get('my-certificate-requests', [App\Http\Controllers\Api\ResidentController::class, 'getMyCertificateRequests']);
     Route::post('certificate-requests', [App\Http\Controllers\Api\ResidentController::class, 'submitCertificateRequest']);
+    Route::get('certificate-requests/{certificateRequest}/print', [CertificateRequestController::class, 'printCertificate']);
 
     // Resident Inventory Borrow APIs
     Route::get('inventories/available', [App\Http\Controllers\Api\ResidentController::class, 'getAvailableInventories']);

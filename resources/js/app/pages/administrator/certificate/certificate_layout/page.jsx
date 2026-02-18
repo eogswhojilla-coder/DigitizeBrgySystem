@@ -385,7 +385,7 @@ export default function Page() {
         ) : (
           <Table 
             columns={columns} 
-            data={certificateTypes}
+            data={Array.isArray(certificateTypes) ? certificateTypes : []}
           />
         )}
 
