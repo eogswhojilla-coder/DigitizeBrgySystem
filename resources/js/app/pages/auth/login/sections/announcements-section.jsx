@@ -35,45 +35,133 @@ export default function AnnouncementsSection({ announcements = [] }) {
   const displayAnnouncements = announcements.length > 0 ? announcements : fallbackAnnouncements;
 
   return (
-    <section id="announcements" className="min-h-screen py-24 px-10 flex items-center bg-blue-900/10 border-y border-blue-900/20">
-      <div className="max-w-7xl mx-auto w-full">
-      <div className="section-label">Latest Updates</div>
-      <h2 className="section-title">
-        Community<br />
-        <span className="text-green-600">Announcements</span>
-      </h2>
-      <div className="divider" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {displayAnnouncements.map((a) => (
-          <div key={a.id} className="announce-card">
-            {a.image && (
-              <div className="mb-4 -mx-7 -mt-7 rounded-t-xl overflow-hidden">
-                <img 
-                  src={a.image} 
-                  alt={a.title}
-                  className="w-full h-48 object-cover"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                />
+    <section 
+      id="announcements" 
+      className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-slate-950 text-slate-200"
+    >
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 -z-10" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-green-500/5 rounded-full blur-[120px] -z-10" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-yellow-500/5 rounded-full blur-[100px] -z-10" />
+
+      <div className="max-w-7xl mx-auto px-6 md:px-10">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <span className="inline-block py-1 px-3 rounded-full bg-green-500/10 text-green-400 text-xs font-bold tracking-widest uppercase mb-4 border border-green-500/20">
+            Latest Updates
+          </span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">
+            Community <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">
+              Announcements
+            </span>
+          </h2>
+          <p className="text-lg text-slate-400 leading-relaxed">
+            Stay informed with the latest news, events, and updates from your barangay administration.
+          </p>
+        </div>
+
+        {/* Announcements Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayAnnouncements.map((a, index) => (
+            <div
+              key={a.id}
+              className="group relative rounded-2xl bg-gradient-to-b from-white/5 to-white/0 border border-white/10 hover:border-green-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 overflow-hidden"
+            >
+              {/* Card Glow Effect */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-500/10 to-transparent blur-xl" />
               </div>
-            )}
-            <div className="font-mono text-[11px] text-yellow-600 tracking-widest mb-3">
-              {a.date.toUpperCase()}
+
+              {/* Image Section (if available) */}
+              {a.image && (
+                <div className="relative h-48 -mx-6 -mt-6 overflow-hidden">
+                  <img 
+                    src={a.image} 
+                    alt={a.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
+                </div>
+              )}
+
+              {/* Card Content */}
+              <div className="relative z-10 p-6">
+                {/* Date Badge */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                  <span className="font-mono text-xs tracking-widest text-green-400 uppercase">
+                    {a.date}
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-xl font-bold text-white mb-3 leading-tight group-hover:text-green-400 transition-colors">
+                  {a.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-sm text-slate-400 leading-relaxed mb-6 group-hover:text-slate-300 transition-colors line-clamp-3">
+                  {stripHtml(a.description)}
+                </p>
+
+                {/* Action Button */}
+                <button className="group/btn flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-green-400 transition-colors">
+                  <span>Read Full Announcement</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="group-hover/btn:translate-x-1 transition-transform"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Card Border Gradient */}
+              <div className="absolute inset-0 rounded-2xl p-[1px] bg-gradient-to-b from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
             </div>
-            <h3 className="font-serif text-xl font-bold mb-3.5 leading-tight">{a.title}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-3">
-              {stripHtml(a.description)}
-            </p>
-            <button className="bg-transparent border-none text-green-600 font-semibold text-sm cursor-pointer p-0 font-serif hover:underline">
-              Read Full Announcement →
-            </button>
-          </div>
-        ))}
-      </div>
-      <div className="text-center mt-12">
-        <button className="btn-outline">View All Announcements</button>
-      </div>
+          ))}
+        </div>
+
+        {/* View All Button */}
+        <div className="mt-16 text-center">
+          <button className="group relative px-8 py-4 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 hover:border-green-500/30 transition-all duration-300 overflow-hidden">
+            <span className="relative z-10 flex items-center gap-2">
+              View All Announcements
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="group-hover:translate-x-1 transition-transform"
+              >
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </span>
+            {/* Button Glow */}
+            <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-500/10 to-transparent blur-lg" />
+            </div>
+          </button>
+        </div>
       </div>
     </section>
   );

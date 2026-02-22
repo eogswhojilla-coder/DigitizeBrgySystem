@@ -48,7 +48,7 @@ class BarangayHighlightController extends Controller
         // Handle image upload
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('highlights', 'public');
-            $validated['image'] = Storage::disk('public')->url($path);
+            $validated['image'] = '/storage/' . $path;
         }
 
         $highlight = BarangayHighlight::create($validated);
@@ -85,12 +85,12 @@ class BarangayHighlightController extends Controller
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($highlight->image) {
-                $oldPath = str_replace('/storage/', '', parse_url($highlight->image, PHP_URL_PATH));
+                $oldPath = str_replace('/storage/', '', $highlight->image);
                 Storage::disk('public')->delete($oldPath);
             }
 
             $path = $request->file('image')->store('highlights', 'public');
-            $validated['image'] = Storage::disk('public')->url($path);
+            $validated['image'] = '/storage/' . $path;
         }
 
         $highlight->update($validated);
@@ -106,7 +106,7 @@ class BarangayHighlightController extends Controller
     {
         // Delete image if exists
         if ($highlight->image) {
-            $path = str_replace('/storage/', '', parse_url($highlight->image, PHP_URL_PATH));
+            $path = str_replace('/storage/', '', $highlight->image);
             Storage::disk('public')->delete($path);
         }
 

@@ -34,3 +34,12 @@ export function update_barangay_residents_service(data) {
         return result;
     } catch (error) {}
 }
+
+export async function create_barangay_information_service(data) {
+    try {
+        const result = await axios.post("/api/barangay_information", data);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}

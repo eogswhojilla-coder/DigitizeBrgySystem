@@ -7,6 +7,7 @@ const navigation = [
     { name: "Services", id: "services" },
     { name: "Announcements", id: "announcements" },
     { name: "Contact", id: "contact" },
+    { name: "Developers", id: "developers" },
 ];
 
 export default function HeaderSection() {
@@ -18,7 +19,7 @@ export default function HeaderSection() {
     };
 
     return (
-        <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md">
+        <header className="sticky top-0 z-50 bg-gray-900  shadow-md">
             <nav
                 aria-label="Global"
                 className="mx-auto flex max-w-7xl items-center justify-between gap-x-6 p-6 lg:px-8"
@@ -33,7 +34,7 @@ export default function HeaderSection() {
                         />
                     </a>
 
-                    <p className="text-md font-bold text-gray-800 tracking-tight dark:text-white">
+                    <p className="text-md font-bold text-white tracking-tight ">
                         BARANGAY PORTAL
                     </p>
                 </div>
@@ -43,7 +44,7 @@ export default function HeaderSection() {
                         <button
                             key={item.name}
                             onClick={() => scrollTo(item.id)}
-                            className="text-sm/6 font-semibold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                            className="text-sm/6 font-semibold text-white  hover:text-gray-300 transition-colors"
                         >
                             {item.name}
                         </button>
@@ -52,7 +53,7 @@ export default function HeaderSection() {
                 <div className="flex flex-1 items-center justify-end gap-x-6">
                     <Link
                         href="/auth/login"
-                        className="hidden text-sm/6 font-semibold text-gray-900 lg:block dark:text-white hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                        className="hidden text-sm/6 font-semibold text-white lg:block  hover:text-gray-300 transition-colors"
                     >
                         Log in
                     </Link>

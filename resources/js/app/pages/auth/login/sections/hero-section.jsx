@@ -1,7 +1,11 @@
 import { Link } from "@inertiajs/react";
 import { useState, useEffect, useCallback } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import Button from "@/app/_components/button";
+import {
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    XMarkIcon,
+    ArrowsPointingOutIcon,
+} from "@heroicons/react/24/outline";
 
 const barangayHighlights = [
     {
@@ -67,12 +71,14 @@ const stats = [
 ];
 
 export default function HeroSection({ highlights }) {
-    // Use highlights from backend or fallback to default hardcoded data
-    const displayHighlights = highlights && highlights.length > 0 ? highlights : barangayHighlights;
-    
+    const displayHighlights =
+        highlights && highlights.length > 0 ? highlights : barangayHighlights;
+
     const [activeIndex, setActiveIndex] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [progress, setProgress] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedSlide, setSelectedSlide] = useState(null);
 
     const SLIDE_DURATION = 5000;
 
@@ -112,590 +118,208 @@ export default function HeroSection({ highlights }) {
         changeSlide((activeIndex + 1) % displayHighlights.length);
     };
 
-    const slide = displayHighlights[activeIndex];
+    const openModal = (slide) => {
+        setSelectedSlide(slide);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedSlide(null);
+    };
+
+    const navigateModalSlide = (direction) => {
+        let newIndex;
+        const currentIdx = displayHighlights.findIndex(
+            (s) => s.id === selectedSlide.id,
+        );
+
+        if (direction === "prev") {
+            newIndex =
+                currentIdx === 0
+                    ? displayHighlights.length - 1
+                    : currentIdx - 1;
+        } else {
+            newIndex =
+                currentIdx === displayHighlights.length - 1
+                    ? 0
+                    : currentIdx + 1;
+        }
+
+        setSelectedSlide(displayHighlights[newIndex]);
+    };
+
+    // Handle keyboard navigation
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (!isModalOpen) return;
+            if (e.key === "Escape") closeModal();
+            if (e.key === "ArrowLeft") navigateModalSlide("prev");
+            if (e.key === "ArrowRight") navigateModalSlide("next");
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [isModalOpen, selectedSlide]);
 
     return (
-        <>
-            <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+        <section
+            id="hero"
+            className="relative min-h-screen flex items-center overflow-hidden bg-slate-950 text-slate-200"
+        >
+            {/* Background Effects */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 -z-10" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-yellow-500/5 rounded-full blur-[120px] -z-10" />
+            <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[100px] -z-10" />
 
-                .hero-root {
-                    font-family: 'DM Sans', sans-serif;
-                    min-height: 100vh;
-                    background: #f5f6fa;
-                    display: flex;
-                    flex-direction: column;
-                    position: relative;
-                    overflow: hidden;
-                }
+            {/* Top Accent Bar */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-slate-900 via-yellow-500 to-slate-900" />
 
-                /* Subtle official seal watermark */
-                .hero-root::before {
-                    content: '';
-                    position: absolute;
-                    top: -120px;
-                    right: -120px;
-                    width: 500px;
-                    height: 500px;
-                    border-radius: 50%;
-                    border: 60px solid rgba(30, 58, 138, 0.04);
-                    pointer-events: none;
-                    z-index: 0;
-                }
-                .hero-root::after {
-                    content: '';
-                    position: absolute;
-                    top: -80px;
-                    right: -80px;
-                    width: 380px;
-                    height: 380px;
-                    border-radius: 50%;
-                    border: 40px solid rgba(30, 58, 138, 0.04);
-                    pointer-events: none;
-                    z-index: 0;
-                }
-
-                /* Top accent bar */
-                .top-bar {
-                    width: 100%;
-                    height: 4px;
-                    background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 50%, #facc15 100%);
-                    position: relative;
-                    z-index: 10;
-                }
-
-                /* Main content grid */
-                .hero-content {
-                    position: relative;
-                    z-index: 2;
-                    flex: 1;
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 0;
-                    max-width: 1400px;
-                    width: 100%;
-                    margin: 0 auto;
-                    padding: 64px 48px 48px;
-                    align-items: center;
-                }
-
-                /* Left side */
-                .hero-left {
-                    padding-right: 60px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 28px;
-                }
-
-                .eyebrow {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                }
-
-                .eyebrow-badge {
-                    background: #1e3a8a;
-                    color: #fff;
-                    font-size: 10px;
-                    font-weight: 600;
-                    letter-spacing: 0.18em;
-                    text-transform: uppercase;
-                    padding: 4px 10px;
-                    border-radius: 2px;
-                }
-
-                .eyebrow-line {
-                    flex: 1;
-                    height: 1px;
-                    background: linear-gradient(90deg, #1e3a8a44, transparent);
-                }
-
-                .hero-title {
-                    font-family: 'Playfair Display', serif;
-                    font-size: clamp(40px, 5.5vw, 76px);
-                    font-weight: 900;
-                    line-height: 1.05;
-                    color: #0d1b3e;
-                    margin: 0;
-                    letter-spacing: -0.02em;
-                }
-
-                .hero-title .accent {
-                    color: #2563eb;
-                    display: block;
-                }
-
-                .hero-divider {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                }
-
-                .divider-dot {
-                    width: 8px;
-                    height: 8px;
-                    border-radius: 50%;
-                    background: #facc15;
-                    flex-shrink: 0;
-                }
-
-                .divider-line {
-                    height: 1px;
-                    width: 60px;
-                    background: #d1d5db;
-                }
-
-                .hero-desc {
-                    font-size: 16px;
-                    color: #4b5563;
-                    line-height: 1.75;
-                    font-weight: 300;
-                    max-width: 420px;
-                    margin: 0;
-                }
-
-                /* CTA buttons */
-                .cta-grid {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 10px;
-                    max-width: 440px;
-                }
-
-                .cta-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 12px 16px;
-                    border-radius: 6px;
-                    font-size: 13px;
-                    font-weight: 500;
-                    cursor: pointer;
-                    transition: all 0.18s ease;
-                    text-decoration: none;
-                    border: 1.5px solid transparent;
-                    font-family: 'DM Sans', sans-serif;
-                    white-space: nowrap;
-                    justify-content: center;
-                }
-
-                .cta-btn-icon {
-                    font-size: 15px;
-                    flex-shrink: 0;
-                }
-
-                .cta-btn.primary {
-                    background: #1e3a8a;
-                    color: #fff;
-                    border-color: #1e3a8a;
-                    grid-column: span 2;
-                    padding: 14px 16px;
-                    font-size: 14px;
-                    font-weight: 600;
-                    letter-spacing: 0.02em;
-                }
-
-                .cta-btn.primary:hover {
-                    background: #1d4ed8;
-                    border-color: #1d4ed8;
-                    transform: translateY(-1px);
-                    box-shadow: 0 8px 24px rgba(30,58,138,0.25);
-                }
-
-                .cta-btn.secondary {
-                    background: #fff;
-                    color: #1e3a8a;
-                    border-color: #d1d5db;
-                }
-
-                .cta-btn.secondary:hover {
-                    border-color: #1e3a8a;
-                    background: #eff6ff;
-                    transform: translateY(-1px);
-                }
-
-                /* Stats row */
-                .stats-row {
-                    display: flex;
-                    gap: 28px;
-                    padding-top: 8px;
-                    border-top: 1px solid #e5e7eb;
-                }
-
-                .stat-item {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 2px;
-                }
-
-                .stat-value {
-                    font-family: 'Playfair Display', serif;
-                    font-size: 22px;
-                    font-weight: 700;
-                    color: #0d1b3e;
-                    line-height: 1;
-                }
-
-                .stat-label {
-                    font-size: 11px;
-                    color: #9ca3af;
-                    text-transform: uppercase;
-                    letter-spacing: 0.1em;
-                    font-weight: 500;
-                }
-
-                /* Right side - Carousel */
-                .hero-right {
-                    position: relative;
-                }
-
-                .carousel-frame {
-    position: relative;
-    width: 100%;
-    height: 600px; /* increased height */
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow:
-        0 0 0 1px rgba(0,0,0,0.06),
-        0 32px 100px rgba(30,58,138,0.18),
-        0 12px 32px rgba(0,0,0,0.12);
-}
-
-                /* Decorative corner accent */
-                .carousel-frame::before {
-                    content: '';
-                    position: absolute;
-                    top: -8px;
-                    right: -8px;
-                    width: calc(100% + 16px);
-                    height: calc(100% + 16px);
-                    border: 1.5px solid rgba(30,58,138,0.12);
-                    border-radius: 16px;
-                    z-index: -1;
-                    pointer-events: none;
-                }
-
-                .carousel-slide {
-                    position: absolute;
-                    inset: 0;
-                    transition: opacity 0.4s ease, transform 0.4s ease;
-                }
-
-                .carousel-slide.active {
-                    opacity: 1;
-                    transform: scale(1);
-                }
-
-                .carousel-slide.inactive {
-                    opacity: 0;
-                    transform: scale(1.02);
-                }
-
-                .carousel-slide img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    display: block;
-                }
-
-                .slide-overlay {
-                    position: absolute;
-                    inset: 0;
-                    background: linear-gradient(
-                        to top,
-                        rgba(13,27,62,0.88) 0%,
-                        rgba(13,27,62,0.3) 50%,
-                        transparent 100%
-                    );
-                }
-
-                .slide-info {
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    padding: 28px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 6px;
-                }
-
-                .slide-tag {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    background: rgba(250,204,21,0.9);
-                    color: #0d1b3e;
-                    font-size: 10px;
-                    font-weight: 700;
-                    letter-spacing: 0.15em;
-                    text-transform: uppercase;
-                    padding: 3px 8px;
-                    border-radius: 2px;
-                    width: fit-content;
-                    margin-bottom: 4px;
-                }
-
-                .slide-title {
-                    font-family: 'Playfair Display', serif;
-                    font-size: 22px;
-                    font-weight: 700;
-                    color: #fff;
-                    margin: 0;
-                    line-height: 1.2;
-                }
-
-                .slide-desc {
-                    font-size: 13px;
-                    color: rgba(255,255,255,0.75);
-                    margin: 0;
-                    font-weight: 300;
-                }
-
-                /* Carousel controls */
-                .carousel-nav {
-                    position: absolute;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    display: flex;
-                    justify-content: space-between;
-                    width: 100%;
-                    padding: 0 14px;
-                    pointer-events: none;
-                    z-index: 10;
-                }
-
-                .nav-btn {
-                    pointer-events: all;
-                    width: 36px;
-                    height: 36px;
-                    border-radius: 50%;
-                    background: rgba(255,255,255,0.95);
-                    border: none;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-                    transition: all 0.15s ease;
-                }
-
-                .nav-btn:hover {
-                    background: #fff;
-                    transform: scale(1.08);
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-                }
-
-                .nav-btn svg {
-                    width: 16px;
-                    height: 16px;
-                    color: #1e3a8a;
-                }
-
-                /* Slide indicators with progress */
-                .slide-indicators {
-                    position: absolute;
-                    bottom: 28px;
-                    right: 28px;
-                    z-index: 20;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 6px;
-                    align-items: flex-end;
-                }
-
-                .indicator {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    cursor: pointer;
-                    background: none;
-                    border: none;
-                    padding: 0;
-                }
-
-                .indicator-bar {
-                    height: 2px;
-                    border-radius: 2px;
-                    background: rgba(255,255,255,0.3);
-                    position: relative;
-                    overflow: hidden;
-                    transition: width 0.3s ease;
-                }
-
-                .indicator-bar.active {
-                    width: 32px;
-                }
-
-                .indicator-bar.inactive {
-                    width: 16px;
-                }
-
-                .indicator-fill {
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                    height: 100%;
-                    background: #facc15;
-                    border-radius: 2px;
-                }
-
-                /* Slide counter */
-                .slide-counter {
-                    position: absolute;
-                    top: 20px;
-                    right: 20px;
-                    z-index: 10;
-                    background: rgba(13,27,62,0.7);
-                    backdrop-filter: blur(8px);
-                    border: 1px solid rgba(255,255,255,0.1);
-                    border-radius: 4px;
-                    padding: 6px 10px;
-                    font-size: 11px;
-                    font-weight: 600;
-                    color: #fff;
-                    letter-spacing: 0.08em;
-                }
-
-                /* Mobile styles */
-                @media (max-width: 1024px) {
-                    .hero-content {
-                        grid-template-columns: 1fr;
-                        padding: 48px 24px 40px;
-                        gap: 40px;
-                    }
-
-                    .hero-left {
-                        padding-right: 0;
-                        order: 2;
-                        text-align: center;
-                        align-items: center;
-                    }
-
-                    .hero-right {
-                        order: 1;
-                    }
-
-                    .eyebrow {
-                        justify-content: center;
-                    }
-
-                    .eyebrow-line {
-                        display: none;
-                    }
-
-                    .hero-desc {
-                        text-align: center;
-                    }
-
-                    .cta-grid {
-                        width: 100%;
-                        max-width: 360px;
-                    }
-
-                    .stats-row {
-                        justify-content: center;
-                    }
-
-                    .hero-title {
-                        text-align: center;
-                    }
-                }
-
-                @media (max-width: 480px) {
-                    .hero-content {
-                        padding: 36px 16px 32px;
-                    }
-
-                    .cta-grid {
-                        grid-template-columns: 1fr;
-                        max-width: 280px;
-                    }
-
-                    .cta-btn.primary {
-                        grid-column: span 1;
-                    }
-                }
-            `}</style>
-
-            <div className="hero-root">
-                <div className="top-bar" />
-
-                <div className="hero-content">
-                    {/* Left Column */}
-                    <div className="hero-left">
-                        <div className="eyebrow">
-                            <span className="eyebrow-badge">
+            <div className="max-w-7xl mx-auto px-6 md:px-10 w-full py-20">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                    {/* Left Content */}
+                    <div className="space-y-8">
+                        {/* Badge */}
+                        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/20">
+                            <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+                            <span className="text-xs font-bold tracking-widest text-yellow-500 uppercase">
                                 Official Portal
                             </span>
-                            <span className="eyebrow-line" />
                         </div>
 
-                        <h1 className="hero-title">
-                            Barangay II
-                            <span className="accent">Management System</span>
+                        {/* Title */}
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                            Barangay II{" "}
+                            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">
+                                Management System
+                            </span>
                         </h1>
 
-                        <div className="hero-divider">
-                            <span className="divider-dot" />
-                            <span className="divider-line" />
-                        </div>
-
-                        <p className="hero-desc">
+                        {/* Description */}
+                        <p className="text-lg text-slate-400 leading-relaxed max-w-lg">
                             Fast, transparent, and fully digital — empowering
                             every resident with accessible, efficient, and
                             accountable barangay services at your fingertips.
                         </p>
 
-                        {/* Stats */}
-                        <div className="stats-row">
-                            {stats.map((s) => (
-                                <div key={s.label} className="stat-item">
-                                    <span className="stat-value">
-                                        {s.value}
+                        {/* CTA Buttons */}
+                        <div className="flex flex-wrap gap-3">
+                            {ctaButtons.map((btn, index) => (
+                                <Link
+                                    key={index}
+                                    href={btn.href}
+                                    className={`group relative px-5 py-3 rounded-xl font-medium text-sm transition-all duration-300 overflow-hidden ${
+                                        btn.primary
+                                            ? "bg-yellow-500 text-slate-950 hover:bg-yellow-400 hover:shadow-lg hover:shadow-yellow-500/25"
+                                            : "bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-yellow-500/30"
+                                    }`}
+                                >
+                                    <span className="relative z-10 flex items-center gap-2">
+                                        <span>{btn.icon}</span>
+                                        <span>{btn.label}</span>
                                     </span>
-                                    <span className="stat-label">
-                                        {s.label}
-                                    </span>
-                                </div>
+                                </Link>
                             ))}
+                        </div>
+
+                        {/* Stats */}
+                        <div className="pt-8 border-t border-white/10">
+                            <div className="grid grid-cols-3 gap-8">
+                                {stats.map((stat, index) => (
+                                    <div key={index} className="space-y-1">
+                                        <div className="text-2xl md:text-3xl font-bold text-white">
+                                            {stat.value}
+                                        </div>
+                                        <div className="text-xs text-slate-500 uppercase tracking-wider">
+                                            {stat.label}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Right Column - Carousel */}
-                    <div className="hero-right">
-                        <div className="carousel-frame">
+                    {/* Right Content - Carousel */}
+                    <div className="relative">
+                        {/* Main Carousel Frame */}
+                        <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-slate-900/50 backdrop-blur-sm border border-white/10 shadow-2xl group">
                             {displayHighlights.map((s, index) => (
                                 <div
                                     key={s.id}
-                                    className={`carousel-slide ${index === activeIndex && !isTransitioning ? "active" : "inactive"}`}
+                                    className={`absolute inset-0 transition-all duration-500 ${
+                                        index === activeIndex &&
+                                        !isTransitioning
+                                            ? "opacity-100 scale-100"
+                                            : "opacity-0 scale-105"
+                                    }`}
                                 >
-                                    <img
-                                        src={s.image}
-                                        alt={s.alt}
-                                        onError={(e) => {
-                                            e.target.src = s.unsplashId 
-                                                ? `https://images.unsplash.com/photo-${s.unsplashId}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80`
-                                                : 'https://via.placeholder.com/1200x600?text=Barangay+Highlight';
-                                        }}
-                                    />
-                                    <div className="slide-overlay" />
-                                    <div className="slide-info">
-                                        <span className="slide-tag">
-                                            {s.tag}
-                                        </span>
-                                        <h3 className="slide-title">
-                                            {s.title}
-                                        </h3>
-                                        <p className="slide-desc">
-                                            {s.description}
-                                        </p>
+                                    {/* Clickable Image Container */}
+                                    <div
+                                        className="relative w-full h-full cursor-pointer"
+                                        onClick={() => openModal(s)}
+                                    >
+                                        <img
+                                            src={s.image}
+                                            alt={s.alt}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                e.target.style.display = "none";
+                                                e.target.parentElement.innerHTML = `
+                                                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
+                                                        <div class="text-center text-slate-500">
+                                                            <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                            </svg>
+                                                            <p class="text-sm font-medium">Image Unavailable</p>
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            }}
+                                        />
+
+                                        {/* Hover Overlay with Expand Icon */}
+                                        <div className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+                                            <div className="w-16 h-16 rounded-full bg-yellow-500/90 flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                                                <ArrowsPointingOutIcon className="w-8 h-8 text-slate-950" />
+                                            </div>
+                                        </div>
+
+                                        {/* Gradient Overlay - pointer-events-none */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent pointer-events-none" />
+
+                                        {/* Slide Content - pointer-events-none */}
+                                        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 pointer-events-none">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <span className="px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-xs font-bold tracking-widest uppercase backdrop-blur-sm">
+                                                    {s.tag}
+                                                </span>
+                                            </div>
+                                            <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                                                {s.title}
+                                            </h3>
+                                            <p className="text-sm text-slate-400">
+                                                {s.description}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
+                            <button
+                                onClick={goToPrevious}
+                                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-900/80 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-slate-950 hover:border-yellow-500 transition-all duration-300 z-10"
+                                aria-label="Previous slide"
+                            >
+                                <ChevronLeftIcon className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={goToNext}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-900/80 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-slate-950 hover:border-yellow-500 transition-all duration-300 z-10"
+                                aria-label="Next slide"
+                            >
+                                <ChevronRightIcon className="w-5 h-5" />
+                            </button>
 
-                            {/* Slide counter */}
-                            <div className="slide-counter">
+                            <div className="absolute top-4 right-4 px-3 py-1.5 rounded-lg bg-slate-900/80 backdrop-blur-sm border border-white/10 text-xs font-mono text-white">
                                 {String(activeIndex + 1).padStart(2, "0")} /{" "}
                                 {String(displayHighlights.length).padStart(
                                     2,
@@ -703,39 +327,24 @@ export default function HeroSection({ highlights }) {
                                 )}
                             </div>
 
-                            {/* Navigation Arrows */}
-                            <div className="carousel-nav">
-                                <button
-                                    onClick={goToPrevious}
-                                    className="nav-btn"
-                                    aria-label="Previous slide"
-                                >
-                                    <ChevronLeftIcon />
-                                </button>
-                                <button
-                                    onClick={goToNext}
-                                    className="nav-btn"
-                                    aria-label="Next slide"
-                                >
-                                    <ChevronRightIcon />
-                                </button>
-                            </div>
-
-                            {/* Progress Indicators */}
-                            <div className="slide-indicators">
+                            <div className="absolute bottom-4 right-4 flex gap-2 z-10">
                                 {displayHighlights.map((_, index) => (
                                     <button
                                         key={index}
-                                        className="indicator"
                                         onClick={() => changeSlide(index)}
+                                        className="group"
                                         aria-label={`Go to slide ${index + 1}`}
                                     >
                                         <div
-                                            className={`indicator-bar ${index === activeIndex ? "active" : "inactive"}`}
+                                            className={`h-1 rounded-full transition-all duration-300 ${
+                                                index === activeIndex
+                                                    ? "w-8 bg-yellow-500"
+                                                    : "w-2 bg-white/30 hover:bg-white/50"
+                                            }`}
                                         >
                                             {index === activeIndex && (
                                                 <div
-                                                    className="indicator-fill"
+                                                    className="h-full bg-yellow-400 rounded-full transition-all duration-100"
                                                     style={{
                                                         width: `${progress}%`,
                                                     }}
@@ -746,9 +355,115 @@ export default function HeroSection({ highlights }) {
                                 ))}
                             </div>
                         </div>
+                        <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-r from-yellow-500/10 to-blue-500/10 rounded-full blur-3xl" />
                     </div>
                 </div>
             </div>
-        </>
+            {isModalOpen && selectedSlide && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="modal-title"
+                >
+                    <div
+                        className="absolute inset-0 bg-slate-950/90 backdrop-blur-md"
+                        onClick={closeModal}
+                    />
+
+                    <div className="relative w-full max-w-5xl max-h-[90vh] bg-slate-900 rounded-3xl overflow-hidden border border-white/10 shadow-2xl animate-in fade-in zoom-in duration-300">
+                        <button
+                            onClick={closeModal}
+                            className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-slate-800/80 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-300"
+                            aria-label="Close modal"
+                        >
+                            <XMarkIcon className="w-6 h-6" />
+                        </button>
+
+                        <button
+                            onClick={() => navigateModalSlide("prev")}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-slate-800/80 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-slate-950 hover:border-yellow-500 transition-all duration-300"
+                            aria-label="Previous image"
+                        >
+                            <ChevronLeftIcon className="w-6 h-6" />
+                        </button>
+                        <button
+                            onClick={() => navigateModalSlide("next")}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-slate-800/80 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-slate-950 hover:border-yellow-500 transition-all duration-300"
+                            aria-label="Next image"
+                        >
+                            <ChevronRightIcon className="w-6 h-6" />
+                        </button>
+
+                        {/* Image Container */}
+                        <div className="flex flex-col lg:flex-row h-full max-h-[90vh]">
+                            {/* Image Section */}
+                            <div className="lg:w-2/3 h-64 lg:h-auto bg-slate-800 flex items-center justify-center">
+                                <img
+                                    src={selectedSlide.image}
+                                    alt={selectedSlide.alt}
+                                    className="w-full h-full object-contain max-h-[50vh] lg:max-h-[85vh]"
+                                    onError={(e) => {
+                                        e.target.style.display = "none";
+                                        e.target.parentElement.innerHTML = `
+                                            <div class="flex items-center justify-center h-full min-h-[300px]">
+                                                <div class="text-center text-slate-500">
+                                                    <svg class="w-20 h-20 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                    <p class="text-lg font-medium">Image Unavailable</p>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }}
+                                />
+                            </div>
+
+                            {/* Details Section */}
+                            <div className="lg:w-1/3 p-6 md:p-8 flex flex-col justify-center bg-slate-900/50">
+                                <div className="mb-6">
+                                    <span className="inline-block px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-xs font-bold tracking-widest uppercase mb-4">
+                                        {selectedSlide.tag}
+                                    </span>
+                                    <h2
+                                        id="modal-title"
+                                        className="text-2xl md:text-3xl font-bold text-white mb-4"
+                                    >
+                                        {selectedSlide.title}
+                                    </h2>
+                                    <p className="text-slate-400 leading-relaxed">
+                                        {selectedSlide.description}
+                                    </p>
+                                </div>
+
+                                {/* Image Counter */}
+                                <div className="flex items-center gap-2 text-sm text-slate-500">
+                                    <span className="font-mono">
+                                        {String(
+                                            displayHighlights.findIndex(
+                                                (s) =>
+                                                    s.id === selectedSlide.id,
+                                            ) + 1,
+                                        ).padStart(2, "0")}
+                                    </span>
+                                    <span className="w-1 h-1 rounded-full bg-slate-600" />
+                                    <span className="font-mono">
+                                        {String(
+                                            displayHighlights.length,
+                                        ).padStart(2, "0")}
+                                    </span>
+                                </div>
+
+                                <div className="mt-8 pt-6 border-t border-white/10">
+                                    <button className="w-full py-3 px-4 rounded-xl bg-yellow-500 text-slate-950 font-medium hover:bg-yellow-400 transition-colors duration-300">
+                                        Learn More
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </section>
     );
 }

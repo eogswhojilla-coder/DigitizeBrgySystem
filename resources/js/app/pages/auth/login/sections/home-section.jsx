@@ -6,6 +6,7 @@ import AnnouncementsSection from "./announcements-section";
 import StatsSection from "./stats-section";
 import ContactSection from "./contact-section";
 import FooterSection from "./footer-section";
+import DevelopersSection from "./developers-sections";
 
 export default function BarangayLanding({ announcements, highlights }) {
     return (
@@ -163,6 +164,7 @@ export default function BarangayLanding({ announcements, highlights }) {
             <AnnouncementsSection announcements={announcements} />
             <StatsSection />
             <ContactSection />
+            <DevelopersSection />
             <FooterSection />
         </div>
     );

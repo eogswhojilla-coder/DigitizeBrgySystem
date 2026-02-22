@@ -1,49 +1,157 @@
+import { useState } from "react";
+
 export default function AboutSection() {
-  return (
-    <section id="about" className="min-h-screen bg-white/5 border-y border-white/10 py-24 flex items-center">
-      <div className="max-w-7xl mx-auto px-10 grid md:grid-cols-2 gap-20 items-center w-full">
-        <div>
-          <div className="section-label">About Us</div>
-          <h2 className="section-title">
-            Serving the Community<br />
-            <span className="text-yellow-600">Since 1965</span>
-          </h2>
-          <div className="divider" />
-          <p className="text-gray-300 leading-relaxed text-base mb-8">
-            Barangay San Isidro has been at the heart of our local community, delivering responsive and compassionate governance. Our barangay management system modernizes access to public services, ensuring every resident can engage with their local government efficiently, transparently, and from anywhere.
-          </p>
-          <div className="flex flex-col gap-4">
-            {[
-              { label: "Barangay Captain", value: "Hon. Eduardo T. Reyes" },
-              { label: "Contact Number", value: "+63 (02) 8123-4567" },
-              { label: "Email Address", value: "brgy.sanisidro@email.gov.ph" },
-              { label: "Office Hours", value: "Mon–Fri, 8:00 AM – 5:00 PM" },
-              { label: "Address", value: "123 Rizal St., Brgy. San Isidro, Quezon City" },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex gap-4 items-start">
-                <span className="font-mono text-[11px] tracking-wider text-yellow-600 min-w-[140px] pt-0.5">{label.toUpperCase()}</span>
-                <span className="text-white/85 text-[15px]">{value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div>
-          <div className="bg-gradient-to-br from-slate-800 to-emerald-900/50 border border-white/10 rounded-2xl p-12 text-center">
-            <div className="text-8xl mb-6">🏛️</div>
-            <h3 className="font-serif text-3xl font-bold mb-2">Barangay San Isidro</h3>
-            <p className="text-slate-400 text-xs tracking-widest font-mono">QUEZON CITY, NCR</p>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-yellow-600 to-green-500 mx-auto my-6" />
-            <p className="text-white/60 text-sm leading-relaxed">
-              "A community united in progress, rooted in integrity, and committed to uplifting every resident's quality of life."
-            </p>
-            <div className="mt-8 p-4 bg-white/5 rounded-lg border border-white/10">
-              <div className="font-mono text-[11px] text-green-500 tracking-widest">POPULATION</div>
-              <div className="font-serif text-4xl font-black text-yellow-500">12,847</div>
-              <div className="text-sm text-slate-400">Registered Residents</div>
+    const [imgError, setImgError] = useState(false);
+    const barangayData = {
+        captain: "Hon. Francis R. Eusebio",
+        contact: "+63 (02) 8123-4567",
+        email: "brgy.sanisidro@email.gov.ph",
+        officeHours: "Mon–Fri, 8:00 AM – 5:00 PM",
+        address:
+            "Don Juan Road, San Carlos City, Negros Occidental 6127, Philippines",
+        population: "12,847",
+    };
+
+    return (
+        <section
+            id="about"
+            aria-labelledby="about-heading"
+            className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-slate-950 text-slate-200"
+        >
+            {/* Background Effects */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 -z-10" />
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-[100px] -z-10" />
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[80px] -z-10" />
+
+            <div className="max-w-7xl mx-auto px-6 md:px-10 grid md:grid-cols-2 gap-12 lg:gap-20 items-center w-full">
+                {/* Left Content */}
+                <div className="space-y-8">
+                    {/* Header */}
+                    <div>
+                        <span className="inline-block py-1 px-3 rounded-full bg-yellow-500/10 text-yellow-500 text-xs font-bold tracking-widest uppercase mb-4 border border-yellow-500/20">
+                            About Us
+                        </span>
+                        <h2
+                            id="about-heading"
+                            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6"
+                        >
+                            Serving the Community <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">
+                                Since 1965
+                            </span>
+                        </h2>
+                        <div className="w-20 h-1 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-full" />
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-lg text-slate-400 leading-relaxed">
+                        Barangay 2 has been at the heart of our local community,
+                        delivering responsive and compassionate governance. Our
+                        barangay management system modernizes access to public
+                        services, ensuring every resident can engage with their
+                        local government efficiently, transparently, and from
+                        anywhere.
+                    </p>
+
+                    {/* Info Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                        {[
+                            { label: "Barangay Captain", value: barangayData.captain },
+                            { label: "Contact Number", value: barangayData.contact },
+                            { label: "Email Address", value: barangayData.email },
+                            { label: "Office Hours", value: barangayData.officeHours },
+                            { label: "Address", value: barangayData.address, span: "sm:col-span-2" },
+                        ].map(({ label, value, span = "" }) => (
+                            <div
+                                key={label}
+                                className={`p-4 rounded-xl bg-white/5 border border-white/10 hover:border-yellow-500/30 hover:bg-white/10 transition-all duration-300 ${span}`}
+                            >
+                                <div className="font-mono text-xs tracking-wider text-yellow-500 mb-1 uppercase">
+                                    {label}
+                                </div>
+                                <div className="text-sm text-slate-300 break-words">
+                                    {value}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Right Content - Info Card */}
+                <div className="relative">
+                    {/* Card Glow Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-blue-500/20 rounded-3xl blur-2xl -z-10" />
+
+                    <div className="relative bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 md:p-10 border border-white/10 shadow-2xl">
+                        {/* Logo Section */}
+                        <div className="text-center mb-8">
+                            {!imgError && (
+                                <div className="relative inline-block mb-6">
+                                    <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-yellow-500/20 to-amber-600/20 border-2 border-yellow-500/30 flex items-center justify-center p-4">
+                                        <img
+                                            src="/images/brgy-ll-logo.png"
+                                            alt="Official logo of Barangay II"
+                                            className="w-full h-full object-contain"
+                                            onError={() => setImgError(true)}
+                                        />
+                                    </div>
+                                    <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center border-4 border-slate-900">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="3"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="text-slate-900"
+                                        >
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            )}
+
+                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                                Barangay II
+                            </h3>
+                            <p className="text-sm font-mono text-yellow-500 uppercase tracking-widest">
+                                San Carlos City, Negros Occidental
+                            </p>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent mb-8" />
+
+                        {/* Mission Statement */}
+                        <div className="text-center mb-8">
+                            <div className="text-4xl mb-4">"</div>
+                            <p className="text-slate-300 italic leading-relaxed">
+                                A community united in progress, rooted in
+                                integrity, and committed to uplifting every
+                                resident's quality of life.
+                            </p>
+                            <div className="text-4xl mt-4 text-slate-600">"</div>
+                        </div>
+
+                        {/* Population Stats */}
+                        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-yellow-500/10 to-amber-600/10 border border-yellow-500/20 p-6 text-center">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 to-amber-600" />
+                            <div className="font-mono text-xs tracking-widest text-yellow-500 mb-2 uppercase">
+                                Population
+                            </div>
+                            <div className="text-4xl md:text-5xl font-bold text-white mb-1">
+                                {barangayData.population}
+                            </div>
+                            <div className="text-sm text-slate-400">
+                                Registered Residents
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+        </section>
+    );
 }

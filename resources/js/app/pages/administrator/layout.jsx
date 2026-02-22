@@ -26,10 +26,11 @@ import {
     HomeIcon,
     List,
     Package,
+    Trophy,
     UserPlus2Icon,
     UsersIcon,
 } from "lucide-react";
-import { GiFamilyTree } from "react-icons/gi";
+import { GiBulb, GiFamilyTree, GiLightBulb } from "react-icons/gi";
 import { PiCertificateDuotone } from "react-icons/pi";
 import { FaUserPlus, FaUsers, FaUsersCog } from "react-icons/fa";
 import ToastProvider from "@/app/_components/toast";
@@ -265,7 +266,7 @@ export default function Layout({ children }) {
         {
             name: "Barangay Highlights",
             href: "/administrator/highlights",
-            icon: <FcDepartment className="h-6 w-6" />,
+            icon: <Trophy className="h-6 w-6 text-yellow-300" />,
             current: isCurrentMain == "highlights",
         },
         {

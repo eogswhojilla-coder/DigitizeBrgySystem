@@ -1,0 +1,1 @@
+import{c as n}from"./app-BE-LrTTj.js";function c(e){try{return n.post("/api/announcement",e)}catch(t){throw t}}function o(){try{return n.get("/api/announcement")}catch(e){throw e}}function u(e){try{return n.delete(`/api/announcement/${e}`)}catch(t){throw t}}function s(e){try{return n.post(`/api/announcement/${e.get("id")}`,e)}catch(t){throw t}}export{c,u as d,o as g,s as u};
