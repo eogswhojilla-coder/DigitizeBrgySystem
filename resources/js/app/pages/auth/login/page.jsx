@@ -1,9 +1,11 @@
-import LoginFormSection from "./sections/login-form-section";
+import HeaderSection from "./sections/header-section";
+import HomeSection from "./sections/home-section";
 
-export default function Page() {
+export default function Page({ announcements, highlights }) {
     return (
         <>
-            <LoginFormSection />
+            <HeaderSection />
+            <HomeSection announcements={announcements} highlights={highlights} />
         </>
     );
 }

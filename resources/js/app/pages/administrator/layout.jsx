@@ -263,6 +263,12 @@ export default function Layout({ children }) {
             current: isCurrentMain == "position",
         },
         {
+            name: "Barangay Highlights",
+            href: "/administrator/highlights",
+            icon: <FcDepartment className="h-6 w-6" />,
+            current: isCurrentMain == "highlights",
+        },
+        {
             name: "Blotter Record",
             href: "/administrator/blotter_record",
             icon: <FcDataRecovery className="h-6 w-6" />,

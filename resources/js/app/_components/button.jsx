@@ -22,6 +22,10 @@ const variantStyles = {
         solid: "bg-green-600 text-white hover:bg-green-700",
         outline: "border border-green-600 text-green-600 hover:bg-green-50",
     },
+    gold: {
+        solid: "bg-amber-500 text-white hover:bg-amber-600",
+        outline: "border border-amber-500 text-amber-600 hover:bg-amber-50",
+    },
 };
 
 const sizeStyles = {
@@ -49,7 +53,7 @@ export default function Button({
         baseStyle,
         variantStyles[variant]?.[styleType],
         sizeStyles[size],
-        className
+        className,
     );
 
     return (

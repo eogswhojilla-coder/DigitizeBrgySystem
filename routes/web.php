@@ -1,29 +1,67 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\BarangayHighlightController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Announcement;
+use App\Models\BarangayHighlight;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    if (Auth::check()) {
-        $user = Auth::user();
+    $announcements = Announcement::with(['files'])
+        ->where('status', 'active')
+        ->orderBy('created_at', 'desc')
+        ->take(6)
+        ->get()
+        ->map(function ($announcement) {
+            return [
+                'id' => $announcement->id,
+                'title' => $announcement->name,
+                'description' => $announcement->description,
+                'date' => $announcement->start_at->format('F d, Y'),
+                'image' => $announcement->files->first()?->file_path ?? null,
+            ];
+        });
 
-        if ($user->user_type === 'admin') {  // Changed from role to user_type
-            return redirect('/administrator/dashboard');
-        } elseif ($user->user_type === 'resident') {  // Changed from role to user_type
-            return redirect('/resident/dashboard');
-        }
-    }
+    // Fetch active barangay highlights
+    $highlights = BarangayHighlight::where('is_active', true)
+        ->orderBy('order', 'asc')
+        ->get()
+        ->map(function ($highlight) {
+            return [
+                'id' => $highlight->id,
+                'image' => $highlight->image,
+                'title' => $highlight->title,
+                'description' => $highlight->description,
+                'tag' => $highlight->category,
+                'alt' => $highlight->title,
+            ];
+        });
 
-    return Inertia::render('auth/login/page');
+    return Inertia::render('auth/login/page', [
+        'announcements' => $announcements,
+        'highlights' => $highlights,
+    ]);
+})->name('home');
+
+// Login page route
+Route::get('/auth/login', function () {
+    return Inertia::render('auth/login/login-page');
 })->name('login');
 
-// Register Route
+// Register page route (if needed)
 Route::get('/auth/register', function () {
     return Inertia::render('auth/register/page');
 })->name('register');
+
+// Login form submission
+Route::post('/auth/login', [LoginController::class, 'store'])->name('login.store');
+
+// Logout
+Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
 // ADMIN ROUTES - Protected by auth:sanctum AND role:admin
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->group(function () {
@@ -51,7 +89,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->grou
         Route::get('official_end_term', function () {
             return Inertia::render('administrator/barangay_residents/official_end_term/page');
         });
-         Route::get('account_approval', function () {
+        Route::get('account_approval', function () {
             return Inertia::render('administrator/barangay_residents/account_approval/page');
         });
     });
@@ -129,6 +167,17 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->grou
         Route::get('calendar', function () {
             return Inertia::render('administrator/announcement/calendar/page');
         });
+    });
+
+    // Barangay Highlights Management
+    Route::prefix('highlights')->name('admin.highlights.')->group(function () {
+        Route::get('/', [BarangayHighlightController::class, 'index'])->name('index');
+        Route::get('/create', [BarangayHighlightController::class, 'create'])->name('create');
+        Route::post('/', [BarangayHighlightController::class, 'store'])->name('store');
+        Route::get('/{highlight}/edit', [BarangayHighlightController::class, 'edit'])->name('edit');
+        Route::put('/{highlight}', [BarangayHighlightController::class, 'update'])->name('update');
+        Route::delete('/{highlight}', [BarangayHighlightController::class, 'destroy'])->name('destroy');
+        Route::post('/{highlight}/toggle-active', [BarangayHighlightController::class, 'toggleActive'])->name('toggle-active');
     });
 
     Route::get('reports', function () {

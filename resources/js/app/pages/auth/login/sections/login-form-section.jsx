@@ -22,7 +22,7 @@ export default function LoginFormSection() {
     };
 
     return (
-        <div className="flex bg-[url('/images/Barangay-2-background.gif')] bg-cover bg-left md:bg-center h-screen flex-1">
+        <div id="login" className="flex bg-[url('/images/Barangay-2-background.gif')] bg-cover bg-left md:bg-center h-screen flex-1">
             <div className="flex flex-1 bg-black/20 border-2 shadow-xl border-white my-3 rounded-3xl m-5 p-2 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
                 <div className="mx-auto w-full max-w-sm lg:w-96">
                     <div>
