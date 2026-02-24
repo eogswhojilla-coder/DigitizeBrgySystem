@@ -49,7 +49,7 @@
 </head>
 <body>
     <div class="header">
-        <img src="{{ asset('images/logo.png') }}" alt="Barangay Logo" class="logo">
+        <img src="{{ asset('images/brgy-ll-logo.png') }}" alt="Barangay Logo" class="logo">
         <div class="title">Republic of the Philippines</div>
         <div class="subtitle">City of [City Name]</div>
         <div class="subtitle">Barangay [Barangay Name]</div>
@@ -67,5 +67,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Auto-print functionality
+        window.onload = function() {
+            window.print();
+        };
+
+        // Close window after printing (or canceling print)
+        window.onafterprint = function() {
+            window.close();
+        };
+
+        // Fallback for browsers that don't support onafterprint
+        if (window.matchMedia) {
+            var mediaQueryList = window.matchMedia('print');
+            mediaQueryList.addListener(function(mql) {
+                if (!mql.matches) {
+                    // After print
+                    window.close();
+                }
+            });
+        }
+    </script>
 </body>
 </html>

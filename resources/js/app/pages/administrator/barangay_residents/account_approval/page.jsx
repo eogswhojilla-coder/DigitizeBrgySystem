@@ -1,18 +1,35 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../../layout'
 import { useDispatch, useSelector } from 'react-redux';
 import { get_pending_accounts_thunk } from '@/app/redux/pending-accounts-thunk';
 import { approve_account_service, reject_account_service } from '@/app/services/registration-service';
 import Swal from 'sweetalert2';
-import { Check, X } from 'lucide-react';
+import { Check, X, Eye } from 'lucide-react';
+import ViewRegistrationDetailSection from './sections/view-registration-detail-section';
 
 export default function Page() {
   const dispatch = useDispatch();
   const { accounts } = useSelector((store) => store.pendingAccounts);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
     dispatch(get_pending_accounts_thunk());
   }, []);
+
+  const handleViewDetails = (id) => {
+    setSelectedUserId(id);
+    setShowDetailModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowDetailModal(false);
+    setSelectedUserId(null);
+  };
+
+  const handleSuccess = () => {
+    dispatch(get_pending_accounts_thunk());
+  };
 
   const handleApprove = async (id, name) => {
     const result = await Swal.fire({
@@ -88,7 +105,7 @@ export default function Page() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-center text-xs font-medium text-blue-700 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -125,7 +142,14 @@ export default function Page() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
+                        <div className="flex justify-center space-x-2">
+                          <button
+                            onClick={() => handleViewDetails(account.id)}
+                            className="p-2 text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors"
+                            title="View Details"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
                           <button
                             onClick={() => handleApprove(account.id, `${account.first_name} ${account.last_name}`)}
                             className="p-2 text-white bg-green-600 hover:bg-green-700 rounded transition-colors"
@@ -156,6 +180,14 @@ export default function Page() {
             Showing {accounts.from} to {accounts.to} of {accounts.total} entries
           </div>
         )}
+
+        {/* View Details Modal */}
+        <ViewRegistrationDetailSection
+          isOpen={showDetailModal}
+          onClose={handleCloseModal}
+          userId={selectedUserId}
+          onSuccess={handleSuccess}
+        />
       </div>
     </Layout>
   )

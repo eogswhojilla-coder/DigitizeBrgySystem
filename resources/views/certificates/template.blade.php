@@ -62,8 +62,8 @@
     <div class="watermark">BRGY CERTIFICATE</div>
     
     <div class="header">
-        @if(file_exists(public_path('images/logo.png')))
-            <img src="{{ public_path('images/logo.png') }}" alt="Barangay Logo" class="logo">
+        @if(file_exists(public_path('images/brgy-ll-logo.png')))
+            <img src="{{ public_path('images/brgy-ll-logo.png') }}" alt="Barangay Logo" class="logo">
         @endif
         <div>
             Republic of the Philippines<br>
@@ -115,5 +115,28 @@
     <div style="margin-top: 100px; text-align: center; font-size: 10px;">
         Certificate Number: {{ $certificate->certificate_number }}
     </div>
+
+    <script>
+        // Auto-print functionality
+        window.onload = function() {
+            window.print();
+        };
+
+        // Close window after printing (or canceling print)
+        window.onafterprint = function() {
+            window.close();
+        };
+
+        // Fallback for browsers that don't support onafterprint
+        if (window.matchMedia) {
+            var mediaQueryList = window.matchMedia('print');
+            mediaQueryList.addListener(function(mql) {
+                if (!mql.matches) {
+                    // After print
+                    window.close();
+                }
+            });
+        }
+    </script>
 </body>
 </html>

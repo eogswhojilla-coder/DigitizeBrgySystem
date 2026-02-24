@@ -28,15 +28,25 @@ class BarangayResident extends Model
            'religion',
            'nationality',
 
-            // Other Info Address)
+            // Other Info (Address)
            'municipality',
            'zip',
            'barangay',
+           'province',
            'houseNumber',
            'street',
+           'purokSitio',
+           'subdivision',
            'address',
            'contactNumber',
            'emailAddress',
+           
+           // Residency Information
+           'residencyStatus',
+           'residencyStatusOther',
+           'dateStartedLiving',
+           'permanentAddress',
+           'residentType',
 
             // Guardian
            'fatherName',
@@ -50,7 +60,27 @@ class BarangayResident extends Model
            'confirmPassword',
 
            'image',
+           'profileImage',
           
 
     ];
+
+    /**
+     * Get the full URL for the profile image
+     */
+    public function getProfileImageUrlAttribute()
+    {
+        if ($this->profileImage) {
+            return asset('images/residents/' . $this->profileImage);
+        }
+        return null;
+    }
+
+    /**
+     * Get the full name of the resident
+     */
+    public function getFullNameAttribute()
+    {
+        return trim("{$this->firstName} {$this->middleName} {$this->lastName}");
+    }
 }

@@ -25,14 +25,16 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// Registration routes
-Route::post('/register-resident', [RegistrationController::class, 'registerResident']);
+// Registration routes (with stricter rate limiting)
+Route::post('/register-resident', [RegistrationController::class, 'registerResident'])->middleware('throttle:5,1');
 
 // Account approval routes (admin only)
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/pending-accounts', [RegistrationController::class, 'getPendingAccounts']);
+    Route::get('/resident-details/{id}', [RegistrationController::class, 'getResidentDetails']);
     Route::post('/approve-account/{id}', [RegistrationController::class, 'approveAccount']);
     Route::post('/reject-account/{id}', [RegistrationController::class, 'rejectAccount']);
+    Route::post('/set-temporary-resident/{id}', [RegistrationController::class, 'setTemporaryResident']);
 });
 
 Route::resource('barangay_residents', BarangayResidentController::class);
@@ -48,7 +50,7 @@ Route::resource('households', HouseholdController::class);
 
 
 // Certificate Types
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('certificate-types', CertificateTypeController::class);
 
     Route::resource('announcement', AnnouncementController::class);
@@ -60,7 +62,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('admin/certificate-requests/{certificateRequest}/verify', [CertificateRequestController::class, 'verify']);
     Route::patch('admin/certificate-requests/{certificateRequest}/approve', [CertificateRequestController::class, 'approve']);
     Route::patch('admin/certificate-requests/{certificateRequest}/reject', [CertificateRequestController::class, 'reject']);
-    Route::patch('admin/certificate-requests/{certificateRequest}/payment', [CertificateRequestController::class, 'updatePayment']);
+    Route::patch('admin/certificate-requests/{certificateRequest}/verify-payment', [CertificateRequestController::class, 'verifyPayment']);
+    Route::patch('admin/certificate-requests/{certificateRequest}/reject-payment', [CertificateRequestController::class, 'rejectPayment']);
     Route::get('admin/certificate-requests/{certificateRequest}/print', [CertificateRequestController::class, 'printCertificate']);
 
     // Direct Certificate Generation
@@ -73,7 +76,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('certificates/{certificate}/download', [App\Http\Controllers\Api\CertificateController::class, 'download']);
 
     // Resident Portal APIs
-    Route::get('certificate-types', [App\Http\Controllers\Api\ResidentController::class, 'getCertificateTypes']);
+    // Note: certificate-types is already available via apiResource above (CertificateTypeController::index)
     Route::get('my-certificate-requests', [App\Http\Controllers\Api\ResidentController::class, 'getMyCertificateRequests']);
     Route::post('certificate-requests', [App\Http\Controllers\Api\ResidentController::class, 'submitCertificateRequest']);
     Route::get('certificate-requests/{certificateRequest}/print', [CertificateRequestController::class, 'printCertificate']);
@@ -90,33 +93,3 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('my-profile', [App\Http\Controllers\Api\ResidentController::class, 'getMyProfile']);
     Route::put('my-profile', [App\Http\Controllers\Api\ResidentController::class, 'updateMyProfile']);
 });
-
-// Route::middleware(['api'])->group(function () {
-//     Route::get('/residents', function () {
-//         try {
-//             $residents = DB::table('list_of_resident')
-//                 ->select(
-//                     'id',
-//                     'first_name',
-//                     'middle_name',
-//                     'last_name',
-//                     'purok',
-//                     DB::raw('TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) as age')
-//                 )
-//                 ->get();
-            
-//             return response()->json([
-//                 'success' => true,
-//                 'data' => $residents
-//             ], 200);
-//         } catch (\Exception $e) {
-//             \Log::error('Error fetching residents: ' . $e->getMessage());
-            
-//             return response()->json([
-//                 'success' => false,
-//                 'message' => 'Error fetching residents',
-//                 'error' => $e->getMessage()
-//             ], 500);
-//         }
-//     });
-// });

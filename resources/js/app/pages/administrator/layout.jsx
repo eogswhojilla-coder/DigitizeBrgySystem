@@ -291,9 +291,9 @@ export default function Layout({ children }) {
         },
         {
             name: "Backup/Reports",
-            href: "/administrator/backup_reports",
+            href: "/administrator/backup",
             icon: <FcNook className="h-6 w-6" />,
-            current: isCurrentMain == "backup_reports",
+            current: isCurrentMain == "backup" || isCurrentMain == "backup_reports",
         },
 
         // {

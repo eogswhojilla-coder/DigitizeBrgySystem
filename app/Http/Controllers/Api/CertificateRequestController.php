@@ -7,6 +7,7 @@ use App\Models\CertificateRequest;
 use App\Models\CertificateType;
 use App\Models\Certificate;
 use App\Enums\CertificateRequestStatus;
+use App\Enums\PaymentStatus;
 use App\Services\CertificateGenerationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -80,6 +81,7 @@ class CertificateRequestController extends Controller
             'approvedBy', 
             'rejectedBy', 
             'releasedBy',
+            'paymentVerifiedBy',
             'certificate'
         ]);
 
@@ -111,6 +113,15 @@ class CertificateRequestController extends Controller
         if ($certificateRequest->status !== CertificateRequestStatus::VERIFIED) {
             return response()->json([
                 'message' => 'Request cannot be approved in its current status'
+            ], 422);
+        }
+
+        // Check if certificate has fee and payment is not verified
+        if ($certificateRequest->certificateType->has_fee && 
+            $certificateRequest->certificateType->fee > 0 &&
+            $certificateRequest->payment_status !== PaymentStatus::VERIFIED) {
+            return response()->json([
+                'message' => 'Cannot approve request. Payment must be verified first.'
             ], 422);
         }
 
@@ -168,7 +179,55 @@ class CertificateRequestController extends Controller
             'request' => $certificateRequest->fresh()
         ]);
     }
+    public function verifyPayment(CertificateRequest $certificateRequest)
+    {
+        if ($certificateRequest->payment_status !== PaymentStatus::FOR_VERIFICATION) {
+            return response()->json([
+                'message' => 'Payment cannot be verified. Current status: ' . $certificateRequest->payment_status->value
+            ], 422);
+        }
 
+        if (!$certificateRequest->receipt_path) {
+            return response()->json([
+                'message' => 'No payment receipt found'
+            ], 422);
+        }
+
+        $certificateRequest->update([
+            'payment_status' => PaymentStatus::VERIFIED,
+            'payment_verified_by' => Auth::id(),
+            'payment_verified_at' => now()
+        ]);
+
+        return response()->json([
+            'message' => 'Payment verified successfully',
+            'request' => $certificateRequest->fresh(['user', 'certificateType', 'paymentVerifiedBy'])
+        ]);
+    }
+
+    public function rejectPayment(Request $request, CertificateRequest $certificateRequest)
+    {
+        $request->validate([
+            'remarks' => 'required|string'
+        ]);
+
+        if ($certificateRequest->payment_status !== PaymentStatus::FOR_VERIFICATION) {
+            return response()->json([
+                'message' => 'Payment cannot be rejected. Current status: ' . $certificateRequest->payment_status->value
+            ], 422);
+        }
+
+        $certificateRequest->update([
+            'payment_status' => PaymentStatus::PAYMENT_REJECTED,
+            'remarks' => $request->remarks,
+            'is_paid' => false
+        ]);
+
+        return response()->json([
+            'message' => 'Payment rejected successfully',
+            'request' => $certificateRequest->fresh(['user', 'certificateType'])
+        ]);
+    }
     public function printCertificate(CertificateRequest $certificateRequest, CertificateGenerationService $generationService)
     {
         // Check if request is approved

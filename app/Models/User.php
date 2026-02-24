@@ -30,6 +30,9 @@ class User extends Authenticatable
         'contact',
         'image',
         'password',
+        'admin_remarks',
+        'approved_by',
+        'approval_date',
     ];
     /**
      * The attributes that should be hidden for serialization.
@@ -57,6 +60,11 @@ class User extends Authenticatable
     public function resident()
     {
         return $this->belongsTo(BarangayResident::class, 'barangay_resident_id');
+    }
+    
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
     
     public function getFullNameAttribute()

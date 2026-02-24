@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class RegistrationController extends Controller
 {
@@ -16,6 +17,34 @@ class RegistrationController extends Controller
      */
     public function registerResident(Request $request)
     {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'profileImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'emailAddress' => 'required|email',
+                'firstName' => 'required|string',
+                'lastName' => 'required|string',
+                'username' => 'required|string|unique:users,username',
+                'password' => 'required|string|min:6',
+                'houseNumber' => 'required|string',
+                'street' => 'required|string',
+                'purokSitio' => 'required|string',
+                'subdivision' => 'nullable|string',
+                'zip' => 'required|string',
+                'residencyStatus' => 'required|string',
+                'residencyStatusOther' => 'nullable|string',
+                'dateStartedLiving' => 'required|date|before_or_equal:today',
+                'permanentAddress' => 'nullable|string',
+                'contactNumber' => 'required|string|min:10|max:13',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        }
+
         DB::beginTransaction();
         
         try {
@@ -32,16 +61,48 @@ class RegistrationController extends Controller
             $now = now();
             $residentId = $now->format('mdys');
             
+            // Calculate resident type based on duration
+            $dateStarted = new \DateTime($request->dateStartedLiving);
+            $today = new \DateTime();
+            $interval = $today->diff($dateStarted);
+            $monthsDiff = ($interval->y * 12) + $interval->m;
+            $residentType = $monthsDiff >= 6 ? 'official' : 'temporary';
+            
             // Prepare barangay resident data
             $residentData = $request->except(['profileImage', 'confirmPassword', 'username', 'password']);
             $residentData['residentId'] = $residentId;
-            $residentData['isOfficial'] = false; // Residents are not officials
+            $residentData['isOfficial'] = false;
+            $residentData['residentType'] = $residentType;
+            
+            // Auto-fill locked fields
+            $residentData['barangay'] = 'Barangay II';
+            $residentData['municipality'] = 'San Carlos City';
+            $residentData['province'] = 'Negros Occidental';
+            
+            // Build complete address
+            $addressParts = array_filter([
+                $request->houseNumber,
+                $request->street,
+                $request->purokSitio,
+                $request->subdivision,
+                'Barangay II',
+                'San Carlos City',
+                'Negros Occidental'
+            ]);
+            $residentData['address'] = implode(', ', $addressParts);
             
             // Handle image upload if present
             if ($request->hasFile('profileImage')) {
                 $image = $request->file('profileImage');
                 $imageName = time() . '_' . uniqid() . '.' . $image->extension();
-                $image->move(public_path('images/residents'), $imageName);
+                
+                // Ensure directory exists
+                $directory = public_path('images/residents');
+                if (!file_exists($directory)) {
+                    mkdir($directory, 0755, true);
+                }
+                
+                $image->move($directory, $imageName);
                 $residentData['profileImage'] = $imageName;
             }
             
@@ -117,9 +178,37 @@ class RegistrationController extends Controller
     }
 
     /**
+     * Get resident details by user ID
+     */
+    public function getResidentDetails($id)
+    {
+        try {
+            $user = User::with('resident')->find($id);
+            
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found'
+                ], 404);
+            }
+            
+            return response()->json([
+                'success' => true,
+                'data' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching resident details',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Approve an account
      */
-    public function approveAccount($id)
+    public function approveAccount(Request $request, $id)
     {
         try {
             $user = User::with('resident')->find($id);
@@ -132,6 +221,9 @@ class RegistrationController extends Controller
             }
             
             $user->status = 'approved';
+            $user->admin_remarks = $request->input('admin_remarks');
+            $user->approved_by = Auth::id();
+            $user->approval_date = now();
             $user->save();
             
             return response()->json([
@@ -151,7 +243,7 @@ class RegistrationController extends Controller
     /**
      * Reject an account
      */
-    public function rejectAccount($id)
+    public function rejectAccount(Request $request, $id)
     {
         try {
             $user = User::with('resident')->find($id);
@@ -164,6 +256,9 @@ class RegistrationController extends Controller
             }
             
             $user->status = 'rejected';
+            $user->admin_remarks = $request->input('admin_remarks');
+            $user->approved_by = Auth::id();
+            $user->approval_date = now();
             $user->save();
             
             return response()->json([
@@ -175,6 +270,53 @@ class RegistrationController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error rejecting account',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Set resident as temporary
+     */
+    public function setTemporaryResident(Request $request, $id)
+    {
+        try {
+            $user = User::with('resident')->find($id);
+            
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found'
+                ], 404);
+            }
+
+            if (!$user->resident) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Resident profile not found'
+                ], 404);
+            }
+            
+            // Update resident type to temporary
+            $user->resident->residentType = 'temporary';
+            $user->resident->save();
+            
+            // Approve the account with remarks
+            $user->status = 'approved';
+            $user->admin_remarks = $request->input('admin_remarks', 'Set as temporary resident');
+            $user->approved_by = Auth::id();
+            $user->approval_date = now();
+            $user->save();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Account approved as temporary resident',
+                'data' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error setting temporary resident',
                 'error' => $e->getMessage()
             ], 500);
         }

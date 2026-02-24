@@ -1,54 +1,10 @@
 import React, { useState } from 'react'
 
-export default function AccountSection() {
+export default function AccountSection({ register, errors }) {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [formData, setFormData] = useState({
-        // Basic Info
-        position: '',
-        startDate: '',
-        endDate: '',
-        voters: '',
-        dateOfBirth: '',
-        placeOfBirth: '',
-        pwd: '',
-        singleParent: '',
-        firstName: '',
-        middleName: '',
-        lastName: '',
-        suffix: '',
-        gender: 'Male',
-        civilStatus: 'Single',
-        religion: '',
-        nationality: '',
-        // Other Info (Address)
-        municipality: '',
-        zip: '',
-        barangay: '',
-        houseNumber: '',
-        street: '',
-        address: '',
-        contactNumber: '',
-        emailAddress: '',
-        // Guardian
-        fatherName: '',
-        motherName: '',
-        guardianName: '',
-        guardianContact: '',
-        // Account
-        username: '',
-        password: '',
-        confirmPassword: ''
-    });
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
     return (
         <>
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 ">
@@ -64,12 +20,17 @@ export default function AccountSection() {
                         </div>
                         <input
                             type="text"
-                            name="username"
-                            value={formData.username}
-                            onChange={handleInputChange}
+                            {...register("username", {
+                                required: "Username is required"
+                            })}
                             placeholder="Username"
-                            className="w-full py-3 pl-10 pr-4 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className={`w-full py-3 pl-10 pr-4 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                errors?.username ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
+                        {errors?.username && (
+                            <p className="text-red-500 text-xs mt-1">{errors.username.message}</p>
+                        )}
                     </div>
 
                     {/* Password */}
@@ -81,11 +42,17 @@ export default function AccountSection() {
                         </div>
                         <input
                             type={showPassword ? "text" : "password"}
-                            name="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
+                            {...register("password", {
+                                required: "Password is required",
+                                minLength: {
+                                    value: 6,
+                                    message: "Password must be at least 6 characters"
+                                }
+                            })}
                             placeholder="Password"
-                            className="w-full py-3 pl-10 pr-12 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className={`w-full py-3 pl-10 pr-12 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                errors?.password ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
                         <button
                             type="button"
@@ -102,6 +69,9 @@ export default function AccountSection() {
                                 </svg>
                             )}
                         </button>
+                        {errors?.password && (
+                            <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                        )}
                     </div>
 
                     {/* Confirm Password */}
@@ -113,11 +83,13 @@ export default function AccountSection() {
                         </div>
                         <input
                             type={showConfirmPassword ? "text" : "password"}
-                            name="confirmPassword"
-                            value={formData.confirmPassword}
-                            onChange={handleInputChange}
+                            {...register("confirmPassword", {
+                                required: "Please confirm your password"
+                            })}
                             placeholder="Confirm Password"
-                            className="w-full py-3 pl-10 pr-12 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className={`w-full py-3 pl-10 pr-12 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                errors?.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
                         <button
                             type="button"
@@ -134,6 +106,9 @@ export default function AccountSection() {
                                 </svg>
                             )}
                         </button>
+                        {errors?.confirmPassword && (
+                            <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>
+                        )}
                     </div>
                 </div>
             </div>

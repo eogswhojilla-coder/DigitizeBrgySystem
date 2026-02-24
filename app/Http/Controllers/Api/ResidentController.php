@@ -9,11 +9,13 @@ use App\Models\CertificateType;
 use App\Models\Blotter;
 use App\Models\Inventories;
 use App\Enums\CertificateRequestStatus;
+use App\Enums\PaymentStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ResidentController extends Controller
 {
@@ -30,7 +32,7 @@ class ResidentController extends Controller
                 'data' => $residents
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error fetching residents: ' . $e->getMessage());
+            Log::error('Error fetching residents: ' . $e->getMessage());
             
             return response()->json([
                 'success' => false,
@@ -71,7 +73,8 @@ class ResidentController extends Controller
         $validator = Validator::make($request->all(), [
             'certificate_type_id' => 'required|exists:certificate_types,id',
             'purpose' => 'required|string|max:500',
-            'valid_id' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120', // 5MB max
+            'valid_id' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // 2MB max
+            'payment_receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048', // 2MB max
         ]);
 
         if ($validator->fails()) {
@@ -83,10 +86,37 @@ class ResidentController extends Controller
         }
 
         try {
+            // Get certificate type to check if it has a fee
+            $certificateType = CertificateType::findOrFail($request->certificate_type_id);
+            
             // Store the valid ID
             $validIdPath = null;
             if ($request->hasFile('valid_id')) {
                 $validIdPath = $request->file('valid_id')->store('certificate_ids', 'public');
+            }
+
+            // Handle payment receipt upload if certificate has fee
+            $receiptPath = null;
+            $paymentStatus = PaymentStatus::UNPAID;
+            $isPaid = false;
+            $amountPaid = 0;
+
+            if ($certificateType->has_fee && $certificateType->fee > 0) {
+                if ($request->hasFile('payment_receipt')) {
+                    $receiptPath = $request->file('payment_receipt')->store('receipts', 'public');
+                    $paymentStatus = PaymentStatus::FOR_VERIFICATION;
+                    $isPaid = true;
+                    $amountPaid = $certificateType->fee;
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Payment receipt is required for certificates with fees',
+                        'errors' => ['payment_receipt' => ['Payment receipt is required']]
+                    ], 422);
+                }
+            } else {
+                // No fee required, mark as verified payment
+                $paymentStatus = PaymentStatus::VERIFIED;
             }
 
             $certificateRequest = CertificateRequest::create([
@@ -94,6 +124,11 @@ class ResidentController extends Controller
                 'certificate_type_id' => $request->certificate_type_id,
                 'purpose' => $request->purpose,
                 'valid_id_path' => $validIdPath,
+                'receipt_path' => $receiptPath,
+                'payment_status' => $paymentStatus,
+                'payment_method' => $certificateType->has_fee ? 'GCash' : null,
+                'is_paid' => $isPaid,
+                'amount_paid' => $amountPaid,
                 'status' => CertificateRequestStatus::PENDING_VERIFICATION,
                 'source' => 'ONLINE',
             ]);
@@ -274,9 +309,11 @@ class ResidentController extends Controller
         $user = Auth::user();
         
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|string|max:255',
+            'first_name' => 'sometimes|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|unique:users,email,' . $user->id,
-            'phone' => 'sometimes|string|max:20',
+            'contact' => 'sometimes|string|max:20',
         ]);
 
         if ($validator->fails()) {
@@ -288,12 +325,12 @@ class ResidentController extends Controller
         }
 
         try {
-            $user->update($request->only(['name', 'email', 'phone']));
+            $user->update($request->only(['first_name', 'middle_name', 'last_name', 'email', 'contact']));
 
             return response()->json([
                 'success' => true,
                 'message' => 'Profile updated successfully',
-                'data' => $user
+                'data' => $user->fresh()
             ]);
         } catch (\Exception $e) {
             return response()->json([

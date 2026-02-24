@@ -1,1 +1,0 @@
-import{c as t}from"./app-BE-LrTTj.js";const c=async e=>(await t.post("/api/certificate-types",e)).data,r=async()=>(await t.get("/api/certificate-types")).data,i=async e=>(await t.delete(`/api/certificate-types/${e}`)).data;export{c,i as d,r as g};

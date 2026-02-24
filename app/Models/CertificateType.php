@@ -14,11 +14,13 @@ class CertificateType extends Model
         'name',
         'description',
         'fee',
+        'has_fee',
         'is_active'
     ];
 
     protected $casts = [
         'fee' => 'decimal:2',
+        'has_fee' => 'boolean',
         'is_active' => 'boolean'
     ];
 

@@ -10,17 +10,17 @@ export default function DevelopersSection() {
         {
             id: 1,
             name: "Wacky D. Hojilla",
-            role: "Full Stack Developer",
+            role: "Programmer",
             description:
-                "Specializes in backend architecture and database design. Passionate about building scalable and efficient systems.",
+                "Develops and maintains the system’s core features, ensuring efficiency, functionality, and reliability.",
             image: "/images/1.png",
         },
         {
             id: 2,
             name: "Janvee M. Romano",
-            role: "Team Leader",
+            role: "Team Leader / System Analyst",
             description:
-                "Leads the team and ensures smooth coordination throughout the development process.",
+                "Analyzes project data to support decisions while leading the team and ensuring smooth coordination and timely completion of tasks.",
             image: "/images/3.png",
         },
         {
@@ -28,7 +28,7 @@ export default function DevelopersSection() {
             name: "Ayesha Marga Dela Cruz",
             role: "Researcher",
             description:
-                "Designs intuitive workflows and ensures system requirements align with community needs.",
+                "Conducts research and gathers relevant information to ensure the system meets technical standards and user needs.",
             image: "/images/2.png",
         },
     ];

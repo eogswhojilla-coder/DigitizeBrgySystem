@@ -8,6 +8,7 @@ use App\Models\AnnouncementFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class AnnouncementController extends Controller
 {
@@ -88,7 +89,7 @@ class AnnouncementController extends Controller
                         'type' => 'announcement'
                     ]);
                 } catch (\Exception $e) {
-                    \Log::error('File upload failed: ' . $e->getMessage());
+                    Log::error('File upload failed: ' . $e->getMessage());
                 }
             }
         }

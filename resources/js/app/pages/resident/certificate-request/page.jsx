@@ -13,18 +13,32 @@ export default function Page() {
         register,
         handleSubmit,
         reset,
+        watch,
         formState: { errors, isSubmitting },
     } = useForm();
 
     const [certificateTypes, setCertificateTypes] = useState([]);
     const [myRequests, setMyRequests] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [receiptFile, setReceiptFile] = useState(null);
     const [activeTab, setActiveTab] = useState("request"); // "request", "types", "history"
+    const [selectedCertificateType, setSelectedCertificateType] = useState(null);
+
+    const watchedCertificateTypeId = watch("certificate_type_id");
 
     useEffect(() => {
         fetchCertificateTypes();
         fetchMyRequests();
     }, []);
+
+    useEffect(() => {
+        if (watchedCertificateTypeId) {
+            const certType = certificateTypes.find(ct => ct.id == watchedCertificateTypeId);
+            setSelectedCertificateType(certType);
+        } else {
+            setSelectedCertificateType(null);
+        }
+    }, [watchedCertificateTypeId, certificateTypes]);
 
     const fetchCertificateTypes = async () => {
         try {
@@ -73,15 +87,30 @@ export default function Page() {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+            if (file.size > 2 * 1024 * 1024) { // 2MB limit
                 Swal.fire({
                     icon: "error",
                     title: "File too large",
-                    text: "Please upload a file smaller than 5MB",
+                    text: "Please upload a file smaller than 2MB",
                 });
                 return;
             }
             setSelectedFile(file);
+        }
+    };
+
+    const handleReceiptChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                Swal.fire({
+                    icon: "error",
+                    title: "File too large",
+                    text: "Please upload a file smaller than 2MB",
+                });
+                return;
+            }
+            setReceiptFile(file);
         }
     };
 
@@ -95,11 +124,25 @@ export default function Page() {
             return;
         }
 
+        // Check if certificate has fee and receipt is required
+        if (selectedCertificateType?.has_fee && selectedCertificateType?.fee > 0 && !receiptFile) {
+            Swal.fire({
+                icon: "error",
+                title: "Missing Payment Receipt",
+                text: "Please upload your payment receipt",
+            });
+            return;
+        }
+
         try {
             const formData = new FormData();
             formData.append("certificate_type_id", data.certificate_type_id);
             formData.append("purpose", data.purpose);
             formData.append("valid_id", selectedFile);
+            
+            if (receiptFile) {
+                formData.append("payment_receipt", receiptFile);
+            }
 
             await axios.post("/api/certificate-requests", formData, {
                 headers: {
@@ -117,6 +160,8 @@ export default function Page() {
 
             reset();
             setSelectedFile(null);
+            setReceiptFile(null);
+            setSelectedCertificateType(null);
             fetchMyRequests();
             setActiveTab("history");
         } catch (error) {
@@ -302,7 +347,7 @@ export default function Page() {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Upload Valid ID * (Max 5MB)
+                                    Upload Valid ID * (Max 2MB)
                                 </label>
                                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
                                     <Upload className="mx-auto h-12 w-12 text-gray-400" />
@@ -317,7 +362,7 @@ export default function Page() {
                                             />
                                         </label>
                                         <p className="text-xs text-gray-500 mt-1">
-                                            PNG, JPG, PDF up to 5MB
+                                            PNG, JPG, PDF up to 2MB
                                         </p>
                                     </div>
                                     {selectedFile && (
@@ -327,6 +372,84 @@ export default function Page() {
                                     )}
                                 </div>
                             </div>
+
+                            {/* Payment Section - Show only if certificate has fee */}
+                            {selectedCertificateType?.has_fee && selectedCertificateType?.fee > 0 && (
+                                <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
+                                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <DollarSign className="w-6 h-6 text-blue-600" />
+                                        Payment Required
+                                    </h3>
+                                    
+                                    <div className="mb-4">
+                                        <p className="text-sm text-gray-700">
+                                            <span className="font-semibold">Amount to Pay:</span>{" "}
+                                            <span className="text-2xl font-bold text-blue-600">
+                                                ₱{parseFloat(selectedCertificateType.fee).toFixed(2)}
+                                            </span>
+                                        </p>
+                                    </div>
+
+                                    <div className="bg-white rounded-lg p-4 mb-4">
+                                        <h4 className="font-semibold text-gray-900 mb-2">GCash Payment Instructions:</h4>
+                                        <ol className="list-decimal list-inside space-y-1 text-sm text-gray-700 mb-4">
+                                            <li>Scan the QR code below using your GCash app</li>
+                                            <li>Pay the exact amount: ₱{parseFloat(selectedCertificateType.fee).toFixed(2)}</li>
+                                            <li>Take a screenshot of your payment confirmation</li>
+                                            <li>Upload the screenshot below</li>
+                                        </ol>
+                                        
+                                        <div className="flex justify-center bg-gray-100 rounded-lg p-4">
+                                            <div className="text-center">
+                                                {/* Replace with your actual GCash QR code image */}
+                                                <div className="bg-white p-4 rounded-lg shadow-md inline-block">
+                                                    <img 
+                                                        src="/images/gcash-qr.png" 
+                                                        alt="GCash QR Code"
+                                                        className="w-48 h-48 object-contain"
+                                                        onError={(e) => {
+                                                            e.target.style.display = 'none';
+                                                            e.target.nextSibling.style.display = 'flex';
+                                                        }}
+                                                    />
+                                                    <div className="hidden w-48 h-48 items-center justify-center bg-gray-200 text-gray-500 text-sm">
+                                                        GCash QR Code<br/>Placeholder
+                                                    </div>
+                                                </div>
+                                                <p className="text-xs text-gray-600 mt-2">Scan to pay via GCash</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Upload Payment Receipt * (Max 2MB)
+                                        </label>
+                                        <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors bg-white">
+                                            <Upload className="mx-auto h-12 w-12 text-blue-400" />
+                                            <div className="mt-2">
+                                                <label className="cursor-pointer text-blue-600 hover:text-blue-800 font-medium">
+                                                    Click to upload receipt
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*,.pdf"
+                                                        onChange={handleReceiptChange}
+                                                        className="hidden"
+                                                    />
+                                                </label>
+                                                <p className="text-xs text-gray-500 mt-1">
+                                                    PNG, JPG, PDF up to 2MB
+                                                </p>
+                                            </div>
+                                            {receiptFile && (
+                                                <p className="mt-2 text-sm text-green-600 font-medium">
+                                                    ✓ {receiptFile.name}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             <button
                                 type="submit"

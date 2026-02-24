@@ -21,6 +21,7 @@ export default function TabsSection() {
         isSubmitting,
         reset,
         trigger,
+        watch,
         formState: { errors },
     } = useForm();
 
@@ -116,10 +117,20 @@ export default function TabsSection() {
         } catch (error) {
             console.error('Registration error:', error);
             
+            let errorMessage = "An error occurred during registration. Please try again.";
+            
+            // Handle validation errors
+            if (error?.response?.data?.errors) {
+                const errors = error.response.data.errors;
+                errorMessage = Object.values(errors).flat().join('\n');
+            } else if (error?.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            }
+            
             await Swal.fire({
                 icon: "error",
                 title: "Registration Failed!",
-                text: error?.response?.data?.message || "An error occurred during registration. Please try again.",
+                text: errorMessage,
                 confirmButtonColor: "#3b82f6",
             });
         }
@@ -224,6 +235,7 @@ export default function TabsSection() {
                             <OtherInfoSection
                                 errors={errors}
                                 register={register}
+                                watch={watch}
                             />
                         )}
                         {activeTab === "guardian" && (

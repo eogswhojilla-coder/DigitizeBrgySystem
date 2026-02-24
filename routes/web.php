@@ -1,14 +1,43 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BarangayHighlightController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Announcement;
 use App\Models\BarangayHighlight;
+use App\Models\Certificate;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+// Public certificate verification route (for QR code scanning)
+Route::get('/verify-certificate/{certificateNumber}', function ($certificateNumber) {
+    $certificate = Certificate::with(['certificateRequest.certificateType', 'certificateRequest.user'])
+        ->where('certificate_number', $certificateNumber)
+        ->first();
+    
+    if (!$certificate) {
+        return response()->view('certificate-verification', [
+            'found' => false,
+            'message' => 'Certificate not found'
+        ], 404);
+    }
+    
+    return response()->view('certificate-verification', [
+        'found' => true,
+        'certificate' => $certificate,
+        'certificateNumber' => $certificate->certificate_number,
+        'residentName' => $certificate->metadata['resident_name'] ?? 'N/A',
+        'certificateType' => $certificate->certificateRequest->certificateType->name ?? 'N/A',
+        'issuedDate' => $certificate->issued_at ? $certificate->issued_at->format('F d, Y') : 'N/A',
+        'requestId' => $certificate->certificate_request_id,
+        'amountPaid' => $certificate->certificateRequest->amount_paid ?? 0,
+        'paymentStatus' => $certificate->certificateRequest->payment_status ?? 'N/A',
+        'status' => 'Valid',
+    ]);
+})->name('verify.certificate');
 
 Route::get('/', function () {
     $announcements = Announcement::with(['files'])
@@ -58,10 +87,10 @@ Route::get('/auth/register', function () {
 })->name('register');
 
 // Login form submission
-Route::post('/auth/login', [LoginController::class, 'store'])->name('login.store');
+Route::post('/auth/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
 
 // Logout
-Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 // ADMIN ROUTES - Protected by auth:sanctum AND role:admin
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->group(function () {
@@ -200,8 +229,19 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->grou
         return Inertia::render('administrator/system_logs/page');
     });
 
+    // Backup Routes
+    Route::prefix('backup')->name('backup.')->group(function () {
+        Route::get('/', [BackupController::class, 'index'])->name('index');
+        Route::post('/generate', [BackupController::class, 'generate'])->name('generate');
+        Route::get('/download/{filename}', [BackupController::class, 'download'])->name('download');
+        Route::delete('/delete/{filename}', [BackupController::class, 'delete'])->name('delete');
+        Route::post('/upload', [BackupController::class, 'upload'])->name('upload');
+        Route::post('/restore', [BackupController::class, 'restore'])->name('restore');
+    });
+
+    // Legacy route redirect
     Route::get('backup_reports', function () {
-        return Inertia::render('administrator/backup_reports/page');
+        return redirect()->route('backup.index');
     });
 
     Route::get('settings', function () {

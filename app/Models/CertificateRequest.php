@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\CertificateRequestStatus;
+use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,7 +17,7 @@ class CertificateRequest extends Model
         'certificate_type_id',
         'request_number',
         'purpose',
-        'valid_id_path',  // Add this line
+        'valid_id_path',
         'source',
         'status',
         'remarks',
@@ -29,15 +30,22 @@ class CertificateRequest extends Model
         'released_by',
         'released_at',
         'is_paid',
-        'amount_paid'
+        'amount_paid',
+        'receipt_path',
+        'payment_status',
+        'payment_verified_by',
+        'payment_verified_at',
+        'payment_method'
     ];
 
     protected $casts = [
         'status' => CertificateRequestStatus::class,
+        'payment_status' => PaymentStatus::class,
         'verified_at' => 'datetime',
         'approved_at' => 'datetime',
         'rejected_at' => 'datetime',
         'released_at' => 'datetime',
+        'payment_verified_at' => 'datetime',
         'is_paid' => 'boolean',
         'amount_paid' => 'decimal:2'
     ];
@@ -75,6 +83,11 @@ class CertificateRequest extends Model
     public function releasedBy()
     {
         return $this->belongsTo(User::class, 'released_by');
+    }
+
+    public function paymentVerifiedBy()
+    {
+        return $this->belongsTo(User::class, 'payment_verified_by');
     }
 
     protected static function boot()
