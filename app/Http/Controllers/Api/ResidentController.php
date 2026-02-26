@@ -251,45 +251,89 @@ class ResidentController extends Controller
     {
         $user = Auth::user();
         
-        // Find the resident associated with this user
-        $resident = \App\Models\BarangayResident::where('username', $user->username)->first();
-        
-        if (!$resident) {
-            return response()->json([
-                'success' => true,
-                'data' => []
-            ]);
-        }
-        
-        // Get blotters where user is the respondent
-        $blotters = Blotter::where('respondent_id', $resident->id)
-            ->with('respondentResident')
+        // Get database notifications for blotter
+        $notifications = $user->notifications()
+            ->where('type', 'App\Notifications\BlotterNotification')
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(function ($blotter) {
+            ->map(function ($notification) {
+                $data = $notification->data;
                 return [
-                    'id' => $blotter->id,
-                    'case_number' => 'BLT-' . str_pad($blotter->id, 6, '0', STR_PAD_LEFT),
-                    'complainant_name' => $blotter->complainant_resident ?? $blotter->complainant_not_resident,
-                    'respondent_name' => $blotter->respondent,
-                    'incident_type' => $blotter->incident,
-                    'incident_date' => $blotter->date_of_incident,
-                    'incident_details' => $blotter->complainant_statement,
-                    'description' => $blotter->complainant_statement,
-                    'location' => $blotter->location_of_incident,
-                    'status' => $blotter->status ?? 'pending',
-                    'severity' => $this->calculateSeverity($blotter),
-                    'action_taken' => $blotter->remarks,
-                    'notes' => $blotter->remarks,
-                    'created_at' => $blotter->created_at,
-                    'updated_at' => $blotter->updated_at,
+                    'id' => $notification->id,
+                    'case_number' => $data['case_number'] ?? 'N/A',
+                    'blotter_id' => $data['blotter_id'] ?? null,
+                    'complainant_name' => $data['complainant'] ?? 'N/A',
+                    'incident_type' => $data['incident_type'] ?? $data['incident'] ?? 'N/A',
+                    'incident_date' => $data['date_of_incident'] ?? null,
+                    'incident_details' => $data['message'] ?? 'You have been named in a blotter case.',
+                    'description' => $data['message'] ?? 'You have been named in a blotter case.',
+                    'location' => $data['location'] ?? 'N/A',
+                    'status' => $data['status'] ?? 'pending',
+                    'severity' => $data['severity'] ?? 'medium',
+                    'action_taken' => null,
+                    'notes' => $data['message'] ?? null,
+                    'read_at' => $notification->read_at,
+                    'is_read' => $notification->read_at !== null,
+                    'created_at' => $notification->created_at,
+                    'updated_at' => $notification->updated_at,
                 ];
             });
         
         return response()->json([
             'success' => true,
-            'data' => $blotters
+            'data' => $notifications
         ]);
+    }
+
+    // Mark Notification as Read
+    public function markNotificationAsRead($id)
+    {
+        try {
+            $user = Auth::user();
+            $notification = $user->notifications()->where('id', $id)->first();
+            
+            if (!$notification) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Notification not found'
+                ], 404);
+            }
+            
+            $notification->markAsRead();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Notification marked as read'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to mark notification as read',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Mark All Notifications as Read
+    public function markAllNotificationsAsRead()
+    {
+        try {
+            $user = Auth::user();
+            $user->unreadNotifications
+                ->where('type', 'App\Notifications\BlotterNotification')
+                ->markAsRead();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'All notifications marked as read'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to mark notifications as read',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     // Get My Profile

@@ -172,4 +172,55 @@ class BarangayResidentController extends Controller
         
         return response()->json($residents);
     }
+
+    public function assignPosition(Request $request, $id)
+    {
+        try {
+            $resident = BarangayResident::find($id);
+            
+            if (!$resident) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Resident not found'
+                ], 404);
+            }
+
+            // Validate the request data
+            $validated = $request->validate([
+                'position' => 'required|string',
+                'startDate' => 'required|date',
+                'endDate' => 'required|date|after:startDate',
+                'isOfficial' => 'required|boolean'
+            ]);
+
+            // Update the resident with official information
+            $resident->update([
+                'position' => $validated['position'],
+                'startDate' => $validated['startDate'],
+                'endDate' => $validated['endDate'],
+                'isOfficial' => $validated['isOfficial']
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Position assigned successfully',
+                'data' => $resident
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+            
+        } catch (\Exception $e) {
+            Log::error('Error assigning position: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error assigning position',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

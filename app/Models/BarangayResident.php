@@ -76,11 +76,21 @@ class BarangayResident extends Model
         return null;
     }
 
-    /**
-     * Get the full name of the resident
-     */
+   
     public function getFullNameAttribute()
     {
         return trim("{$this->firstName} {$this->middleName} {$this->lastName}");
+    }
+
+  
+    public function user()
+    {
+        return $this->hasOne(User::class, 'barangay_resident_id');
+    }
+
+    
+    public function blottersAsRespondent()
+    {
+        return $this->hasMany(Blotter::class, 'respondent_id');
     }
 }

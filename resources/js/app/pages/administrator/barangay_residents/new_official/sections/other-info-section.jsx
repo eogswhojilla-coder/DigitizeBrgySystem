@@ -1,120 +1,285 @@
 import Input from "@/app/_components/input";
+import Select from "@/app/_components/select";
 import React, { useState } from "react";
 
-export default function OtherInfoSection({ register, errors }) {
- 
-   
+export default function OtherInfoSection({ register, errors, watch }) {
+    const residencyStatus = watch ? watch("residencyStatus") : "";
+    const dateStartedLiving = watch ? watch("dateStartedLiving") : "";
+
+    // Calculate resident type based on duration
+    const calculateResidentType = (dateStarted) => {
+        if (!dateStarted) return "";
+        
+        const startDate = new Date(dateStarted);
+        const today = new Date();
+        const monthsDiff = (today.getFullYear() - startDate.getFullYear()) * 12 + 
+                          (today.getMonth() - startDate.getMonth());
+        
+        return monthsDiff >= 6 ? "official" : "temporary";
+    };
+
+    const showPermanentAddress = ["renter", "boarder", "temporary"].includes(residencyStatus);
+
     return (
         <>
             <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">
-                    Address
+                    Address Information
                 </h2>
 
                 <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Input
-                                register={register("municipality", {
-                                    required: "Field is required",
-                                })}
-                                error={errors?.municipality?.message}
-                                label="Municipality"
-                                type="text"
-                                name="municipality"
-                                className="w-full px-3 py-2"
-                            />
+                    {/* Current Address Section */}
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="text-sm font-semibold text-gray-700 mb-4">Current Address</h3>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("houseNumber", {
+                                        required: "House number is required",
+                                    })}
+                                    error={errors?.houseNumber?.message}
+                                    label="House No."
+                                    type="text"
+                                    name="houseNumber"
+                                    placeholder="e.g., 123"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("street", {
+                                        required: "Street is required",
+                                    })}
+                                    error={errors?.street?.message}
+                                    label="Street"
+                                    type="text"
+                                    name="street"
+                                    placeholder="e.g., Main Street"
+                                />
+                            </div>
                         </div>
-                        <div className="space-y-2">
-                            <Input
-                                register={register("zip", {
-                                    required: "Field is required",
-                                })}
-                                error={errors?.zip?.message}
-                                label="Zip Code"
-                                type="text"
-                                name="zip"
-                                className="w-full px-3 py-2"
-                            />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("purokSitio", {
+                                        required: "Purok/Sitio is required",
+                                    })}
+                                    error={errors?.purokSitio?.message}
+                                    label="Purok / Sitio"
+                                    type="text"
+                                    name="purokSitio"
+                                    placeholder="e.g., Purok 1"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("subdivision")}
+                                    error={errors?.subdivision?.message}
+                                    label="Subdivision (Optional)"
+                                    type="text"
+                                    name="subdivision"
+                                    placeholder="e.g., Green Valley"
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Input
-                                register={register("barangay", {
-                                    required: "Field is required",
-                                })}
-                                error={errors?.barangay?.message}
-                                label="Barangay"
-                                type="text"
-                                name="barangay"
-                                className="w-full px-3 py-2"
-                            />
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("barangay")}
+                                    error={errors?.barangay?.message}
+                                    label="Barangay"
+                                    type="text"
+                                    name="barangay"
+                                    value="Barangay II"
+                                    disabled
+                                    className="bg-gray-100"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("municipality")}
+                                    error={errors?.municipality?.message}
+                                    label="City / Municipality"
+                                    type="text"
+                                    name="municipality"
+                                    value="San Carlos City"
+                                    disabled
+                                    className="bg-gray-100"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("province")}
+                                    error={errors?.province?.message}
+                                    label="Province"
+                                    type="text"
+                                    name="province"
+                                    value="Negros Occidental"
+                                    disabled
+                                    className="bg-gray-100"
+                                />
+                            </div>
                         </div>
-                        <div className="space-y-2">
-                            <Input
-                                register={register("houseNumber", {
-                                    required: "Field is required",
-                                })}
-                                error={errors?.houseNumber?.message}
-                                label="House Number"
-                                type="text"
-                                name="houseNumber"
-                                className="w-full px-3 py-2"
-                            />
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Input
-                                register={register("street", {
-                                    required: "Field is required",
-                                })}
-                                error={errors?.street?.message}
-                                label="Street"
-                                type="text"
-                                name="street"
-                                className="w-full px-3 py-2"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Input
-                                register={register("address", {
-                                    required: "Field is required",
-                                })}
-                                error={errors?.address?.message}
-                                label="Address"
-                                type="text"
-                                name="address"
-                                className="w-full px-3 py-2"
-                            />
+
+                        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mt-4">
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("zip", {
+                                        required: "Zip code is required",
+                                    })}
+                                    error={errors?.zip?.message}
+                                    label="Zip Code"
+                                    type="text"
+                                    name="zip"
+                                    placeholder="e.g., 6127"
+                                />
+                            </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Input
-                                register={register("contactNumber", {
-                                    required: "Field is required",
-                                })}
-                                error={errors?.contactNumber?.message}
-                                label="Contact Number"
-                                type="text"
-                                name="contactNumber"
-                                className="w-full px-3 py-2"
-                            />
+                    {/* Residency Information */}
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="text-sm font-semibold text-gray-700 mb-4">Residency Information</h3>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Select
+                                    register={register("residencyStatus", {
+                                        required: "Residency status is required",
+                                    })}
+                                    error={errors?.residencyStatus?.message}
+                                    name="residencyStatus"
+                                    label="Residency Status"
+                                    options={[
+                                        { value: "", label: "Select Status" },
+                                        { value: "homeowner", label: "Homeowner" },
+                                        { value: "renter", label: "Renter" },
+                                        { value: "boarder", label: "Boarder" },
+                                        { value: "living_with_relatives", label: "Living with Relatives" },
+                                        { value: "temporary", label: "Temporary Resident" },
+                                        { value: "others", label: "Others" },
+                                    ]}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("dateStartedLiving", {
+                                        required: "Date started living is required",
+                                        validate: {
+                                            notFuture: (value) => {
+                                                const selectedDate = new Date(value);
+                                                const today = new Date();
+                                                today.setHours(0, 0, 0, 0);
+                                                return selectedDate <= today || "Date cannot be in the future";
+                                            }
+                                        }
+                                    })}
+                                    error={errors?.dateStartedLiving?.message}
+                                    label="Date Started Living in Barangay"
+                                    type="date"
+                                    name="dateStartedLiving"
+                                />
+                                {dateStartedLiving && (
+                                    <p className="text-xs text-gray-600 mt-1">
+                                        Resident Type: <span className="font-semibold">
+                                            {calculateResidentType(dateStartedLiving) === "official" 
+                                                ? "Official Resident (6+ months)" 
+                                                : "Temporary Resident (< 6 months)"}
+                                        </span>
+                                    </p>
+                                )}
+                            </div>
                         </div>
-                        <div className="space-y-2">
-                            <Input
-                                register={register("emailAddress", {
-                                    required: "Field is required",
-                                })}
-                                error={errors?.emailAddress?.message}
-                                label="Email Address"
-                                type="text"
-                                name="emailAddress"
-                                className="w-full px-3 py-2 "
-                            />
+
+                        {residencyStatus === "others" && (
+                            <div className="grid grid-cols-1 gap-4 mt-4">
+                                <div className="space-y-2">
+                                    <Input
+                                        register={register("residencyStatusOther", {
+                                            required: "Please specify residency status",
+                                        })}
+                                        error={errors?.residencyStatusOther?.message}
+                                        label="Please Specify"
+                                        type="text"
+                                        name="residencyStatusOther"
+                                        placeholder="Specify your residency status"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Permanent Address (Conditional) */}
+                    {showPermanentAddress && (
+                        <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                            <h3 className="text-sm font-semibold text-amber-800 mb-4">
+                                Permanent Address <span className="text-red-500">*</span>
+                            </h3>
+                            <p className="text-xs text-amber-700 mb-4">
+                                Since this resident is a {residencyStatus === "renter" ? "renter" : residencyStatus === "boarder" ? "boarder" : "temporary resident"}, 
+                                please provide their permanent address.
+                            </p>
+                            
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Complete Permanent Address
+                                </label>
+                                <textarea
+                                    {...register("permanentAddress", {
+                                        required: showPermanentAddress ? "Permanent address is required" : false,
+                                    })}
+                                    rows="3"
+                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                        errors?.permanentAddress ? 'border-red-500' : 'border-gray-300'
+                                    }`}
+                                    placeholder="Complete address including House No., Street, Barangay, City/Municipality, Province, Zip Code"
+                                />
+                                {errors?.permanentAddress && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.permanentAddress.message}</p>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Contact Information */}
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="text-sm font-semibold text-gray-700 mb-4">Contact Information</h3>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("contactNumber", {
+                                        required: "Contact number is required",
+                                        pattern: {
+                                            value: /^[0-9]{10,13}$/,
+                                            message: "Please enter a valid contact number (10-13 digits)"
+                                        }
+                                    })}
+                                    error={errors?.contactNumber?.message}
+                                    label="Contact Number"
+                                    type="text"
+                                    name="contactNumber"
+                                    placeholder="e.g., 09123456789"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("emailAddress", {
+                                        required: "Email address is required",
+                                        pattern: {
+                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                            message: "Please enter a valid email address"
+                                        }
+                                    })}
+                                    error={errors?.emailAddress?.message}
+                                    label="Email Address"
+                                    type="email"
+                                    name="emailAddress"
+                                    placeholder="e.g., juan.delacruz@email.com"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -40,6 +40,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::resource('barangay_residents', BarangayResidentController::class);
 Route::resource('barangay_officials', BarangayResidentController::class);
 Route::get('residents/search', [BarangayResidentController::class, 'search']);
+Route::put('barangay_residents/{id}/assign-position', [BarangayResidentController::class, 'assignPosition']);
 Route::resource('positions', PositionController::class);
 Route::resource('blotters', BlotterController::class);
 Route::resource('inventories', InventoriesController::class);
@@ -88,7 +89,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // Resident Blotter Notifications
     Route::get('my-blotter-notifications', [App\Http\Controllers\Api\ResidentController::class, 'getMyBlotterNotifications']);
-    
+    Route::post('mark-notification-read/{id}', [App\Http\Controllers\Api\ResidentController::class, 'markNotificationAsRead']);
+    Route::post('mark-all-notifications-read', [App\Http\Controllers\Api\ResidentController::class, 'markAllNotificationsAsRead']);
+
     // Resident Profile
     Route::get('my-profile', [App\Http\Controllers\Api\ResidentController::class, 'getMyProfile']);
     Route::put('my-profile', [App\Http\Controllers\Api\ResidentController::class, 'updateMyProfile']);

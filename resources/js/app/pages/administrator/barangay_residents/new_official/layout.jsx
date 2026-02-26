@@ -1,64 +1,9 @@
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
-import Radio from "@/app/_components/radio";
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { get_positions_thunk } from "@/app/redux/position-thunk";
+import React, { useState } from "react";
 
-export default function NewOfficialLayout({ children, register, errors, onIsOfficialChange }) {
-    const dispatch = useDispatch();
-    const { positions } = useSelector((store) => store.positions);
-    const [isOfficial, setIsOfficial] = useState(false);
+export default function NewOfficialLayout({ children, register, errors }) {
     const [imagePreview, setImagePreview] = useState(null);
-
-    useEffect(() => {
-        dispatch(get_positions_thunk());
-    }, []);
-    const [formData, setFormData] = useState({
-        // Basic Info
-        position: "",
-        startDate: "",
-        endDate: "",
-        voters: "",
-        dateOfBirth: "",
-        placeOfBirth: "",
-        pwd: "",
-        singleParent: "",
-        firstName: "",
-        middleName: "",
-        lastName: "",
-        suffix: "",
-        gender: "Male",
-        civilStatus: "Single",
-        religion: "",
-        nationality: "",
-        // Other Info (Address)
-        municipality: "",
-        zip: "",
-        barangay: "",
-        houseNumber: "",
-        street: "",
-        address: "",
-        contactNumber: "",
-        emailAddress: "",
-        // Guardian
-        fatherName: "",
-        motherName: "",
-        guardianName: "",
-        guardianContact: "",
-        // Account
-        username: "",
-        password: "",
-        confirmPassword: "",
-    });
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -133,71 +78,6 @@ export default function NewOfficialLayout({ children, register, errors, onIsOffi
                         {imagePreview ? "Click × to remove image" : "Click to upload profile picture"}
                     </p>
                 </div>
-                <div class="flex items-center mb-4">
-                    <input
-                        onChange={() => {
-                            const newValue = !isOfficial;
-                            setIsOfficial(newValue);
-                            if (onIsOfficialChange) {
-                                onIsOfficialChange(newValue);
-                            }
-                        }}
-                        id="default-checkbox"
-                        type="checkbox"
-                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 "
-                    />
-                    <label
-                        for="default-checkbox"
-                        class="ms-2 text-sm font-medium text-gray-900 "
-                    >
-                        Is Official
-                    </label>
-                </div>
-                {isOfficial && (
-                    <div className="flex gap-3">
-                        <div className="space-y-2">
-                            <Select
-                                register={register("position", {
-                                    required: "Field is required",
-                                })}
-                                name="position"
-                                label="Position"
-                                error={errors?.position?.message}
-                                options={(positions || []).map((position) => ({
-                                    value: position.id,
-                                    label: position.position,
-                                }))}
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Input
-                                    register={register("startDate", {
-                                        required: "Field is required",
-                                    })}
-                                    error={errors?.startDate?.message}
-                                    label="Start"
-                                    placeholder="Start date"
-                                    type="date"
-                                    name="startDate"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Input
-                                    register={register("endDate", {
-                                        required: "Field is required",
-                                    })}
-                                    error={errors?.endDate?.message}
-                                    label="End"
-                                    placeholder="End date"
-                                    type="date"
-                                    name="endDate"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                )}
 
                 <div className="space-y-2">
                     <Select
@@ -207,11 +87,10 @@ export default function NewOfficialLayout({ children, register, errors, onIsOffi
                         error={errors?.voters?.message}
                         name="voters"
                         label="Voters Status"
-                        value={formData.voters}
-                        onChange={handleInputChange}
                         options={[
-                            { value: "registered", label: "Registered" },
-                            { value: "unregistered", label: "Unregistered" },
+                            { value: "", label: "Select Status" },
+                            { value: "YES", label: "Registered" },
+                            { value: "NO", label: "Unregistered" },
                         ]}
                     />
                 </div>
@@ -252,8 +131,8 @@ export default function NewOfficialLayout({ children, register, errors, onIsOffi
                         label="PWD Status"
                         options={[
                             { value: "", label: "Select" },
-                            { value: "yes", label: "Yes" },
-                            { value: "no", label: "No" },
+                            { value: "YES", label: "Yes" },
+                            { value: "NO", label: "No" },
                         ]}
                     />
                 </div>
@@ -269,8 +148,8 @@ export default function NewOfficialLayout({ children, register, errors, onIsOffi
                         label="Single Parent"
                         options={[
                             { value: "", label: "Select Status" },
-                            { value: "yes", label: "Yes" },
-                            { value: "no", label: "No" },
+                            { value: "YES", label: "Yes" },
+                            { value: "NO", label: "No" },
                         ]}
                     />
                 </div>

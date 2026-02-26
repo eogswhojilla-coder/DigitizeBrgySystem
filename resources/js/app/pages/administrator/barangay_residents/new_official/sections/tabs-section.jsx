@@ -13,7 +13,6 @@ import Button from "@/app/_components/button";
 export default function TabsSection() {
     const [activeTab, setActiveTab] = useState("basic");
     const [completedSteps, setCompletedSteps] = useState(["basic"]); // Track completed steps
-    const [isOfficial, setIsOfficial] = useState(false);
 
     const {
         register,
@@ -21,6 +20,7 @@ export default function TabsSection() {
         isSubmitting,
         reset,
         trigger,
+        watch,
         formState: { errors },
     } = useForm();
 
@@ -217,7 +217,6 @@ export default function TabsSection() {
                     <NewOfficialLayout 
                         errors={errors} 
                         register={register}
-                        onIsOfficialChange={setIsOfficial}
                     >
                         {activeTab === "basic" && (
                             <BasicInfoSection
@@ -229,6 +228,7 @@ export default function TabsSection() {
                             <OtherInfoSection
                                 errors={errors}
                                 register={register}
+                                watch={watch}
                             />
                         )}
                         {activeTab === "guardian" && (

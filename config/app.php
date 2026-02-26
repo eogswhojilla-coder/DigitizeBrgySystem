@@ -15,6 +15,10 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'barangay_name' => env('BARANGAY_NAME', 'Barangay Office'),
+    'municipality_name' => env('MUNICIPALITY_NAME', ''),
+    'province_name' => env('PROVINCE_NAME', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

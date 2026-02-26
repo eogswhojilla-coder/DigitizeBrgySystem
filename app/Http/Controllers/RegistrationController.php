@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BarangayResident;
 use App\Models\User;
+use App\Notifications\AccountApprovedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -226,6 +227,15 @@ class RegistrationController extends Controller
             $user->approval_date = now();
             $user->save();
             
+            // Send email notification if user has an email
+            if ($user->email) {
+                try {
+                    $user->notify(new AccountApprovedNotification($user, $user->admin_remarks));
+                } catch (\Exception $e) {
+                    Log::error('Failed to send approval email notification: ' . $e->getMessage());
+                }
+            }
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Account approved successfully',
@@ -307,6 +317,15 @@ class RegistrationController extends Controller
             $user->approved_by = Auth::id();
             $user->approval_date = now();
             $user->save();
+            
+            // Send email notification if user has an email
+            if ($user->email) {
+                try {
+                    $user->notify(new AccountApprovedNotification($user, $user->admin_remarks));
+                } catch (\Exception $e) {
+                    Log::error('Failed to send approval email notification: ' . $e->getMessage());
+                }
+            }
             
             return response()->json([
                 'success' => true,
