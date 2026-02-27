@@ -8,10 +8,13 @@ import store from "@/app/store/store";
 import { get_inventories_thunk } from "@/app/redux/inventories-thunk";
 
 export default function EditSection({ item, onClose }) {
+    const [qrPreview, setQrPreview] = useState(item?.gcash_qr_url || null);
+    
     const {
         register,
         handleSubmit,
         reset,
+        watch,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
@@ -25,8 +28,23 @@ export default function EditSection({ item, onClose }) {
             condition: item.condition,
             status: item.status,
             location: item.location,
+            has_fee: item.has_fee || false,
+            price: item.price || '',
         }
     });
+
+    const hasFee = watch("has_fee", item.has_fee || false);
+
+    const handleQrChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setQrPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const categories = [
         "Furniture",
@@ -45,7 +63,36 @@ export default function EditSection({ item, onClose }) {
 
     const onSubmit = async (data) => {
         try {
-            await update_inventories_service(item.id, data);
+            const formData = new FormData();
+            
+            // Append non-fee fields
+            const fieldsToAppend = [
+                'name', 'category', 'description', 'quantity', 
+                'minimum_quantity', 'borrowed', 'damaged', 
+                'condition', 'status', 'location'
+            ];
+            
+            fieldsToAppend.forEach(field => {
+                if (data[field] !== undefined && data[field] !== null) {
+                    formData.append(field, data[field]);
+                }
+            });
+            
+            // Handle has_fee conversion
+            formData.append('has_fee', data.has_fee ? '1' : '0');
+            
+            // Handle fee-related fields
+            if (data.has_fee) {
+                if (data.price) {
+                    formData.append('price', data.price);
+                }
+                
+                if (data.gcash_qr && data.gcash_qr.length > 0) {
+                    formData.append('gcash_qr', data.gcash_qr[0]);
+                }
+            }
+            
+            await update_inventories_service(item.id, formData);
             await store.dispatch(get_inventories_thunk());
             await Swal.fire({
                 icon: "success",
@@ -271,6 +318,95 @@ export default function EditSection({ item, onClose }) {
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
+                        </div>
+
+                        {/* Borrowing Fee Section */}
+                        <div className="border-t pt-4 mt-4">
+                            <div className="mb-4">
+                                <label className="flex items-center gap-3 cursor-pointer">
+                                    <span className="text-sm font-medium text-gray-700">
+                                        Has Borrowing Fee?
+                                    </span>
+                                    <div className="relative inline-block">
+                                        <input
+                                            type="checkbox"
+                                            {...register("has_fee")}
+                                            className="sr-only peer"
+                                        />
+                                        <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 peer-focus:ring-4 peer-focus:ring-blue-300 transition-all"></div>
+                                        <div className="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5"></div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            {hasFee && (
+                                <div className="space-y-4 pl-4 border-l-2 border-blue-200">
+                                    {/* Borrowing Fee Price */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Borrowing Fee (₱) *
+                                        </label>
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            min="0"
+                                            {...register("price", {
+                                                required: hasFee ? "Price is required when fee is enabled" : false,
+                                                valueAsNumber: false,
+                                            })}
+                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                                                errors.price ? "border-red-500" : "border-gray-300"
+                                            }`}
+                                            placeholder="0.00"
+                                        />
+                                        {errors.price && (
+                                            <p className="text-red-500 text-sm mt-1">
+                                                {errors.price.message}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    {/* GCash QR Upload */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            GCash QR Code {!item.gcash_qr && '*'}
+                                        </label>
+                                        <input
+                                            type="file"
+                                            accept="image/jpeg,image/jpg,image/png"
+                                            {...register("gcash_qr", {
+                                                required: hasFee && !item.gcash_qr ? "QR code is required when fee is enabled" : false
+                                            })}
+                                            onChange={handleQrChange}
+                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                                                errors.gcash_qr ? "border-red-500" : "border-gray-300"
+                                            }`}
+                                        />
+                                        {errors.gcash_qr && (
+                                            <p className="text-red-500 text-sm mt-1">
+                                                {errors.gcash_qr.message}
+                                            </p>
+                                        )}
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            {item.gcash_qr ? 'Upload a new file to replace the existing QR code' : 'Accepted formats: JPG, JPEG, PNG (Max 2MB)'}
+                                        </p>
+                                        
+                                        {/* QR Preview */}
+                                        {qrPreview && (
+                                            <div className="mt-3">
+                                                <p className="text-sm font-medium text-gray-700 mb-2">
+                                                    {item.gcash_qr ? 'Current/New QR Code:' : 'Preview:'}
+                                                </p>
+                                                <img
+                                                    src={qrPreview}
+                                                    alt="QR Code Preview"
+                                                    className="w-48 h-48 object-contain border-2 border-gray-200 rounded-lg"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Buttons */}

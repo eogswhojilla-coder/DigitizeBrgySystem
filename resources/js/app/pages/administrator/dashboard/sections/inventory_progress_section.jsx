@@ -3,9 +3,8 @@
 import React from 'react';
 import ChartCardSection from './chart_card_section';
 import { Package } from 'lucide-react';
-import { inventoryData } from './dummy_data';
 
-export default function InventoryProgressSection() {
+export default function InventoryProgressSection({ data }) {
     return (
         <ChartCardSection
             title="Inventory Status"
@@ -13,7 +12,7 @@ export default function InventoryProgressSection() {
             icon={<Package className="w-5 h-5 text-orange-600" />}
         >
             <div className="space-y-4">
-                {inventoryData.map((item) => (
+                {data?.map((item) => (
                     <div key={item.id} className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
                             <span className="font-medium text-gray-700">{item.name}</span>

@@ -20,6 +20,8 @@ class BorrowRequest extends Model
         'actual_return_date',
         'contact_number',
         'purpose',
+        'payment_reference',
+        'payment_receipt',
         'status',
         'approved_by',
         'approved_at',

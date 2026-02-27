@@ -4,9 +4,8 @@ import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import ChartCardSection from './chart_card_section';
 import { Shield } from 'lucide-react';
-import { blotterStatusData } from './dummy_data';
 
-export default function BlotterStatusDonutSection() {
+export default function BlotterStatusDonutSection({ data }) {
     return (
         <ChartCardSection
             title="Blotter Status"
@@ -16,7 +15,7 @@ export default function BlotterStatusDonutSection() {
             <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                     <Pie
-                        data={blotterStatusData}
+                        data={data}
                         cx="50%"
                         cy="50%"
                         labelLine={false}
@@ -26,7 +25,7 @@ export default function BlotterStatusDonutSection() {
                         fill="#8884d8"
                         dataKey="value"
                     >
-                        {blotterStatusData.map((entry, index) => (
+                        {data?.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                     </Pie>

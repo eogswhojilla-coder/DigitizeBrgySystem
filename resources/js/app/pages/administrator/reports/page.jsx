@@ -1,32 +1,33 @@
 import React, { useState } from "react";
-import {
-    Layers,
-    Filter,
-    RotateCcw,
-    Printer,
-    ChevronLeft,
-    ChevronRight,
-} from "lucide-react";
+import { Printer } from "lucide-react";
 import Layout from "../layout";
+import { usePage, router } from "@inertiajs/react";
 import SearchReportSection from "./sections/search-report-section";
 import TableSection from "./sections/table-section";
+import Button from "@/app/_components/button";
 
 export default function Page() {
+    const { residents, filters: initialFilters, totalCount } = usePage().props;
+
     return (
         <Layout>
-            <ResidentReport />
+            <ResidentReport 
+                residents={residents} 
+                initialFilters={initialFilters}
+                totalCount={totalCount}
+            />
         </Layout>
     );
 }
 
-function ResidentReport() {
+function ResidentReport({ residents, initialFilters, totalCount }) {
     const [filters, setFilters] = useState({
-        voters: "",
-        age: "",
-        status: "",
-        pwd: "",
-        singleParent: "",
-        senior: "",
+        voters: initialFilters?.voters || "",
+        age: initialFilters?.age || "",
+        status: initialFilters?.status || "",
+        pwd: initialFilters?.pwd || "",
+        singleParent: initialFilters?.singleParent || "",
+        senior: initialFilters?.senior || "",
     });
 
     const handleFilterChange = (field, value) => {
@@ -34,7 +35,11 @@ function ResidentReport() {
     };
 
     const handleFilter = () => {
-        console.log("Filtering with:", filters);
+        // Send filters to backend
+        router.get('/administrator/reports', filters, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const handleReset = () => {
@@ -46,35 +51,52 @@ function ResidentReport() {
             singleParent: "",
             senior: "",
         });
+        // Reset filters on backend
+        router.get('/administrator/reports', {}, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
-    const handlePrint = () => {
-        window.print();
+    const handleGeneratePdf = () => {
+        // Generate PDF with current filters
+        const queryParams = new URLSearchParams(filters).toString();
+        window.open(`/administrator/reports/generate-pdf?${queryParams}`, '_blank');
     };
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="">
                 {/* Header */}
-                <h1 className="text-2xl font-bold text-gray-800 mb-6">
-                    Resident Report
-                </h1>
-
-                {/* Filter Section */}
-                <SearchReportSection />
-                {/* Print Button */}
-                <div className="mb-4">
-                    <button
-                        onClick={handlePrint}
-                        className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded flex items-center gap-2 transition-colors"
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-800">
+                            Resident Report
+                        </h1>
+                        <p className="text-sm text-gray-600 mt-1">
+                            Total Residents: {totalCount}
+                        </p>
+                    </div>
+                    <Button
+                        onClick={handleGeneratePdf}
+                        variant="warning"
+                        className="flex items-center gap-2"
                     >
                         <Printer size={16} />
-                        PRINT
-                    </button>
+                        GENERATE PDF
+                    </Button>
                 </div>
 
+                {/* Filter Section */}
+                <SearchReportSection 
+                    filters={filters}
+                    onFilterChange={handleFilterChange}
+                    onFilter={handleFilter}
+                    onReset={handleReset}
+                />
+
                 {/* Table Section */}
-                <TableSection />
+                <TableSection residents={residents} />
             </div>
         </div>
     );

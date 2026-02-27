@@ -44,6 +44,13 @@ Route::put('barangay_residents/{id}/assign-position', [BarangayResidentControlle
 Route::resource('positions', PositionController::class);
 Route::resource('blotters', BlotterController::class);
 Route::resource('inventories', InventoriesController::class);
+
+// Admin Borrow Request Management
+Route::get('admin/borrow-requests', [InventoriesController::class, 'getAllBorrowRequests']);
+Route::patch('admin/borrow-requests/{id}/approve', [InventoriesController::class, 'approveBorrowRequest']);
+Route::patch('admin/borrow-requests/{id}/decline', [InventoriesController::class, 'declineBorrowRequest']);
+Route::patch('admin/borrow-requests/{id}/return', [InventoriesController::class, 'markAsReturned']);
+
 Route::resource('families', FamiliesController::class);
 Route::resource('family_members', FamilyMemberController::class);
 Route::resource('administrator', AdministratorController::class);

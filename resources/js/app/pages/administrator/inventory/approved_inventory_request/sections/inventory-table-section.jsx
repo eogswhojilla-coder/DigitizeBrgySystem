@@ -1,59 +1,9 @@
 import { Eye, Package } from 'lucide-react'
-import React, { useState } from 'react'
+import React from 'react'
 import InventoryTableDetailsSection from './inventory-table-details-section';
 
-export default function InventoryTableSection({ tab }) {
-    const [selectedFilter, setSelectedFilter] = useState('Pending');
-    const [requests, setRequests] = useState([
-        {
-            id: 1,
-            residentName: 'John Smith',
-            itemName: 'Laptop Dell XPS',
-            quantity: 1,
-            reason: 'Work presentation preparation',
-            dateNeeded: '2024-08-05',
-            status: 'Pending',
-            requestDate: '2024-08-03',
-            availableStock: 3
-        },
-        {
-            id: 2,
-            residentName: 'Maria Garcia',
-            itemName: 'Projector',
-            quantity: 1,
-            reason: 'Community meeting',
-            dateNeeded: '2024-08-06',
-            status: 'Approved',
-            requestDate: '2024-08-02',
-            availableStock: 2,
-            borrowDate: '2024-08-03'
-        },
-        {
-            id: 3,
-            residentName: 'David Chen',
-            itemName: 'Folding Tables',
-            quantity: 3,
-            reason: 'Birthday party setup',
-            dateNeeded: '2024-08-07',
-            status: 'Declined',
-            requestDate: '2024-08-01',
-            declineReason: 'Insufficient quantity available'
-        },
-        {
-            id: 4,
-            residentName: 'Sarah Johnson',
-            itemName: 'Sound System',
-            quantity: 1,
-            reason: 'Wedding ceremony',
-            dateNeeded: '2024-08-04',
-            status: 'Approved',
-            requestDate: '2024-07-30',
-            availableStock: 1,
-            borrowDate: '2024-08-01'
-        }
-    ]);
-
-    const filteredRequests = requests.filter(request => request.status === selectedFilter);
+export default function InventoryTableSection({ tab, requests }) {
+    const filteredRequests = requests.filter(request => request.status === tab);
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -69,8 +19,8 @@ export default function InventoryTableSection({ tab }) {
             {filteredRequests.length === 0 ? (
                 <div className="text-center py-12 bg-white rounded-lg border">
                     <Package size={48} className="mx-auto text-gray-400 mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No {selectedFilter.toLowerCase()} requests</h3>
-                    <p className="text-gray-600">There are currently no requests with {selectedFilter.toLowerCase()} status.</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No {tab.toLowerCase()} requests</h3>
+                    <p className="text-gray-600">There are currently no requests with {tab.toLowerCase()} status.</p>
                 </div>
             ) : (
                 filteredRequests.map((request) => (

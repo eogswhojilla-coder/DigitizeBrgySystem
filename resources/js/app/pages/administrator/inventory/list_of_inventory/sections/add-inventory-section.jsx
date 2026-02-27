@@ -12,10 +12,14 @@ export default function AddInventorySection() {
         register,
         handleSubmit,
         reset,
+        watch,
         formState: { errors, isSubmitting },
     } = useForm();
 
     const [showForm, setShowForm] = useState(false);
+    const [qrPreview, setQrPreview] = useState(null);
+    
+    const hasFee = watch("has_fee", false);
 
     const categories = [
         "Furniture",
@@ -32,9 +36,42 @@ export default function AddInventorySection() {
     const conditions = ["New", "Good", "Fair", "Poor"];
     const statuses = ["Active", "Damaged", "Retired"];
 
+    const handleQrChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setQrPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setQrPreview(null);
+        }
+    };
+
     const onSubmit = async (data) => {
         try {
-            await create_inventories_service(data);
+            const formData = new FormData();
+            
+            // Append all text fields except special ones
+            Object.keys(data).forEach(key => {
+                if (key !== 'gcash_qr' && key !== 'has_fee' && data[key] !== undefined && data[key] !== null) {
+                    formData.append(key, data[key]);
+                }
+            });
+            
+            // Convert has_fee to proper boolean value (1 or 0)
+            formData.append('has_fee', data.has_fee ? '1' : '0');
+            
+            // Only append price if has_fee is true
+            if (data.has_fee) {
+                // Append file if provided
+                if (data.gcash_qr && data.gcash_qr[0]) {
+                    formData.append('gcash_qr', data.gcash_qr[0]);
+                }
+            }
+            
+            await create_inventories_service(formData);
             await store.dispatch(get_inventories_thunk());
             await Swal.fire({
                 icon: "success",
@@ -45,12 +82,13 @@ export default function AddInventorySection() {
 
             reset();
             setShowForm(false);
+            setQrPreview(null);
         } catch (error) {
             console.error("Error saving item:", error);
             Swal.fire({
                 icon: "error",
                 title: "Error",
-                text: "Failed to save item. Please try again.",
+                text: error.response?.data?.message || "Failed to save item. Please try again.",
             });
         }
     };
@@ -317,6 +355,92 @@ export default function AddInventorySection() {
                                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
+                                </div>
+
+                                {/* Borrowing Fee Section */}
+                                <div className="border-t pt-4 space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <label className="block text-sm font-medium text-gray-700">
+                                            Has Borrowing Fee?
+                                        </label>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                {...register("has_fee")}
+                                                className="sr-only peer"
+                                            />
+                                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                        </label>
+                                    </div>
+
+                                    {hasFee && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fadeIn">
+                                            {/* Price Field */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                    Borrowing Fee (₱) *
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    min="0"
+                                                    placeholder="0.00"
+                                                    {...register("price", {
+                                                        required: hasFee ? "Price is required" : false,
+                                                        valueAsNumber: true,
+                                                        min: { value: 0, message: "Price must be 0 or greater" }
+                                                    })}
+                                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                                                        errors.price ? "border-red-500" : "border-gray-300"
+                                                    }`}
+                                                />
+                                                {errors.price && (
+                                                    <p className="text-red-500 text-sm mt-1">
+                                                        {errors.price.message}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            {/* GCash QR Upload */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                    GCash QR Code *
+                                                </label>
+                                                <input
+                                                    type="file"
+                                                    accept="image/jpeg,image/jpg,image/png"
+                                                    {...register("gcash_qr", {
+                                                        required: hasFee ? "QR code is required" : false,
+                                                    })}
+                                                    onChange={handleQrChange}
+                                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                                                        errors.gcash_qr ? "border-red-500" : "border-gray-300"
+                                                    }`}
+                                                />
+                                                {errors.gcash_qr && (
+                                                    <p className="text-red-500 text-sm mt-1">
+                                                        {errors.gcash_qr.message}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            {/* QR Preview */}
+                                            {qrPreview && (
+                                                <div className="md:col-span-2">
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                        QR Code Preview
+                                                    </label>
+                                                    <div className="border rounded-lg p-4 bg-gray-50">
+                                                        <img
+                                                            src={qrPreview}
+                                                            alt="QR Code Preview"
+                                                            className="max-w-xs mx-auto rounded-lg shadow-sm"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Buttons */}

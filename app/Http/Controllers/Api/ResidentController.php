@@ -181,7 +181,13 @@ class ResidentController extends Controller
         $requests = BorrowRequest::with(['inventory', 'user'])
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($request) {
+                $request->payment_receipt_url = $request->payment_receipt 
+                    ? asset('storage/' . $request->payment_receipt) 
+                    : null;
+                return $request;
+            });
         
         return response()->json([
             'success' => true,
@@ -192,14 +198,32 @@ class ResidentController extends Controller
     // Submit Borrow Request
     public function submitBorrowRequest(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        // Get inventory first to check if it has a fee
+        $inventory = Inventories::find($request->inventory_id);
+        
+        if (!$inventory) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Inventory item not found'
+            ], 404);
+        }
+
+        $rules = [
             'inventory_id' => 'required|exists:inventories,id',
             'quantity' => 'required|integer|min:1',
             'borrow_date' => 'required|date|after_or_equal:today',
             'return_date' => 'required|date|after:borrow_date',
             'contact_number' => 'required|regex:/^09\d{9}$/',
             'purpose' => 'required|string|max:500',
-        ]);
+        ];
+
+        // Add payment validation if inventory has a fee
+        if ($inventory->has_fee) {
+            $rules['payment_reference'] = 'required|string|max:255';
+            $rules['payment_receipt'] = 'required|image|mimes:jpeg,jpg,png|max:2048';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json([
@@ -211,7 +235,6 @@ class ResidentController extends Controller
 
         try {
             // Check if inventory has enough quantity
-            $inventory = Inventories::findOrFail($request->inventory_id);
             $available = $inventory->quantity - ($inventory->borrowed ?? 0);
 
             if ($available < $request->quantity) {
@@ -221,7 +244,7 @@ class ResidentController extends Controller
                 ], 422);
             }
 
-            $borrowRequest = BorrowRequest::create([
+            $data = [
                 'user_id' => Auth::id(),
                 'inventory_id' => $request->inventory_id,
                 'quantity' => $request->quantity,
@@ -230,7 +253,16 @@ class ResidentController extends Controller
                 'contact_number' => $request->contact_number,
                 'purpose' => $request->purpose,
                 'status' => 'pending',
-            ]);
+            ];
+
+            // Handle payment receipt upload if inventory has fee
+            if ($inventory->has_fee && $request->hasFile('payment_receipt')) {
+                $receiptPath = $request->file('payment_receipt')->store('inventory/receipts', 'public');
+                $data['payment_receipt'] = $receiptPath;
+                $data['payment_reference'] = $request->payment_reference;
+            }
+
+            $borrowRequest = BorrowRequest::create($data);
 
             return response()->json([
                 'success' => true,

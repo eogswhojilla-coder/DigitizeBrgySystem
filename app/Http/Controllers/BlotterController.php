@@ -108,6 +108,12 @@ class BlotterController extends Controller
         return response()->json($blotters, 200);
     }
     
+    public function show($id)
+    {
+        $blotter = Blotter::with('respondentResident')->findOrFail($id);
+        return response()->json($blotter, 200);
+    }
+    
     public function update(Request $request, $id)
     {
         $blotter = Blotter::findOrFail($id);

@@ -11,6 +11,7 @@ import certificateTypeSlice from "../redux/certificate-type-slice";
 import announcementSlice from "../redux/announcement-slice"; // ✅ Add this import
 import familySlice from "../redux/family-slice";
 import pendingAccountsSlice from "../redux/pending-accounts-slice";
+import borrowRequestsSlice from "../redux/borrow-requests-slice";
 
 const store = configureStore({
     reducer: {
@@ -26,6 +27,7 @@ const store = configureStore({
         announcements: announcementSlice, // ✅ Add this line
         families: familySlice.reducer,
         pendingAccounts: pendingAccountsSlice,
+        borrowRequests: borrowRequestsSlice,
     },
 });
 

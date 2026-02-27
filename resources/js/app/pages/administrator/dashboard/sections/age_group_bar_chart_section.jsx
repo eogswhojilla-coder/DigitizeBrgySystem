@@ -4,9 +4,8 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import ChartCardSection from './chart_card_section';
 import { Users } from 'lucide-react';
-import { ageGroupData } from './dummy_data';
 
-export default function AgeGroupBarChartSection() {
+export default function AgeGroupBarChartSection({ data }) {
     return (
         <ChartCardSection
             title="Population by Age Group"
@@ -14,7 +13,7 @@ export default function AgeGroupBarChartSection() {
             icon={<Users className="w-5 h-5 text-purple-600" />}
         >
             <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={ageGroupData}>
+                <BarChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis dataKey="ageGroup" />
                     <YAxis />

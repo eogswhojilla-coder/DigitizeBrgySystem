@@ -262,7 +262,7 @@ class ResidentController extends Controller
                 'message' => 'Profile updated successfully',
                 'data' => $user
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception $e) {   
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update profile',

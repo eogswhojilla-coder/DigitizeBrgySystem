@@ -3,7 +3,10 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BarangayHighlightController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\SystemLogsController;
 use App\Models\Announcement;
 use App\Models\BarangayHighlight;
 use App\Models\Certificate;
@@ -94,9 +97,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 
 // ADMIN ROUTES - Protected by auth:sanctum AND role:admin
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('administrator/dashboard/page');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('barangay_residents')->group(function () {
         Route::get('new_official', function () {
@@ -209,9 +210,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->grou
         Route::post('/{highlight}/toggle-active', [BarangayHighlightController::class, 'toggleActive'])->name('toggle-active');
     });
 
-    Route::get('reports', function () {
-        return Inertia::render('administrator/reports/page');
-    });
+    Route::get('reports', [ReportsController::class, 'index'])->name('reports.index');
+    Route::get('reports/generate-pdf', [ReportsController::class, 'generatePdf'])->name('reports.generate-pdf');
 
     Route::prefix('inventory')->group(function () {
         Route::get('list_of_inventory', function () {
@@ -225,9 +225,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->grou
         });
     });
 
-    Route::get('system_logs', function () {
-        return Inertia::render('administrator/system_logs/page');
-    });
+    Route::get('system_logs', [SystemLogsController::class, 'index'])->name('system_logs.index');
 
     // Backup Routes
     Route::prefix('backup')->name('backup.')->group(function () {

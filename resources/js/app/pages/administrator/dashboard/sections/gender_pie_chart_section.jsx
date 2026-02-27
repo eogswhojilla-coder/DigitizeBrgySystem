@@ -4,9 +4,8 @@ import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import ChartCardSection from './chart_card_section';
 import { Users } from 'lucide-react';
-import { genderData } from './dummy_data';
 
-export default function GenderPieChartSection() {
+export default function GenderPieChartSection({ data }) {
     return (
         <ChartCardSection
             title="Population by Gender"
@@ -16,7 +15,7 @@ export default function GenderPieChartSection() {
             <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                     <Pie
-                        data={genderData}
+                        data={data}
                         cx="50%"
                         cy="50%"
                         labelLine={false}
@@ -25,7 +24,7 @@ export default function GenderPieChartSection() {
                         fill="#8884d8"
                         dataKey="value"
                     >
-                        {genderData.map((entry, index) => (
+                        {data?.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                     </Pie>

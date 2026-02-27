@@ -3,7 +3,6 @@
 import React from 'react';
 import ChartCardSection from './chart_card_section';
 import { Activity, User, FileText, Shield, Package, Users } from 'lucide-react';
-import { activityFeed } from './dummy_data';
 
 const iconMap = {
     user: User,
@@ -21,7 +20,7 @@ const colorMap = {
     users: 'bg-purple-100 text-purple-600'
 };
 
-export default function ActivityFeedSection() {
+export default function ActivityFeedSection({ data }) {
     return (
         <ChartCardSection
             title="Recent Activity"
@@ -29,7 +28,7 @@ export default function ActivityFeedSection() {
             icon={<Activity className="w-5 h-5 text-green-600" />}
         >
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                {activityFeed.map((activity) => {
+                {data?.map((activity) => {
                     const Icon = iconMap[activity.icon] || Activity;
                     const colorClass = colorMap[activity.icon] || 'bg-gray-100 text-gray-600';
 

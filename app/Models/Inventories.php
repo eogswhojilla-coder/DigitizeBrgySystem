@@ -17,5 +17,8 @@ class Inventories extends Model
         'borrowed',           // ✅ Add this
         'damaged',            // ✅ Add this
         'minimum_quantity',   // ✅ Add this
+        'has_fee',
+        'price',
+        'gcash_qr',
     ];
 }

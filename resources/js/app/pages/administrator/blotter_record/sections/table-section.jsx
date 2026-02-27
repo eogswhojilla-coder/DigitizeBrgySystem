@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { Edit } from "lucide-react";
+import { Edit, Eye } from "lucide-react";
 import { useSelector } from "react-redux";
 import Table from "@/app/_components/table";
+import ViewBlotterModal from "./view-blotter-modal";
 
 export default function TableSection() {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedItems, setSelectedItems] = useState([]);
+    const [viewModalOpen, setViewModalOpen] = useState(false);
+    const [selectedBlotterId, setSelectedBlotterId] = useState(null);
     const { blotters } = useSelector((store) => store.blotters);
     const [entriesPerPage, setEntriesPerPage] = useState(10);
 
@@ -22,6 +25,16 @@ export default function TableSection() {
         setSelectedItems((prev) =>
             checked ? [...prev, id] : prev.filter((item) => item !== id),
         );
+    };
+
+    const handleViewBlotter = (blotterId) => {
+        setSelectedBlotterId(blotterId);
+        setViewModalOpen(true);
+    };
+
+    const handleCloseViewModal = () => {
+        setViewModalOpen(false);
+        setSelectedBlotterId(null);
     };
 
     // Filter blotters based on search term
@@ -111,14 +124,33 @@ export default function TableSection() {
         dateIncident: blotter.date_of_incident,
         dateReported: blotter.date_reported,
         action: (
-            <button className="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 p-2 rounded transition-colors">
-                <Edit size={16} />
-            </button>
+            <div className="flex gap-2">
+                <button 
+                    onClick={() => handleViewBlotter(blotter.id)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition-colors"
+                    title="View Details"
+                >
+                    <Eye size={16} />
+                </button>
+                <button 
+                    className="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 p-2 rounded transition-colors"
+                    title="Edit"
+                >
+                    <Edit size={16} />
+                </button>
+            </div>
         ),
     }));
 
     return (
         <div>
+            {/* View Blotter Modal */}
+            <ViewBlotterModal 
+                isOpen={viewModalOpen}
+                onClose={handleCloseViewModal}
+                blotterId={selectedBlotterId}
+            />
+
             {/* Controls Section */}
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white">
                 <div className="flex items-center gap-2">

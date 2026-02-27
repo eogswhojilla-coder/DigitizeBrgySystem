@@ -4,9 +4,8 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import ChartCardSection from './chart_card_section';
 import { Activity } from 'lucide-react';
-import { monthlyActivityData } from './dummy_data';
 
-export default function MonthlyActivityChartSection() {
+export default function MonthlyActivityChartSection({ data }) {
     return (
         <ChartCardSection
             title="Monthly Activity Trends"
@@ -14,7 +13,7 @@ export default function MonthlyActivityChartSection() {
             icon={<Activity className="w-5 h-5 text-green-600" />}
         >
             <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={monthlyActivityData}>
+                <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis dataKey="month" />
                     <YAxis />

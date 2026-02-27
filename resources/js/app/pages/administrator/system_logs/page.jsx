@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import Layout from '../layout';
-import { FileText, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import SearchSystemLogsSection from './sections/search-system-logs-section';
-import TableSystemLogsSection from './sections/table-system-logs-section';
-import PaginationSystemLogsSection from './sections/pagination-system-logs-section';
+import { FileText, Search } from 'lucide-react';
+import { usePage, router } from '@inertiajs/react';
 
 export default function Page() {
   return (
@@ -14,122 +12,44 @@ export default function Page() {
 }
 
 const SystemLogs = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
+  const { logs, search: initialSearch, perPage: initialPerPage } = usePage().props;
+  const [searchTerm, setSearchTerm] = useState(initialSearch || '');
+  const [rowsPerPage, setRowsPerPage] = useState(initialPerPage || 10);
 
-  const logs = [
-    {
-      id: 1559,
-      message: 'ADMIN: Admin KIN | LOGIN',
-      date: '20-8-2025 10:36 AM'
-    },
-    {
-      id: 1558,
-      message: 'ADMIN: Admin KIN | LOGIN',
-      date: '19-8-2025 1:42 PM'
-    },
-    {
-      id: 1557,
-      message: 'ADMIN: Admin KIN | LOGIN',
-      date: '18-8-2025 9:46 PM'
-    },
-    {
-      id: 1556,
-      message: 'OFFICIAL: asdasd asdasd | LOGIN',
-      date: '13-8-2025 6:26 PM'
-    },
-    {
-      id: 1555,
-      message: 'ADMIN: Admin KIN | LOGOUT',
-      date: '13-8-2025 12:26 PM'
-    },
-    {
-      id: 1554,
-      message: 'ADMIN: ADDED ADMINISTRATOR - 1840335575660706081320251826120801 | asdasd asdasd',
-      date: '13-8-2025 6:26 PM'
-    },
-    {
-      id: 1553,
-      message: 'ADMIN: Admin KIN | LOGIN',
-      date: '13-8-2025 5:06 PM'
-    },
-    {
-      id: 1552,
-      message: 'ADMIN: Admin KIN | LOGIN',
-      date: '12-8-2025 5:29 PM'
-    },
-    {
-      id: 1551,
-      message: 'ADMIN: ADDED POSITION - 9641038397690763080620250924480341 | POSITION NAME Kawatan | POSITION LIMIT 5',
-      date: '6-8-2025 9:24 AM'
-    },
-    {
-      id: 1550,
-      message: 'ADMIN: Admin KIN | LOGIN',
-      date: '6-8-2025 9:21 AM'
-    }
-  ];
-
-  const filteredLogs = logs.filter(log =>
-    log.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    log.date.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalEntries = filteredLogs.length;
-  const totalPages = Math.ceil(totalEntries / rowsPerPage);
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const endIndex = Math.min(startIndex + rowsPerPage, totalEntries);
-  const currentLogs = filteredLogs.slice(startIndex, endIndex);
-
-  const getMessageType = (message) => {
-    if (message.includes('LOGIN')) return 'login';
-    if (message.includes('LOGOUT')) return 'logout';
-    if (message.includes('ADDED')) return 'added';
-    return 'default';
+  const handleSearch = (value) => {
+    setSearchTerm(value);
+    router.get(route('system_logs.index'), {
+      search: value,
+      per_page: rowsPerPage,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
   };
 
-  const getMessageColor = (type) => {
-    switch (type) {
-      case 'login': return 'text-green-700 bg-green-50';
-      case 'logout': return 'text-orange-700 bg-orange-50';
-      case 'added': return 'text-blue-700 bg-blue-50';
+  const handleRowsPerPageChange = (value) => {
+    setRowsPerPage(value);
+    router.get(route('system_logs.index'), {
+      search: searchTerm,
+      per_page: value,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const getMessageColor = (action) => {
+    switch (action?.toUpperCase()) {
+      case 'LOGIN': return 'text-green-700 bg-green-50';
+      case 'LOGOUT': return 'text-orange-700 bg-orange-50';
+      case 'CREATE':
+      case 'ADD':
+      case 'ADDED': return 'text-blue-700 bg-blue-50';
+      case 'UPDATE':
+      case 'EDIT': return 'text-yellow-700 bg-yellow-50';
+      case 'DELETE': return 'text-red-700 bg-red-50';
       default: return 'text-gray-700 bg-gray-50';
     }
-  };
-
-  const generatePageNumbers = () => {
-    const pages = [];
-    const maxVisiblePages = 5;
-
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      if (currentPage <= 3) {
-        for (let i = 1; i <= 4; i++) {
-          pages.push(i);
-        }
-        pages.push('...');
-        pages.push(totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1);
-        pages.push('...');
-        for (let i = totalPages - 3; i <= totalPages; i++) {
-          pages.push(i);
-        }
-      } else {
-        pages.push(1);
-        pages.push('...');
-        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-          pages.push(i);
-        }
-        pages.push('...');
-        pages.push(totalPages);
-      }
-    }
-    return pages;
   };
 
   return (
@@ -151,10 +71,7 @@ const SystemLogs = () => {
               <span className="text-gray-700">Rows per page:</span>
               <select
                 value={rowsPerPage}
-                onChange={(e) => {
-                  setRowsPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
+                onChange={(e) => handleRowsPerPageChange(Number(e.target.value))}
                 className="border border-gray-300 rounded px-5 py-1 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value={10}>10</option>
@@ -163,18 +80,105 @@ const SystemLogs = () => {
                 <option value={100}>100</option>
               </select>
             </div>
-            <SearchSystemLogsSection />
+            
+            <div className="flex items-center gap-2">
+              <span className="text-gray-700">SEARCH:</span>
+              <div className="relative">
+                <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch(searchTerm);
+                    }
+                  }}
+                  onBlur={() => handleSearch(searchTerm)}
+                  className="border border-gray-300 rounded pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Search logs..."
+                />
+              </div>
+            </div>
           </div>
 
           {/* Table */}
           <div className="overflow-x-auto">
-            <TableSystemLogsSection />
+            <table className="w-full">
+              <thead className="bg-gray-100 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    No. ↕
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Message ↕
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Date ↕
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {logs.data && logs.data.length > 0 ? (
+                  logs.data.map((log, index) => (
+                    <tr key={log.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {log.id}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getMessageColor(log.action)}`}>
+                          {log.message}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                        {log.date}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="px-6 py-8 text-center text-gray-500">
+                      No logs found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
 
-          {/* Footer */}
-          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-between items-center">
-            <PaginationSystemLogsSection />
-          </div>
+          {/* Pagination Footer */}
+          {logs.data && logs.data.length > 0 && (
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-between items-center">
+              <div className="text-sm text-gray-700">
+                Showing {logs.from} to {logs.to} of {logs.total} entries
+              </div>
+              <div className="flex gap-1">
+                {/* Pagination controls */}
+                {logs.links.map((link, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      if (link.url) {
+                        router.visit(link.url, {
+                          preserveState: true,
+                          replace: true,
+                        });
+                      }
+                    }}
+                    disabled={!link.url}
+                    className={`px-3 py-1 rounded ${
+                      link.active
+                        ? 'bg-blue-600 text-white'
+                        : link.url
+                        ? 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                        : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    }`}
+                    dangerouslySetInnerHTML={{ __html: link.label }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

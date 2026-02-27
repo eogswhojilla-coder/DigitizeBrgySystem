@@ -2,7 +2,12 @@ import axios from "axios";
 
 export function create_inventories_service(data) {
     try {
-        const result = axios.post("/api/inventories", data);
+        const config = data instanceof FormData ? {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        } : {};
+        const result = axios.post("/api/inventories", data, config);
         return result;
     } catch (error) {}
 }
@@ -28,9 +33,22 @@ export async function delete_inventories_service(id) {
     } catch (error) {}
 }
 
-export async function update_inventories_service(data) {
+export async function update_inventories_service(id, data) {
     try {
-        const result =await axios.put(`/api/inventories/${data.id}`, data);
+        const config = data instanceof FormData ? {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        } : {};
+        
+        // For FormData, append _method for Laravel PUT
+        if (data instanceof FormData) {
+            data.append('_method', 'PUT');
+        }
+        
+        const result = await axios.post(`/api/inventories/${id}`, data, config);
         return result;
-    } catch (error) {}
+    } catch (error) {
+        throw error;
+    }
 }

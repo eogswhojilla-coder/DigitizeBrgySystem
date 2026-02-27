@@ -1,24 +1,10 @@
 import React, { useState } from "react";
 import Layout from "../layout";
-import Button from "@/app/_components/button";
-import Input from "@/app/_components/input";
-import { H1Icon, UserCircleIcon } from "@heroicons/react/24/outline";
-import TextArea from "@/app/_components/textarea";
-import Radio from "@/app/_components/radio";
-import Modal from "@/Components/Modal";
-import DashboardCardSection from "./sections/dashboard-card-section";
-import Card from "@/app/_components/card";
+import { usePage } from "@inertiajs/react";
 import {
     Package,
     FileText,
     Users,
-    AlertTriangle,
-    TrendingDown,
-    Clock,
-    Wrench,
-    History,
-    Download,
-    BarChart3,
     DollarSign,
     Shield,
     User,
@@ -34,13 +20,22 @@ import FamilyStackedBarChartSection from "./sections/family_stacked_bar_chart_se
 import InventoryProgressSection from "./sections/inventory_progress_section";
 import RecentTransactionsTableSection from "./sections/recent_transactions_table_section";
 import ActivityFeedSection from "./sections/activity_feed_section";
-import { statsData } from "./sections/dummy_data";
 
 export default function Page() {
-    const [open, setOpen] = useState(false);
+    const { 
+        statsData, 
+        genderData, 
+        ageGroupData, 
+        monthlyActivityData, 
+        blotterStatusData, 
+        familyDistributionData, 
+        inventoryData, 
+        recentTransactions, 
+        activityFeed 
+    } = usePage().props;
+    
     return (
         <Layout>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6"></div>
             <div className="space-y-6">
                 {/* Page Header */}
                 <div className="flex items-center justify-between">
@@ -119,22 +114,22 @@ export default function Page() {
 
                 {/* Charts Grid - Row 1 */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <MonthlyActivityChartSection />
-                    <GenderPieChartSection />
+                    <MonthlyActivityChartSection data={monthlyActivityData} />
+                    <GenderPieChartSection data={genderData} />
                 </div>
 
                 {/* Charts Grid - Row 2 */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <AgeGroupBarChartSection />
-                    <BlotterStatusDonutSection />
-                    <FamilyStackedBarChartSection />
+                    <AgeGroupBarChartSection data={ageGroupData} />
+                    <BlotterStatusDonutSection data={blotterStatusData} />
+                    <FamilyStackedBarChartSection data={familyDistributionData} />
                 </div>
 
                 {/* Bottom Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <InventoryProgressSection />
-                    <RecentTransactionsTableSection />
-                    <ActivityFeedSection />
+                    <InventoryProgressSection data={inventoryData} />
+                    <RecentTransactionsTableSection data={recentTransactions} />
+                    <ActivityFeedSection data={activityFeed} />
                 </div>
             </div>
         </Layout>

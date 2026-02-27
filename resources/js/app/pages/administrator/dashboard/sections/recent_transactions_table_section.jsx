@@ -3,9 +3,8 @@
 import React from 'react';
 import ChartCardSection from './chart_card_section';
 import { FileText, ExternalLink } from 'lucide-react';
-import { recentTransactions } from './dummy_data';
 
-export default function RecentTransactionsTableSection() {
+export default function RecentTransactionsTableSection({ data }) {
     return (
         <ChartCardSection
             title="Recent Transactions"
@@ -30,7 +29,7 @@ export default function RecentTransactionsTableSection() {
                         </tr>
                     </thead>
                     <tbody>
-                        {recentTransactions.map((transaction) => (
+                        {data?.map((transaction) => (
                             <tr 
                                 key={transaction.id} 
                                 className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
