@@ -23,6 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register role middleware alias
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureUserRole::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

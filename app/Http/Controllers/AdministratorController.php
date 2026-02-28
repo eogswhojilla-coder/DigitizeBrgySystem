@@ -37,9 +37,27 @@ class AdministratorController extends Controller
     public function index()
     {
         $administrators = User::where('user_type', 'admin')
+            ->with('roles')
             ->orderBy('id', 'desc')
             ->paginate(10);
         return response()->json($administrators, 200);
+    }
+
+    public function assignRole(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'role' => 'required|string|exists:roles,name',
+        ]);
+
+        $administrator = User::where('user_type', 'admin')->findOrFail($id);
+        
+        // Sync roles (replaces all existing roles with the new one)
+        $administrator->syncRoles([$validated['role']]);
+
+        return response()->json([
+            'message' => 'Role assigned successfully',
+            'user' => $administrator->load('roles')
+        ], 200);
     }
 
     public function destroy(Request $request, $id)

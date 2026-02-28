@@ -59,7 +59,7 @@ export default function Page() {
                 </div>
 
                 {/* Stats Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                     <StatCardSection
                         icon={<Users className="w-6 h-6" />}
                         title="Total Residents"
@@ -100,7 +100,7 @@ export default function Page() {
                         trend={statsData.inventoryItems.trend}
                         color="green"
                     />
-                    <StatCardSection
+                    {/* <StatCardSection
                         icon={<DollarSign className="w-6 h-6" />}
                         title="Monthly Revenue"
                         value={`₱${(
@@ -109,7 +109,7 @@ export default function Page() {
                         change={statsData.monthlyRevenue.change}
                         trend={statsData.monthlyRevenue.trend}
                         color="pink"
-                    />
+                    /> */}
                 </div>
 
                 {/* Charts Grid - Row 1 */}

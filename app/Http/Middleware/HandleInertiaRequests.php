@@ -31,10 +31,21 @@ class HandleInertiaRequests extends Middleware
     {
         $user = $request->user();
         
+        // Get permissions and roles for admin users only
+        $permissions = null;
+        $roles = null;
+        
+        if ($user && $user->user_type !== 'resident') {
+            $permissions = $user->getAllPermissions()->pluck('name')->toArray();
+            $roles = $user->getRoleNames()->toArray();
+        }
+        
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $user,
+                'permissions' => $permissions,
+                'roles' => $roles,
             ],
             'profile' => $user ? [
                 'profileImage' => $user->image ? asset('storage/' . $user->image) : null,

@@ -34,3 +34,14 @@ export function update_administrator_service(data) {
         return result;
     } catch (error) {}
 }
+
+export async function assign_role_service(data) {
+    try {
+        const result = await axios.post(`/api/administrator/${data.id}/assign-role`, {
+            role: data.role
+        });
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
