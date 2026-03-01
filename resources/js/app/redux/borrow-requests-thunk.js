@@ -44,10 +44,10 @@ export function decline_borrow_request_thunk(id, remarks) {
     };
 }
 
-export function mark_as_returned_thunk(id, remarks = '') {
+export function mark_as_returned_thunk(id, condition_after_return, remarks = '') {
     return async function (dispatch, getState) {
         try {
-            await mark_as_returned_service(id, remarks);
+            await mark_as_returned_service(id, condition_after_return, remarks);
             // Refresh the list after marking as returned
             dispatch(get_borrow_requests_thunk(''));
         } catch (error) {

@@ -196,7 +196,7 @@ class InventoriesController extends Controller
 
         // Check if inventory has enough quantity
         $inventory = $borrowRequest->inventory;
-        $available = $inventory->quantity - ($inventory->borrowed ?? 0);
+        $available = $inventory->quantity - ($inventory->borrowed ?? 0) - ($inventory->damaged ?? 0);
 
         if ($available < $borrowRequest->quantity) {
             return response()->json([
@@ -299,16 +299,27 @@ class InventoriesController extends Controller
             ], 422);
         }
 
+        // Validate condition
+        $request->validate([
+            'condition_after_return' => 'required|in:Good,Fair,Damaged,Lost'
+        ]);
+
         // Update borrow request
         $borrowRequest->update([
             'status' => 'returned',
             'actual_return_date' => now(),
+            'condition_after_return' => $request->condition_after_return,
             'remarks' => $request->remarks
         ]);
 
         // Update inventory: decrease borrowed count
         $inventory = $borrowRequest->inventory;
         $inventory->decrement('borrowed', $borrowRequest->quantity);
+
+        // If damaged or lost, update damaged count
+        if (in_array($request->condition_after_return, ['Damaged', 'Lost'])) {
+            $inventory->increment('damaged', $borrowRequest->quantity);
+        }
 
         return response()->json([
             'success' => true,

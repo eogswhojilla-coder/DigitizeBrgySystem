@@ -8,7 +8,7 @@ export default function AboutSection() {
         email: "brgy.sanisidro@email.gov.ph",
         officeHours: "Mon–Fri, 8:00 AM – 5:00 PM",
         address:
-            "Don Juan Road, San Carlos City, Negros Occidental 6127, Philippines",
+            "Don Juan Subd., Pres. Quirino St., Brgy. II, Barangay Hall, San Carlos City, Negros Occidental, Philippines",
         population: "12,847",
     };
 

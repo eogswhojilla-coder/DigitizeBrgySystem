@@ -96,8 +96,7 @@ export default function InventoryTableDetailsSection({ data, tab }) {
     const handleMarkReturned = async (id) => {
         try {
             setIsProcessing(true);
-            const remarks = `Condition: ${returnCondition}${returnNotes ? '. Notes: ' + returnNotes : ''}`;
-            await store.dispatch(mark_as_returned_thunk(id, remarks));
+            await store.dispatch(mark_as_returned_thunk(id, returnCondition, returnNotes));
             await Swal.fire({
                 icon: 'success',
                 title: 'Returned!',
@@ -344,10 +343,10 @@ export default function InventoryTableDetailsSection({ data, tab }) {
                                             onChange={(e) => setReturnCondition(e.target.value)}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         >
-                                            <option value="Excellent">Excellent</option>
                                             <option value="Good">Good</option>
                                             <option value="Fair">Fair</option>
                                             <option value="Damaged">Damaged</option>
+                                            <option value="Lost">Lost</option>
                                         </select>
                                     </div>
                                     <div>

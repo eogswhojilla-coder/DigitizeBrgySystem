@@ -18,6 +18,7 @@ class BorrowRequest extends Model
         'borrow_date',
         'return_date',
         'actual_return_date',
+        'condition_after_return',
         'contact_number',
         'purpose',
         'payment_reference',

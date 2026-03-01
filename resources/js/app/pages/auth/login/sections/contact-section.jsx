@@ -1,7 +1,7 @@
 export default function ContactSection() {
     const contactData = {
         address:
-            "Don Juan Road, San Carlos City, Negros Occidental 6127, Philippines",
+            "Don Juan Subd., Pres. Quirino St., Brgy. II, Barangay Hall, San Carlos City, Negros Occidental, Philippines",
         phone1: "+63 (02) 8123-4567",
         phone2: "+63 917 123 4567",
         email: "brgy.two@email.gov.ph",

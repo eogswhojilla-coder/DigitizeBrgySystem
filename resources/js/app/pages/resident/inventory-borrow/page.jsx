@@ -33,9 +33,10 @@ export default function Page() {
     }, [dispatch]);
 
     const inventoryData = inventories?.data || inventories || [];
-    const availableItems = inventoryData.filter(
-        (item) => item.status === "Active" && item.quantity > (item.borrowed || 0)
-    );
+    const availableItems = inventoryData.filter((item) => {
+        const available = item.quantity - (item.borrowed || 0) - (item.damaged || 0);
+        return item.status === "Active" && available > 0;
+    });
 
     const fetchMyBorrowRequests = async () => {
         try {
@@ -179,7 +180,7 @@ export default function Page() {
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {availableItems.map((item) => {
-                                        const available = item.quantity - (item.borrowed || 0);
+                                        const available = item.quantity - (item.borrowed || 0) - (item.damaged || 0);
                                         return (
                                             <div
                                                 key={item.id}
@@ -251,7 +252,7 @@ export default function Page() {
                             <p className="text-blue-800 text-lg font-bold">{selectedItem.name}</p>
                             <p className="text-sm text-blue-700 mt-1">{selectedItem.description}</p>
                             <div className="flex flex-wrap gap-4 mt-2 text-sm text-blue-700">
-                                <span>Available: {selectedItem.quantity - (selectedItem.borrowed || 0)}</span>
+                                <span>Available: {selectedItem.quantity - (selectedItem.borrowed || 0) - (selectedItem.damaged || 0)}</span>
                                  <span>•</span>
                                 <span>Category: {selectedItem.category || 'Equipment'}</span>
                                 {selectedItem.has_fee && (
@@ -272,13 +273,13 @@ export default function Page() {
                                     <input
                                         type="number"
                                         min="1"
-                                        max={selectedItem.quantity - (selectedItem.borrowed || 0)}
+                                        max={selectedItem.quantity - (selectedItem.borrowed || 0) - (selectedItem.damaged || 0)}
                                         {...register("quantity", {
                                             required: "Quantity is required",
                                             min: { value: 1, message: "Minimum quantity is 1" },
                                             max: {
-                                                value: selectedItem.quantity - (selectedItem.borrowed || 0),
-                                                message: `Maximum available is ${selectedItem.quantity - (selectedItem.borrowed || 0)}`
+                                                value: selectedItem.quantity - (selectedItem.borrowed || 0) - (selectedItem.damaged || 0),
+                                                message: `Maximum available is ${selectedItem.quantity - (selectedItem.borrowed || 0) - (selectedItem.damaged || 0)}`
                                             },
                                         })}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"

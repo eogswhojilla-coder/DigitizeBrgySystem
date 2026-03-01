@@ -103,7 +103,7 @@ export default function TableInventorySection() {
             ),
         },
         {
-            header: "Quantity",
+            header: "Total Stock",
             accessor: "quantity",
             cell: (item) => (
                 <div className="text-center">
@@ -115,6 +115,24 @@ export default function TableInventorySection() {
                     </div>
                 </div>
             ),
+        },
+        {
+            header: "Available",
+            accessor: "available",
+            cell: (item) => {
+                const available = (item.quantity || 0) - (item.borrowed || 0) - (item.damaged || 0);
+                const isLow = available <= (item.minimum_quantity || 5);
+                return (
+                    <div className="text-center">
+                        <div className={`text-sm font-bold ${isLow ? 'text-red-600' : 'text-green-600'}`}>
+                            {available}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                            {isLow ? '⚠️ Low' : '✓ Good'}
+                        </div>
+                    </div>
+                );
+            },
         },
         {
             header: "Borrowed",

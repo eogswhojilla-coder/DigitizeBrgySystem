@@ -35,20 +35,21 @@ import { PiCertificateDuotone } from "react-icons/pi";
 import { FaUserPlus, FaUsers, FaUsersCog } from "react-icons/fa";
 import ToastProvider from "@/app/_components/toast";
 import { DocumentCheckIcon } from "@heroicons/react/24/outline";
-import { usePage } from '@inertiajs/react';
+import { usePage } from "@inertiajs/react";
 
 export default function Layout({ children }) {
     const isCurrentMain = window.location.pathname.split("/")[2];
     const isCurrentSub = window.location.pathname.split("/")[3];
-    
+
     // 🔐 Get user permissions from Inertia props
     const { auth } = usePage().props;
     const permissions = auth?.permissions || [];
-    
+
     // Helper function to check permissions
     const hasPermission = (permission) => permissions.includes(permission);
-    const hasAnyPermission = (perms) => perms.some(p => permissions.includes(p));
-    
+    const hasAnyPermission = (perms) =>
+        perms.some((p) => permissions.includes(p));
+
     const navigation = [
         {
             name: "Dashboard",
@@ -107,7 +108,7 @@ export default function Layout({ children }) {
                     current: isCurrentSub == "account_approval",
                     show: hasPermission("residents.approve"),
                 },
-            ].filter(item => item.show !== false), // Filter out items without permission
+            ].filter((item) => item.show !== false), // Filter out items without permission
         },
         // {
         //     name: "User Approval",
@@ -167,7 +168,7 @@ export default function Layout({ children }) {
                     current: isCurrentSub == "certificate",
                     show: hasPermission("certificates.view"),
                 },
-            ].filter(item => item.show !== false),
+            ].filter((item) => item.show !== false),
         },
         {
             name: "Announcement",
@@ -176,13 +177,13 @@ export default function Layout({ children }) {
             current: isCurrentMain == "announcement",
             show: hasPermission("announcements.create"), // 🔐 Permission check
             children: [
-                {
-                    name: "Add Announcement",
-                    href: "/administrator/announcement/add_announcement",
-                    icon: <FcAdvertising className="h-6 w-6  text-blue-600" />,
-                    current: isCurrentSub == "add_announcement",
-                    show: hasPermission("announcements.create"),
-                },
+                // {
+                //     name: "Add Announcement",
+                //     href: "/administrator/announcement/add_announcement",
+                //     icon: <FcAdvertising className="h-6 w-6  text-blue-600" />,
+                //     current: isCurrentSub == "add_announcement",
+                //     show: hasPermission("announcements.create"),
+                // },
                 {
                     name: "Announcement List",
                     href: "/administrator/announcement/announcement_list",
@@ -197,7 +198,7 @@ export default function Layout({ children }) {
                     current: isCurrentSub == "calendar",
                     show: hasPermission("announcements.create"),
                 },
-            ].filter(item => item.show !== false),
+            ].filter((item) => item.show !== false),
         },
 
         {
@@ -207,22 +208,23 @@ export default function Layout({ children }) {
             current: isCurrentMain == "user",
             show: hasPermission("users.manage"), // 🔐 Permission check
             children: [
+                // {
+                //     name: "Resident",
+                //     href: "/administrator/user/resident_user",
+                //     icon: <FcReadingEbook className="h-6 w-6" />,
+                //     current: isCurrentSub == "resident_user",
+                //     show: hasPermission("users.manage"),
+                // },
                 {
-                    name: "Resident",
-                    href: "/administrator/user/resident_user",
-                    icon: <FcReadingEbook className="h-6 w-6" />,
-                    current: isCurrentSub == "resident_user",
-                    show: hasPermission("users.manage"),
-                },
-                {
-                    name: "Administrator",
+                    name: "Role Management",
                     href: "/administrator/user/administrator_user",
                     icon: <FcCustomerSupport className="h-6 w-6" />,
                     current: isCurrentSub == "administrator_user",
                     show: hasPermission("users.manage"),
                 },
-            ].filter(item => item.show !== false),
+            ].filter((item) => item.show !== false),
         },
+
         {
             name: "Family Profile",
             href: "#",
@@ -260,7 +262,7 @@ export default function Layout({ children }) {
                     current: isCurrentSub == "list_of_family",
                     show: hasPermission("residents.view"),
                 },
-            ].filter(item => item.show !== false),
+            ].filter((item) => item.show !== false),
         },
         {
             name: "Inventory",
@@ -290,7 +292,7 @@ export default function Layout({ children }) {
                     current: isCurrentSub == "view_inventory_report",
                     show: hasAnyPermission(["reports.view", "inventory.view"]),
                 },
-            ].filter(item => item.show !== false),
+            ].filter((item) => item.show !== false),
         },
 
         {
@@ -334,7 +336,8 @@ export default function Layout({ children }) {
             name: "Backup/Reports",
             href: "/administrator/backup",
             icon: <FcNook className="h-6 w-6" />,
-            current: isCurrentMain == "backup" || isCurrentMain == "backup_reports",
+            current:
+                isCurrentMain == "backup" || isCurrentMain == "backup_reports",
             show: hasPermission("backups.manage"), // 🔐 Permission check
         },
 
@@ -386,16 +389,20 @@ export default function Layout({ children }) {
         //         },
         //     ],
         // },
-    ].filter(item => item.show !== false); // 🔐 Filter out items without permission
+    ].filter((item) => item.show !== false); // 🔐 Filter out items without permission
 
     const userNavigation = [
         { name: "Your profile", href: "#" },
         { name: "Sign out", href: "#" },
     ];
-    
+
     return (
         <>
-            <SidebarSection navigation={navigation} permissions={permissions} roles={auth?.roles || []} />
+            <SidebarSection
+                navigation={navigation}
+                permissions={permissions}
+                roles={auth?.roles || []}
+            />
             <div className="lg:pl-72">
                 <TopbarSection userNavigation={userNavigation} />
 

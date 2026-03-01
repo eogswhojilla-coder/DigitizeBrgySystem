@@ -6,10 +6,13 @@ import {
     Transition,
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import React, { Fragment } from "react";
 
 export default function HeaderMenuSection({ userNavigation }) {
+    const { auth } = usePage().props;
+    const userRole = auth?.roles?.[0] || "Administrator";
+
     return (
         <Menu as="div" className="relative">
             <MenuButton className="-m-1.5 flex items-center p-1.5">
@@ -24,7 +27,7 @@ export default function HeaderMenuSection({ userNavigation }) {
                         aria-hidden="true"
                         className="ml-4 text-sm/6 font-semibold text-gray-900"
                     >
-                        Administrator
+                        {userRole}
                     </span>
                     <ChevronDownIcon
                         aria-hidden="true"

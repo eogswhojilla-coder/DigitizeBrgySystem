@@ -90,99 +90,167 @@ export default function InventoryTableSection({ inventories = [], reportType = '
                         <table className="w-full border-collapse">
                             <thead className="bg-gray-50">
                                 <tr>
-                                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                                        Item Name
-                                    </th>
-                                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                                        Category
-                                    </th>
-                                    {reportType === 'most-borrowed' && (
+                                    {reportType === 'borrow-history' ? (
                                         <>
                                             <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                                                Times Borrowed
+                                                Borrower Name
                                             </th>
                                             <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                                                Current Stock
-                                            </th>
-                                        </>
-                                    )}
-                                    {reportType === 'low-stock' && (
-                                        <>
-                                            <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                                                Current Stock
+                                                Item/Equipment
                                             </th>
                                             <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                                                Minimum Stock
+                                                Borrow Date
+                                            </th>
+                                            <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                                Return Date
+                                            </th>
+                                            <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                                Condition After Return
                                             </th>
                                             <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
                                                 Status
                                             </th>
                                         </>
-                                    )}
-                                    {reportType === 'damaged' && (
+                                    ) : (
                                         <>
                                             <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                                                Damaged Quantity
+                                                Item Name
                                             </th>
                                             <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                                                Total Stock
+                                                Category
+                                            </th>
+                                            {reportType === 'most-borrowed' && (
+                                                <>
+                                                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                                        Times Borrowed
+                                                    </th>
+                                                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                                        Current Stock
+                                                    </th>
+                                                </>
+                                            )}
+                                            {reportType === 'low-stock' && (
+                                                <>
+                                                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                                        Current Stock
+                                                    </th>
+                                                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                                        Minimum Stock
+                                                    </th>
+                                                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                                        Status
+                                                    </th>
+                                                </>
+                                            )}
+                                            {reportType === 'damaged' && (
+                                                <>
+                                                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                                        Damaged Quantity
+                                                    </th>
+                                                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                                        Total Stock
+                                                    </th>
+                                                </>
+                                            )}
+                                            <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                                Location
                                             </th>
                                         </>
                                     )}
-                                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                                        Location
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {reportData.map((item, index) => (
                                     <tr key={item.id || index} className="hover:bg-gray-50 transition-colors">
-                                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">
-                                            {item.item_name || item.name}
-                                        </td>
-                                        <td className="border border-gray-300 px-4 py-3 text-gray-700">
-                                            {item.category || 'N/A'}
-                                        </td>
-                                        {reportType === 'most-borrowed' && (
+                                        {reportType === 'borrow-history' ? (
                                             <>
-                                                <td className="border border-gray-300 px-4 py-3 font-semibold text-blue-600">
-                                                    {item.borrowed || 0}
+                                                <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">
+                                                    {item.borrower_name || item.resident_name || 'N/A'}
                                                 </td>
                                                 <td className="border border-gray-300 px-4 py-3 text-gray-700">
-                                                    {item.quantity || 0}
-                                                </td>
-                                            </>
-                                        )}
-                                        {reportType === 'low-stock' && (
-                                            <>
-                                                <td className="border border-gray-300 px-4 py-3">
-                                                    <span className="font-semibold text-red-600">
-                                                        {item.quantity || 0}
-                                                    </span>
+                                                    {item.item_name || item.equipment_name || item.name || 'N/A'}
                                                 </td>
                                                 <td className="border border-gray-300 px-4 py-3 text-gray-700">
-                                                    {item.minimum_quantity || 5}
+                                                    {item.borrow_date || item.borrowed_at || 'N/A'}
+                                                </td>
+                                                <td className="border border-gray-300 px-4 py-3 text-gray-700">
+                                                    {item.return_date || item.returned_at || 'Not Returned'}
                                                 </td>
                                                 <td className="border border-gray-300 px-4 py-3">
-                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                                        Low Stock
+                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                        item.condition_after_return === 'Good' || item.return_condition === 'Good'
+                                                            ? 'bg-green-100 text-green-800'
+                                                            : item.condition_after_return === 'Damaged' || item.return_condition === 'Damaged'
+                                                            ? 'bg-red-100 text-red-800'
+                                                            : 'bg-yellow-100 text-yellow-800'
+                                                    }`}>
+                                                        {item.condition_after_return || item.return_condition || 'Pending'}
+                                                    </span>
+                                                </td>
+                                                <td className="border border-gray-300 px-4 py-3">
+                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                        item.status === 'returned' || item.status === 'Returned'
+                                                            ? 'bg-green-100 text-green-800'
+                                                            : item.status === 'borrowed' || item.status === 'Borrowed'
+                                                            ? 'bg-blue-100 text-blue-800'
+                                                            : item.status === 'overdue' || item.status === 'Overdue'
+                                                            ? 'bg-red-100 text-red-800'
+                                                            : 'bg-gray-100 text-gray-800'
+                                                    }`}>
+                                                        {item.status || 'Unknown'}
                                                     </span>
                                                 </td>
                                             </>
-                                        )}
-                                        {reportType === 'damaged' && (
+                                        ) : (
                                             <>
-                                                <td className="border border-gray-300 px-4 py-3 font-semibold text-red-600">
-                                                    {item.damaged || 0}
+                                                <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">
+                                                    {item.item_name || item.name}
                                                 </td>
                                                 <td className="border border-gray-300 px-4 py-3 text-gray-700">
-                                                    {item.quantity || 0}
+                                                    {item.category || 'N/A'}
+                                                </td>
+                                                {reportType === 'most-borrowed' && (
+                                                    <>
+                                                        <td className="border border-gray-300 px-4 py-3 font-semibold text-blue-600">
+                                                            {item.borrowed || 0}
+                                                        </td>
+                                                        <td className="border border-gray-300 px-4 py-3 text-gray-700">
+                                                            {item.quantity || 0}
+                                                        </td>
+                                                    </>
+                                                )}
+                                                {reportType === 'low-stock' && (
+                                                    <>
+                                                        <td className="border border-gray-300 px-4 py-3">
+                                                            <span className="font-semibold text-red-600">
+                                                                {item.quantity || 0}
+                                                            </span>
+                                                        </td>
+                                                        <td className="border border-gray-300 px-4 py-3 text-gray-700">
+                                                            {item.minimum_quantity || 5}
+                                                        </td>
+                                                        <td className="border border-gray-300 px-4 py-3">
+                                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                                Low Stock
+                                                            </span>
+                                                        </td>
+                                                    </>
+                                                )}
+                                                {reportType === 'damaged' && (
+                                                    <>
+                                                        <td className="border border-gray-300 px-4 py-3 font-semibold text-red-600">
+                                                            {item.damaged || 0}
+                                                        </td>
+                                                        <td className="border border-gray-300 px-4 py-3 text-gray-700">
+                                                            {item.quantity || 0}
+                                                        </td>
+                                                    </>
+                                                )}
+                                                <td className="border border-gray-300 px-4 py-3 text-gray-600">
+                                                    {item.location || 'Storage'}
                                                 </td>
                                             </>
                                         )}
-                                        <td className="border border-gray-300 px-4 py-3 text-gray-600">
-                                            {item.location || 'Storage'}
-                                        </td>
                                     </tr>
                                 ))}
                             </tbody>

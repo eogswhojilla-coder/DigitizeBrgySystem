@@ -20,14 +20,14 @@ Route::get('/verify-certificate/{certificateNumber}', function ($certificateNumb
     $certificate = Certificate::with(['certificateRequest.certificateType', 'certificateRequest.user'])
         ->where('certificate_number', $certificateNumber)
         ->first();
-    
+
     if (!$certificate) {
         return response()->view('certificate-verification', [
             'found' => false,
             'message' => 'Certificate not found'
         ], 404);
     }
-    
+
     return response()->view('certificate-verification', [
         'found' => true,
         'certificate' => $certificate,
@@ -163,6 +163,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->grou
             return Inertia::render('administrator/user/resident_user/page');
         });
     });
+
+
 
     Route::prefix('family_profile')->group(function () {
         Route::get('create_new_family', function () {
