@@ -149,6 +149,20 @@ export default function InventoryTableDetailsSection({ data, tab }) {
                         <div>
                             <span className="font-medium">Borrow Date:</span> {data.borrow_date || data.dateNeeded || 'N/A'}
                         </div>
+                        {tab === 'Returned' && data.return_condition && (
+                            <div>
+                                <span className="font-medium">Condition:</span>{' '}
+                                <span className={`px-2 py-1 rounded-md text-xs font-medium ${
+                                    data.return_condition === 'Good' ? 'bg-green-100 text-green-800' :
+                                    data.return_condition === 'Fair' ? 'bg-yellow-100 text-yellow-800' :
+                                    data.return_condition === 'Damaged' ? 'bg-red-100 text-red-800' :
+                                    data.return_condition === 'Lost' ? 'bg-gray-100 text-gray-800' :
+                                    'bg-gray-100 text-gray-800'
+                                }`}>
+                                    {data.return_condition}
+                                </span>
+                            </div>
+                        )}
                     </div>
 
                     <p className="text-gray-700 text-sm">
@@ -253,6 +267,31 @@ export default function InventoryTableDetailsSection({ data, tab }) {
                                     <p className="text-gray-700"><span className="font-medium">Actual Return Date:</span> {data.actual_return_date}</p>
                                 )}
                             </div>
+
+                            {data.status === 'Returned' && (data.return_condition || data.return_notes) && (
+                                <div className="border-t pt-4">
+                                    <h3 className="font-medium text-gray-900 mb-2">Return Information</h3>
+                                    {data.return_condition && (
+                                        <p className="text-gray-700">
+                                            <span className="font-medium">Item Condition:</span>{' '}
+                                            <span className={`px-2 py-1 rounded-md text-sm font-medium ${
+                                                data.return_condition === 'Good' ? 'bg-green-100 text-green-800' :
+                                                data.return_condition === 'Fair' ? 'bg-yellow-100 text-yellow-800' :
+                                                data.return_condition === 'Damaged' ? 'bg-red-100 text-red-800' :
+                                                data.return_condition === 'Lost' ? 'bg-gray-100 text-gray-800' :
+                                                'bg-gray-100 text-gray-800'
+                                            }`}>
+                                                {data.return_condition}
+                                            </span>
+                                        </p>
+                                    )}
+                                    {data.return_notes && (
+                                        <p className="text-gray-700 mt-2">
+                                            <span className="font-medium">Return Notes:</span> {data.return_notes}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
 
                             {data.payment_reference && (
                                 <div className="border-t pt-4">

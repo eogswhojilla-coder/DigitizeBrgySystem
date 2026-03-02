@@ -87,31 +87,28 @@
             margin: 12px 0;
         }
 
-        .signatures {
-            margin-top: 50px;
-            display: table;
+        .signature-wrapper {
             width: 100%;
-        }
-
-        .signature-left {
-            display: table-cell;
-            width: 50%;
-            text-align: center;
-            padding-right: 20px;
+            display: flex;
+            justify-content: flex-starts;
+            /* pushes signature to right */
+            margin-top: 80px;
+            /* adjust spacing */
         }
 
         .signature-right {
-            display: table-cell;
-            width: 50%;
+            width: 280px;
+            /* fixed width for proper alignment */
             text-align: center;
-            padding-left: 20px;
         }
 
         .signature-line {
-            border-bottom: 2px solid #000;
-            padding-bottom: 2px;
-            margin-bottom: 5px;
-            min-height: 40px;
+            border-top: 1px solid black;
+            margin: 8px 0 4px 0;
+        }
+
+        .signature-title {
+            font-size: 9pt;
         }
 
         .details-container {
@@ -193,14 +190,18 @@
             <strong><u>{{ ucfirst($residentCivilStatus ?? 'Single') }}</u></strong>,
             is a bonafide resident of
             <strong><u>{{ strtoupper($residentAddress ?? 'BARANGAY II, SAN CARLOS CITY, NEGROS OCCIDENTAL') }}</u></strong>,
-            Philippines, for more than six (6) months.
+            Philippines.
         </p>
+        <p>
 
+        </p>
         <p style="text-indent: 40px;">
             This certification is being issued upon the request of the above-named person for
             <strong><u>{{ strtoupper($purpose ?? 'General Purpose') }}</u></strong> purposes.
         </p>
+        <p>
 
+        </p>
         <p style="text-indent: 40px;">
             Issued this <strong><u>{{ $date ?? now()->format('jS \d\a\y \o\f F, Y') }}</u></strong>, Barangay Hall,
             <strong>BARANGAY II</strong>, San Carlos City, Negros Occidental, Philippines.
@@ -208,21 +209,28 @@
     </div>
 
     <!-- Signatures -->
-    <div class="signatures">
-        <div class="signature-left">
+    <!-- <div class="signatures"> -->
+    <!-- <div class="signature-left">
             <strong>{{ strtoupper($residentName ?? 'N/A') }}</strong><br>
             <div class="signature-line"></div>
             <span style="font-size: 9pt;">APPLICANT SIGNATURE</span>
-        </div>
-        <div class="signature-right">
+        </div> -->
+    <!-- <div class="signature-right">
             <strong>{{ strtoupper($punongBarangay ?? 'HON. FRANCIS R. EUSEBIO') }}</strong><br>
             <div class="signature-line"></div>
             <span style="font-size: 9pt;">PUNONG BARANGAY</span>
+        </div> -->
+    <div class="signature-wrapper">
+        <div class="signature-right">
+            <strong>{{ strtoupper($punongBarangay ?? 'HON. FRANCIS R. EUSEBIO') }}</strong>
+            <div class="signature-line"></div>
+            <span class="signature-title">PUNONG BARANGAY</span>
         </div>
     </div>
+    <!-- </div> -->
 
     <!-- Details and QR Code -->
-    <div class="details-container">
+    <!-- <div class="details-container">
         <div class="details-left">
             <p><strong>Purpose:</strong> {{ strtoupper($purpose ?? 'General Purpose') }}</p>
             <p><strong>Certificate No.:</strong> {{ $barangayId ?? 'CODE' }}</p>
@@ -239,12 +247,12 @@
                 </div>
             @endif
         </div>
-    </div>
+    </div> -->
 
     <!-- Note -->
-    <div class="note">
+    <!-- <div class="note">
         <p><strong>Note:</strong> This Certificate is valid for Six(6) months after the date of issue.</p>
-    </div>
+    </div> -->
 
     <script>
         // Auto-print functionality

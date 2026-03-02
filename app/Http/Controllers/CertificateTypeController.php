@@ -6,12 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Models\CertificateType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class CertificateTypeController extends Controller
 {
     public function index()
     {
         $types = CertificateType::orderBy('name')->get();
+        
+        // Add QR URL to response
+        $types->transform(function ($type) {
+            $type->gcash_qr_url = $type->gcash_qr 
+                ? asset('storage/' . $type->gcash_qr) 
+                : null;
+            return $type;
+        });
+        
         return response()->json($types);
     }
 
@@ -20,14 +30,36 @@ class CertificateTypeController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|unique:certificate_types',
             'description' => 'nullable|string',
-            'fee' => 'required|numeric|min:0'
+            'has_fee' => 'nullable|in:0,1,true,false',
+            'fee' => 'required_if:has_fee,1,true|nullable|numeric|min:0',
+            'gcash_qr' => 'nullable|image|mimes:jpeg,jpg,png|max:2048|required_if:has_fee,1,true',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        $type = CertificateType::create($request->all());
+        $data = $request->all();
+        
+        // Convert has_fee to boolean
+        $data['has_fee'] = in_array($request->has_fee, ['1', 1, true, 'true'], true);
+
+        // If has_fee is false, set fee and gcash_qr to null
+        if (!$data['has_fee']) {
+            $data['fee'] = null;
+            $data['gcash_qr'] = null;
+        } else {
+            // Handle GCash QR upload
+            if ($request->hasFile('gcash_qr')) {
+                $qrPath = $request->file('gcash_qr')->store('certificate_types/qr', 'public');
+                $data['gcash_qr'] = $qrPath;
+            }
+        }
+
+        $type = CertificateType::create($data);
         return response()->json($type, 201);
     }
 
@@ -36,14 +68,48 @@ class CertificateTypeController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|unique:certificate_types,name,' . $certificateType->id,
             'description' => 'nullable|string',
-            'fee' => 'required|numeric|min:0'
+            'has_fee' => 'nullable|in:0,1,true,false',
+            'fee' => 'required_if:has_fee,1,true|nullable|numeric|min:0',
+            'gcash_qr' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        $certificateType->update($request->all());
+        $data = $request->all();
+
+        // Convert has_fee to boolean if present
+        if (isset($request->has_fee)) {
+            $data['has_fee'] = in_array($request->has_fee, ['1', 1, true, 'true'], true);
+        }
+
+        // If has_fee is false, set fee and gcash_qr to null
+        if (isset($data['has_fee']) && !$data['has_fee']) {
+            $data['fee'] = null;
+            
+            // Delete old QR if exists
+            if ($certificateType->gcash_qr) {
+                Storage::disk('public')->delete($certificateType->gcash_qr);
+            }
+            $data['gcash_qr'] = null;
+        } else if (isset($data['has_fee']) && $data['has_fee']) {
+            // Handle GCash QR upload
+            if ($request->hasFile('gcash_qr')) {
+                // Delete old QR if exists
+                if ($certificateType->gcash_qr) {
+                    Storage::disk('public')->delete($certificateType->gcash_qr);
+                }
+                
+                $qrPath = $request->file('gcash_qr')->store('certificate_types/qr', 'public');
+                $data['gcash_qr'] = $qrPath;
+            }
+        }
+
+        $certificateType->update($data);
         return response()->json($certificateType);
     }
 
@@ -53,6 +119,11 @@ class CertificateTypeController extends Controller
             return response()->json([
                 'message' => 'Cannot delete certificate type with existing requests'
             ], 422);
+        }
+        
+        // Delete QR image if exists
+        if ($certificateType->gcash_qr) {
+            Storage::disk('public')->delete($certificateType->gcash_qr);
         }
         
         $certificateType->delete();

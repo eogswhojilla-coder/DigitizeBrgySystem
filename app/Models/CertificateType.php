@@ -15,6 +15,7 @@ class CertificateType extends Model
         'description',
         'fee',
         'has_fee',
+        'gcash_qr',
         'is_active'
     ];
 

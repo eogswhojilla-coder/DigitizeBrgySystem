@@ -4,27 +4,66 @@ import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import Input from '@/app/_components/input';
 import Button from '@/app/_components/button';
-import { create_certificate_type_service } from '@/app/services/certificate-type-service';
+import axios from 'axios';
 
 const AddCertificateTypeModal = ({ isOpen, onClose }) => {
+    const [qrPreview, setQrPreview] = useState(null);
+    
     const {
         register,
         handleSubmit,
         reset,
+        watch,
         formState: { errors }
     } = useForm({
         defaultValues: {
             name: '',
             description: '',
-            fee: ''
+            has_fee: false,
+            fee: '',
+            gcash_qr: null
         }
     });
 
+    const hasFee = watch("has_fee", false);
+
+    const handleQrChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setQrPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setQrPreview(null);
+        }
+    };
+
     const onSubmit = async (data) => {
         try {
-            await create_certificate_type_service({
-                ...data,
-                fee: parseFloat(data.fee)
+            const formData = new FormData();
+            
+            // Append text fields
+            formData.append('name', data.name);
+            if (data.description) formData.append('description', data.description);
+            
+            // Handle has_fee conversion
+            formData.append('has_fee', data.has_fee ? '1' : '0');
+            
+            // Handle fee-related fields
+            if (data.has_fee) {
+                if (data.fee) {
+                    formData.append('fee', data.fee);
+                }
+                
+                if (data.gcash_qr && data.gcash_qr.length > 0) {
+                    formData.append('gcash_qr', data.gcash_qr[0]);
+                }
+            }
+
+            await axios.post("/api/certificate-types", formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
 
             await Swal.fire({
@@ -36,11 +75,15 @@ const AddCertificateTypeModal = ({ isOpen, onClose }) => {
             });
 
             reset();
+            setQrPreview(null);
             onClose();
+            
+            // Reload the page to refresh the list
+            window.location.reload();
         } catch (error) {
             const errorMessage = error.response?.data?.errors 
-                ? Object.values(error.response.data.errors).flat().join('\\n')
-                : 'Failed to add certificate type. Please try again.';
+                ? Object.values(error.response.data.errors).flat().join('\n')
+                : error.response?.data?.message || 'Failed to add certificate type. Please try again.';
 
             await Swal.fire({
                 icon: 'error',
@@ -102,30 +145,92 @@ const AddCertificateTypeModal = ({ isOpen, onClose }) => {
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Fee *
+                        {/* Has Fee Toggle */}
+                        <div className="border-t pt-4">
+                            <label className="flex items-center gap-3 cursor-pointer">
+                                <span className="text-sm font-medium text-gray-700">This certificate requires a fee</span>
+                                <div className="relative">
+                                    <input
+                                        type="checkbox"
+                                        {...register("has_fee")}
+                                        className="sr-only peer"
+                                    />
+                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </div>
                             </label>
-                            <input
-                                {...register("fee", { 
-                                    required: "Fee is required",
-                                    min: {
-                                        value: 0,
-                                        message: "Fee cannot be negative"
-                                    }
-                                })}
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                className={`w-full px-3 py-2 border ${
-                                    errors.fee ? "border-red-500" : "border-gray-300"
-                                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                                placeholder="Enter certificate fee"
-                            />
-                            {errors.fee && (
-                                <p className="text-sm text-red-500 mt-1">{errors.fee.message}</p>
-                            )}
                         </div>
+
+                        {/* Fee Fields - Show only when has_fee is true */}
+                        {hasFee && (
+                            <div className="space-y-4 animate-fadeIn border border-blue-100 rounded-lg p-4 bg-blue-50">
+                                {/* Fee Amount */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Fee Amount (₱) *
+                                    </label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        placeholder="0.00"
+                                        {...register("fee", {
+                                            required: hasFee ? "Fee is required" : false,
+                                            min: { value: 0, message: "Fee must be 0 or greater" }
+                                        })}
+                                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                            errors.fee ? "border-red-500" : "border-gray-300"
+                                        }`}
+                                    />
+                                    {errors.fee && (
+                                        <p className="text-red-500 text-sm mt-1">
+                                            {errors.fee.message}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* GCash QR Upload */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        GCash QR Code *
+                                    </label>
+                                    <input
+                                        type="file"
+                                        accept="image/jpeg,image/jpg,image/png"
+                                        {...register("gcash_qr", {
+                                            required: hasFee ? "QR code is required" : false,
+                                        })}
+                                        onChange={handleQrChange}
+                                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                            errors.gcash_qr ? "border-red-500" : "border-gray-300"
+                                        }`}
+                                    />
+                                    {errors.gcash_qr && (
+                                        <p className="text-red-500 text-sm mt-1">
+                                            {errors.gcash_qr.message}
+                                        </p>
+                                    )}
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Accepted formats: JPG, JPEG, PNG (Max 2MB)
+                                    </p>
+                                </div>
+
+                                {/* QR Preview */}
+                                {qrPreview && (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            QR Code Preview
+                                        </label>
+                                        <div className="border rounded-lg p-4 bg-white">
+                                            <img
+                                                src={qrPreview}
+                                                alt="QR Code Preview"
+                                                className="w-48 h-48 object-contain mx-auto"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* Actions */}

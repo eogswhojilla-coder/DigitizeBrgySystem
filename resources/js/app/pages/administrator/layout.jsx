@@ -157,14 +157,14 @@ export default function Layout({ children }) {
                 {
                     name: "Certificate Request",
                     href: "/administrator/certificate/certificate_pending",
-                    icon: <FcPrint className="h-6 w-6" />,
+                    icon: < DocumentCheckIcon  className="h-6 w-6" />,
                     current: isCurrentSub == "certificate_pending",
                     show: hasPermission("certificates.view"),
                 },
                 {
-                    name: "Certificate ",
+                    name: "Print Certificate ",
                     href: "/administrator/certificate/certificate",
-                    icon: <DocumentCheckIcon className="h-6 w-6" />,
+                    icon: <FcPrint className="h-6 w-6" />,
                     current: isCurrentSub == "certificate",
                     show: hasPermission("certificates.view"),
                 },

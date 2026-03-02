@@ -401,19 +401,21 @@ export default function Page() {
                                         
                                         <div className="flex justify-center bg-gray-100 rounded-lg p-4">
                                             <div className="text-center">
-                                                {/* Replace with your actual GCash QR code image */}
+                                                {/* Display certificate type specific GCash QR code */}
                                                 <div className="bg-white p-4 rounded-lg shadow-md inline-block">
-                                                    <img 
-                                                        src="/images/gcash-qr.png" 
-                                                        alt="GCash QR Code"
-                                                        className="w-48 h-48 object-contain"
-                                                        onError={(e) => {
-                                                            e.target.style.display = 'none';
-                                                            e.target.nextSibling.style.display = 'flex';
-                                                        }}
-                                                    />
-                                                    <div className="hidden w-48 h-48 items-center justify-center bg-gray-200 text-gray-500 text-sm">
-                                                        GCash QR Code<br/>Placeholder
+                                                    {selectedCertificateType.gcash_qr_url ? (
+                                                        <img 
+                                                            src={selectedCertificateType.gcash_qr_url} 
+                                                            alt="GCash QR Code"
+                                                            className="w-48 h-48 object-contain"
+                                                            onError={(e) => {
+                                                                e.target.style.display = 'none';
+                                                                e.target.nextSibling.style.display = 'flex';
+                                                            }}
+                                                        />
+                                                    ) : null}
+                                                    <div className={`${selectedCertificateType.gcash_qr_url ? 'hidden' : 'flex'} w-48 h-48 items-center justify-center bg-gray-200 text-gray-500 text-sm text-center`}>
+                                                        GCash QR Code<br/>Not Available
                                                     </div>
                                                 </div>
                                                 <p className="text-xs text-gray-600 mt-2">Scan to pay via GCash</p>
