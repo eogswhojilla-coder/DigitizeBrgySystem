@@ -20,4 +20,19 @@ class BarangayOfficialEndTerm extends Model
         'voters',
         'date_deleted',
     ];
+
+    protected $casts = [
+        'pwd' => 'boolean',
+        'single_parent' => 'boolean',
+        'voters' => 'boolean',
+        'senior' => 'boolean',
+    ];
+
+    /**
+     * Get the official (resident) associated with this end term record
+     */
+    public function official()
+    {
+        return $this->belongsTo(BarangayResident::class, 'official_id');
+    }
 }

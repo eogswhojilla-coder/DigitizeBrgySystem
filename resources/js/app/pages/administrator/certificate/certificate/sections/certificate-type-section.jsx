@@ -183,15 +183,23 @@ export default function CertificateTypeSection() {
 
             if (editingType) {
                 // Update existing type
+                const token = document.head.querySelector('meta[name="csrf-token"]');
                 await axios.post(`/api/certificate-types/${editingType.id}`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
+                    headers: { 
+                        'Content-Type': 'multipart/form-data',
+                        'X-CSRF-TOKEN': token ? token.content : ''
+                    },
                     params: { _method: 'PUT' }
                 });
                 Swal.fire("Updated!", "Certificate type has been updated.", "success");
             } else {
                 // Create new type
+                const token = document.head.querySelector('meta[name="csrf-token"]');
                 await axios.post("/api/certificate-types", formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
+                    headers: { 
+                        'Content-Type': 'multipart/form-data',
+                        'X-CSRF-TOKEN': token ? token.content : ''
+                    }
                 });
                 Swal.fire("Created!", "Certificate type has been created.", "success");
             }

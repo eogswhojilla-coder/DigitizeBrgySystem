@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Carbon\Carbon;
 
@@ -45,34 +46,155 @@ class BackupController extends Controller
             $filename = "BackupFile-{$timestamp}.sql";
             $filepath = $this->backupPath . '/' . $filename;
 
-            $database = env('DB_DATABASE');
-            $username = env('DB_USERNAME');
-            $password = env('DB_PASSWORD');
-            $host = env('DB_HOST');
+            $database = config('database.connections.mysql.database');
+            $username = config('database.connections.mysql.username');
+            $password = config('database.connections.mysql.password');
+            $host = config('database.connections.mysql.host');
+            $port = config('database.connections.mysql.port', 3306);
 
-            // MySQL dump command
-            $command = sprintf(
-                'mysqldump --user=%s --password=%s --host=%s %s > %s',
-                escapeshellarg($username),
-                escapeshellarg($password),
-                escapeshellarg($host),
-                escapeshellarg($database),
-                escapeshellarg($filepath)
-            );
+            // Try to find mysqldump executable
+            $mysqldumpPath = $this->findMysqldump();
 
-            // Execute the command
-            exec($command, $output, $returnVar);
+            if ($mysqldumpPath) {
+                // Use mysqldump command
+                $success = $this->backupUsingMysqldump($mysqldumpPath, $host, $port, $username, $password, $database, $filepath);
+            } else {
+                // Fallback to PHP-based backup
+                $success = $this->backupUsingPHP($database, $filepath);
+            }
 
-            if ($returnVar === 0 && File::exists($filepath)) {
+            if ($success && File::exists($filepath) && File::size($filepath) > 0) {
                 return back()->with('success', 'Database backup created successfully!');
             } else {
-                return back()->with('error', 'Failed to create database backup.');
+                // Clean up empty file if it exists
+                if (File::exists($filepath)) {
+                    File::delete($filepath);
+                }
+                return back()->with('error', 'Failed to create database backup. The backup file is empty.');
             }
 
         } catch (\Exception $e) {
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Find mysqldump executable path
+     */
+    private function findMysqldump()
+    {
+        // Common paths for mysqldump on Windows
+        $possiblePaths = [
+            'C:\xampp\mysql\bin\mysqldump.exe',
+            'C:\wamp\bin\mysql\mysql8.0.27\bin\mysqldump.exe',
+            'C:\wamp64\bin\mysql\mysql8.0.27\bin\mysqldump.exe',
+            'C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump.exe',
+            'C:\Program Files\MySQL\MySQL Server 5.7\bin\mysqldump.exe',
+            'mysqldump', // Try system PATH
+        ];
+
+        foreach ($possiblePaths as $path) {
+            // For system PATH command, check if it's available
+            if ($path === 'mysqldump') {
+                exec('where mysqldump 2>nul', $output, $returnVar);
+                if ($returnVar === 0 && !empty($output)) {
+                    return 'mysqldump';
+                }
+            } else {
+                if (File::exists($path)) {
+                    return $path;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Backup using mysqldump command
+     */
+    private function backupUsingMysqldump($mysqldumpPath, $host, $port, $username, $password, $database, $filepath)
+    {
+        try {
+            // Build the command with proper escaping for Windows
+            $command = sprintf(
+                '"%s" --user=%s --host=%s --port=%d --single-transaction --routines --triggers %s %s > "%s" 2>&1',
+                $mysqldumpPath,
+                $username,
+                $host,
+                $port,
+                $password ? '--password=' . $password : '',
+                $database,
+                $filepath
+            );
+
+            exec($command, $output, $returnVar);
+
+            // Check if backup was successful
+            return ($returnVar === 0 && File::exists($filepath) && File::size($filepath) > 0);
+
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Backup using PHP (fallback method)
+     */
+    private function backupUsingPHP($database, $filepath)
+    {
+        try {
+            $tables = DB::select('SHOW TABLES');
+            $tableKey = 'Tables_in_' . $database;
+            
+            $sql = "-- Database Backup\n";
+            $sql .= "-- Generated: " . Carbon::now() . "\n";
+            $sql .= "-- Database: {$database}\n\n";
+            $sql .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
+
+            foreach ($tables as $table) {
+                $tableName = $table->$tableKey;
+                
+                // Get CREATE TABLE statement
+                $createTable = DB::select("SHOW CREATE TABLE `{$tableName}`");
+                $sql .= "-- Table: {$tableName}\n";
+                $sql .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
+                $sql .= $createTable[0]->{'Create Table'} . ";\n\n";
+
+                // Get table data
+                $rows = DB::select("SELECT * FROM `{$tableName}`");
+                
+                if (!empty($rows)) {
+                    $sql .= "-- Data for table {$tableName}\n";
+                    
+                    foreach ($rows as $row) {
+                        $values = array_map(function($value) {
+                            if ($value === null) {
+                                return 'NULL';
+                            }
+                            return "'" . addslashes($value) . "'";
+                        }, (array) $row);
+                        
+                        $sql .= "INSERT INTO `{$tableName}` VALUES (" . implode(', ', $values) . ");\n";
+                    }
+                    
+                    $sql .= "\n";
+                }
+            }
+
+            $sql .= "SET FOREIGN_KEY_CHECKS=1;\n";
+
+            // Write to file
+            File::put($filepath, $sql);
+
+            return File::exists($filepath) && File::size($filepath) > 0;
+
+        } catch (\Exception $e) {
+            Log::error('Backup error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
 
     /**
      * Download a backup file
@@ -154,33 +276,129 @@ class BackupController extends Controller
                 return back()->with('error', 'Backup file not found.');
             }
 
-            $database = env('DB_DATABASE');
-            $username = env('DB_USERNAME');
-            $password = env('DB_PASSWORD');
-            $host = env('DB_HOST');
+            $database = config('database.connections.mysql.database');
+            $username = config('database.connections.mysql.username');
+            $password = config('database.connections.mysql.password');
+            $host = config('database.connections.mysql.host');
+            $port = config('database.connections.mysql.port', 3306);
 
-            // MySQL restore command
-            $command = sprintf(
-                'mysql --user=%s --password=%s --host=%s %s < %s',
-                escapeshellarg($username),
-                escapeshellarg($password),
-                escapeshellarg($host),
-                escapeshellarg($database),
-                escapeshellarg($filepath)
-            );
+            // Try to find mysql executable
+            $mysqlPath = $this->findMysql();
 
-            exec($command, $output, $returnVar);
+            if ($mysqlPath) {
+                // Use mysql command
+                $success = $this->restoreUsingMysql($mysqlPath, $host, $port, $username, $password, $database, $filepath);
+            } else {
+                // Fallback to PHP-based restore
+                $success = $this->restoreUsingPHP($filepath);
+            }
 
-            if ($returnVar === 0) {
+            if ($success) {
                 return back()->with('success', 'Database restored successfully!');
             } else {
-                return back()->with('error', 'Failed to restore database.');
+                return back()->with('error', 'Failed to restore database. Please check the backup file.');
             }
 
         } catch (\Exception $e) {
             return back()->with('error', 'Error restoring database: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Find mysql executable path
+     */
+    private function findMysql()
+    {
+        // Common paths for mysql on Windows
+        $possiblePaths = [
+            'C:\xampp\mysql\bin\mysql.exe',
+            'C:\wamp\bin\mysql\mysql8.0.27\bin\mysql.exe',
+            'C:\wamp64\bin\mysql\mysql8.0.27\bin\mysql.exe',
+            'C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe',
+            'C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql.exe',
+            'mysql', // Try system PATH
+        ];
+
+        foreach ($possiblePaths as $path) {
+            // For system PATH command, check if it's available
+            if ($path === 'mysql') {
+                exec('where mysql 2>nul', $output, $returnVar);
+                if ($returnVar === 0 && !empty($output)) {
+                    return 'mysql';
+                }
+            } else {
+                if (File::exists($path)) {
+                    return $path;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Restore using mysql command
+     */
+    private function restoreUsingMysql($mysqlPath, $host, $port, $username, $password, $database, $filepath)
+    {
+        try {
+            // Build the command with proper escaping for Windows
+            $command = sprintf(
+                '"%s" --user=%s --host=%s --port=%d %s %s < "%s" 2>&1',
+                $mysqlPath,
+                $username,
+                $host,
+                $port,
+                $password ? '--password=' . $password : '',
+                $database,
+                $filepath
+            );
+
+            exec($command, $output, $returnVar);
+
+            return ($returnVar === 0);
+
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Restore using PHP (fallback method)
+     */
+    private function restoreUsingPHP($filepath)
+    {
+        try {
+            // Read the SQL file
+            $sql = File::get($filepath);
+
+            // Split into individual queries
+            $queries = array_filter(
+                array_map('trim', explode(';', $sql)),
+                function($query) {
+                    return !empty($query) && !preg_match('/^--/', $query);
+                }
+            );
+
+            // Execute each query
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+            
+            foreach ($queries as $query) {
+                if (!empty(trim($query))) {
+                    DB::statement($query);
+                }
+            }
+            
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
+            return true;
+
+        } catch (\Exception $e) {
+            Log::error('Restore error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
 
     /**
      * Get list of backup files

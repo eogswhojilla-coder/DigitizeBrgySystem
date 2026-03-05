@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { setSidebarOpen } from "@/app/redux/app-slice";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import ResidentHeaderMenuSection from "./resident-header-menu-section";
+import NotificationSection from "@/app/_sections/notification-section";
 
 export default function ResidentTopbarSection() {
     const dispatch = useDispatch();
@@ -33,6 +34,10 @@ export default function ResidentTopbarSection() {
                     </div>
                     
                     <div className="flex items-center gap-x-4 lg:gap-x-6">
+                        {/* Real-time Notification Bell */}
+                        <NotificationSection />
+                        
+                        {/* User Menu */}
                         <ResidentHeaderMenuSection />
                     </div>
                 </div>

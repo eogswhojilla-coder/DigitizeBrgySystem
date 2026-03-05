@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Announcement;
 use App\Models\AnnouncementCalendar;
 use App\Models\AnnouncementFile;
+use App\Models\User;
+use App\Notifications\AnnouncementCreatedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class AnnouncementController extends Controller
 {
@@ -92,6 +95,21 @@ class AnnouncementController extends Controller
                     Log::error('File upload failed: ' . $e->getMessage());
                 }
             }
+        }
+        
+        // Send notification to all approved residents
+        try {
+            $residents = User::where('user_type', 'resident')
+                ->where('status', 'approved')
+                ->get();
+            
+            if ($residents->count() > 0) {
+                Notification::send($residents, new AnnouncementCreatedNotification($announcement));
+                Log::info('Announcement notification sent to ' . $residents->count() . ' residents');
+            }
+        } catch (\Exception $e) {
+            Log::error('Announcement notification failed: ' . $e->getMessage());
+            // Don't fail the request if notification fails
         }
         
         return response()->json([

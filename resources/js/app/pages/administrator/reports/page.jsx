@@ -24,7 +24,6 @@ function ResidentReport({ residents, initialFilters, totalCount }) {
     const [filters, setFilters] = useState({
         voters: initialFilters?.voters || "",
         age: initialFilters?.age || "",
-        status: initialFilters?.status || "",
         pwd: initialFilters?.pwd || "",
         singleParent: initialFilters?.singleParent || "",
         senior: initialFilters?.senior || "",
@@ -46,7 +45,6 @@ function ResidentReport({ residents, initialFilters, totalCount }) {
         setFilters({
             voters: "",
             age: "",
-            status: "",
             pwd: "",
             singleParent: "",
             senior: "",

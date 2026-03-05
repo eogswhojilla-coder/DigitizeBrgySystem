@@ -155,6 +155,19 @@ class RolesAndPermissionsSeeder extends Seeder
             'reports.view',
         ]);
 
+        // 6. RESIDENT - Basic resident permissions
+        $resident = Role::create([
+            'name' => 'Resident',
+            'guard_name' => 'web'
+        ]);
+        $resident->givePermissionTo([
+            'certificates.request',
+            'borrow.request',
+            'profile.view',
+            'profile.update',
+            'notifications.view',
+        ]);
+
         $this->command->info('✅ Roles and permissions created successfully!');
         $this->command->newLine();
         $this->command->info('Created Roles:');
@@ -163,5 +176,6 @@ class RolesAndPermissionsSeeder extends Seeder
         $this->command->info('- Secretary (Residents, Certificates, Blotter, Announcements)');
         $this->command->info('- Treasurer (Payments, Reports)');
         $this->command->info('- Inventory Officer (Inventory, Borrow requests)');
+        $this->command->info('- Resident (Certificates, Borrow, Profile, Notifications)');
     }
 }

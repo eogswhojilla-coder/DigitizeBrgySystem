@@ -124,16 +124,6 @@
             font-size: 9px;
             color: #888;
         }
-        
-        .status-active {
-            color: #10b981;
-            font-weight: bold;
-        }
-        
-        .status-inactive {
-            color: #ef4444;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
@@ -151,9 +141,6 @@
         @endif
         @if($filters['age'])
             <p><strong>Age:</strong> {{ $filters['age'] }} years old</p>
-        @endif
-        @if($filters['status'])
-            <p><strong>Status:</strong> {{ $filters['status'] }}</p>
         @endif
         @if($filters['pwd'])
             <p><strong>PWD:</strong> {{ $filters['pwd'] }}</p>
@@ -182,7 +169,6 @@
                 <th style="width: 8%;">PWD</th>
                 <th style="width: 10%;">Single Parent</th>
                 <th style="width: 8%;">Voters</th>
-                <th style="width: 10%;">Status</th>
                 <th style="width: 8%;">Senior</th>
                 <th style="width: 10%;">Address</th>
             </tr>
@@ -197,9 +183,6 @@
                 <td>{{ $resident['pwd'] }}</td>
                 <td>{{ $resident['singleParent'] }}</td>
                 <td>{{ $resident['voters'] }}</td>
-                <td class="{{ $resident['status'] === 'ACTIVE' ? 'status-active' : 'status-inactive' }}">
-                    {{ $resident['status'] }}
-                </td>
                 <td>{{ $resident['senior'] }}</td>
                 <td>{{ $resident['address'] ?? '-' }}</td>
             </tr>

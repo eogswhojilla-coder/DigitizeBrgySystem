@@ -14,6 +14,9 @@ export default function Select({
     error,
     multiple = false, // NEW: support multiple selection
 }) {
+    // If using react-hook-form register, let it handle everything
+    const isUsingRegister = register && typeof register === 'object' && 'onChange' in register;
+    
     return (
         <div className="w-full">
             <div className="relative">
@@ -26,12 +29,14 @@ export default function Select({
 
                 {/* Select */}
                 <select
-                    {...register}
+                    {...(isUsingRegister ? register : {})}
                     multiple={multiple}
                     disabled={disabled}
                     required={required}
-                    value={value}
-                    onChange={onChange}
+                    {...(!isUsingRegister && {
+                        value: value !== undefined ? value : "",
+                        onChange: onChange,
+                    })}
                     id={name}
                     name={name}
                     className={`peer text-black placeholder-transparent w-full py-2.5 px-5 border bg-white rounded-md focus:outline-none transition-all appearance-none
@@ -42,7 +47,7 @@ export default function Select({
                     `}
                 >
                     {!multiple && (
-                        <option value="" selected disabled>
+                        <option value="" disabled>
                             {/* Placeholder when not multiple */}
                         </option>
                     )}

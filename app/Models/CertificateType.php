@@ -25,6 +25,21 @@ class CertificateType extends Model
         'is_active' => 'boolean'
     ];
 
+    protected $appends = [
+        'gcash_qr_url'
+    ];
+
+    /**
+     * Get the full URL for the GCash QR code
+     */
+    public function getGcashQrUrlAttribute()
+    {
+        if ($this->gcash_qr) {
+            return asset('images/qrcodes/' . $this->gcash_qr);
+        }
+        return null;
+    }
+
     public function requests()
     {
         return $this->hasMany(CertificateRequest::class);

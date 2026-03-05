@@ -2,9 +2,9 @@ export default function ContactSection() {
     const contactData = {
         address:
             "Don Juan Subd., Pres. Quirino St., Brgy. II, Barangay Hall, San Carlos City, Negros Occidental, Philippines",
-        phone1: "+63 (02) 8123-4567",
+        phone1: "   729-8353 ",
         phone2: "+63 917 123 4567",
-        email: "brgy.two@email.gov.ph",
+        email: "barangay_two@yahoo.com",
         officeHours: [
             "Monday – Friday: 8:00 AM – 5:00 PM",
             "Saturday: 8:00 AM – 12:00 PM",
@@ -129,7 +129,7 @@ export default function ContactSection() {
                                         {contactData.officeHours.map(
                                             (hour, i) => (
                                                 <div key={i}>{hour}</div>
-                                            )
+                                            ),
                                         )}
                                     </div>
                                 </div>
@@ -145,7 +145,7 @@ export default function ContactSection() {
                             <div className="absolute inset-0 opacity-10">
                                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
                             </div>
-                            
+
                             {/* Center Location Marker */}
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
                                 <div className="relative">
@@ -189,6 +189,115 @@ export default function ContactSection() {
                                 </svg>
                                 Open in Google Maps
                             </a>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Emergency Contacts Section */}
+                <div className="mt-16 pt-16 border-t border-white/10">
+                    <div className="mb-10">
+                        <span className="inline-block py-1 px-3 rounded-full bg-red-500/10 text-red-500 text-xs font-bold tracking-widest uppercase mb-4 border border-red-500/20">
+                            Emergency
+                        </span>
+                        <h3 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-4">
+                            Emergency Hotlines
+                        </h3>
+                        <p className="text-slate-400 leading-relaxed max-w-2xl">
+                            For urgent matters and emergencies, contact these
+                            emergency response services available 24/7.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {/* Emergency 911 */}
+                        <div className="group p-6 rounded-2xl bg-gradient-to-b from-white/5 to-white/0 border border-red-500/30 hover:border-red-500/50 hover:bg-white/10 transition-all duration-300">
+                            <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-slate-800 border border-red-500/30 flex items-center justify-center text-xl group-hover:bg-red-500/20 transition-all duration-300">
+                                    🚨
+                                </div>
+                                <div>
+                                    <div className="font-mono text-xs tracking-widest text-red-400 mb-2 uppercase">
+                                        Emergency
+                                    </div>
+                                    <div className="text-white font-bold text-lg mb-1">
+                                        Emergency 911
+                                    </div>
+                                    <div className="text-slate-400 text-sm mb-2">
+                                        National emergency hotline
+                                    </div>
+                                    <div className="text-red-400 font-bold text-lg">
+                                        911
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="group p-6 rounded-2xl bg-gradient-to-b from-white/5 to-white/0 border border-orange-500/30 hover:border-orange-500/50 hover:bg-white/10 transition-all duration-300">
+                            <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-slate-800 border border-orange-500/30 flex items-center justify-center text-xl group-hover:bg-orange-500/20 transition-all duration-300">
+                                    🚒
+                                </div>
+                                <div>
+                                    <div className="font-mono text-xs tracking-widest text-orange-400 mb-2 uppercase">
+                                        Fire Emergency
+                                    </div>
+                                    <div className="text-white font-bold text-lg mb-1">
+                                        BFP San Carlos
+                                    </div>
+                                    <div className="text-slate-400 text-sm mb-2">
+                                        Bureau of Fire Protection
+                                    </div>
+                                    <div className="text-orange-400 font-bold text-lg">
+                                        (034) 729-3331
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* CDRRMO */}
+                        <div className="group p-6 rounded-2xl bg-gradient-to-b from-white/5 to-white/0 border border-blue-500/30 hover:border-blue-500/50 hover:bg-white/10 transition-all duration-300">
+                            <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-slate-800 border border-blue-500/30 flex items-center justify-center text-xl group-hover:bg-blue-500/20 transition-all duration-300">
+                                    ⚠️
+                                </div>
+                                <div>
+                                    <div className="font-mono text-xs tracking-widest text-blue-400 mb-2 uppercase">
+                                        Disaster Response
+                                    </div>
+                                    <div className="text-white font-bold text-lg mb-1">
+                                        CDRRMO
+                                    </div>
+                                    <div className="text-slate-400 text-sm mb-2">
+                                        City Disaster Risk Reduction
+                                    </div>
+                                    <div className="text-blue-400 font-bold text-lg">
+                                        +63 925-786-6243
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* PNP */}
+                        <div className="group p-6 rounded-2xl bg-gradient-to-b from-white/5 to-white/0 border border-green-500/30 hover:border-green-500/50 hover:bg-white/10 transition-all duration-300">
+                            <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-slate-800 border border-green-500/30 flex items-center justify-center text-xl group-hover:bg-green-500/20 transition-all duration-300">
+                                    👮
+                                </div>
+                                <div>
+                                    <div className="font-mono text-xs tracking-widest text-green-400 mb-2 uppercase">
+                                        Police Emergency
+                                    </div>
+                                    <div className="text-white font-bold text-lg mb-1">
+                                        PNP San Carlos
+                                    </div>
+                                    <div className="text-slate-400 text-sm mb-2">
+                                        Philippine National Police
+                                    </div>
+                                    <div className="text-green-400 font-bold text-lg">
+                                        (034) 312-5166
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { get_certificate_types_service, delete_certificate_type_service } from '@/app/services/certificate-type-service';
 import Swal from 'sweetalert2';
 
@@ -101,19 +101,20 @@ export default function TableSection() {
                                     {type.description || '-'}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    ₱{parseFloat(type.fee).toFixed(2)}
+                                    {type.has_fee ? (
+                                        <span className="text-green-600 font-medium">
+                                            ₱{parseFloat(type.fee || 0).toFixed(2)}
+                                        </span>
+                                    ) : (
+                                        <span className="text-gray-400 italic">Free</span>
+                                    )}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div className="flex items-center justify-end gap-2">
                                         <button
-                                            onClick={() => handleEdit(type)}
-                                            className="text-blue-600 hover:text-blue-900"
-                                        >
-                                            <Edit2 size={18} />
-                                        </button>
-                                        <button
                                             onClick={() => handleDelete(type.id)}
-                                            className="text-red-600 hover:text-red-900"
+                                            className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50 transition-colors"
+                                            title="Delete"
                                         >
                                             <Trash2 size={18} />
                                         </button>

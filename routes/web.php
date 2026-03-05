@@ -87,10 +87,7 @@ Route::get('/auth/login', function () {
 // Register page route (if needed)
 Route::get('/auth/register', function () {
     return Inertia::render('auth/register/page');
-})->name('register');
-
-// Login form submission
-Route::post('/auth/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+})->name('auth.register');
 
 // Logout
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
@@ -116,9 +113,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('administrator')->grou
         Route::get('archive_resident', function () {
             return Inertia::render('administrator/barangay_residents/archive_resident/page');
         });
-        Route::get('official_end_term', function () {
-            return Inertia::render('administrator/barangay_residents/official_end_term/page');
-        });
+        Route::get('official_end_term', [App\Http\Controllers\BarangayOfficialEndTermController::class, 'index'])->name('official_end_term.index');
         Route::get('account_approval', function () {
             return Inertia::render('administrator/barangay_residents/account_approval/page');
         });

@@ -35,12 +35,20 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
         $user = $request->user();
         
-        // Log admin/secretary login only
-        if (in_array($user->user_type, ['admin', 'secretary'])) {
+        // Log login for admin, secretary, treasurer, and inventory_officer
+        if (in_array($user->user_type, ['admin', 'secretary', 'treasurer', 'inventory_officer'])) {
+            $userTypeDisplay = match($user->user_type) {
+                'admin' => 'ADMIN',
+                'secretary' => 'SECRETARY',
+                'treasurer' => 'TREASURER',
+                'inventory_officer' => 'INVENTORY OFFICER',
+                default => strtoupper($user->user_type)
+            };
+            
             AdminLog::createLog(
                 $user->id,
                 'LOGIN',
-                strtoupper($user->user_type) . ": {$user->full_name} | LOGIN",
+                "{$userTypeDisplay}: {$user->full_name} | LOGIN",
                 $request
             );
         }
@@ -84,12 +92,20 @@ class AuthenticatedSessionController extends Controller
     {
         $user = Auth::user();
         
-        // Log admin/secretary logout only
-        if ($user && in_array($user->user_type, ['admin', 'secretary'])) {
+        // Log logout for admin, secretary, treasurer, and inventory_officer
+        if ($user && in_array($user->user_type, ['admin', 'secretary', 'treasurer', 'inventory_officer'])) {
+            $userTypeDisplay = match($user->user_type) {
+                'admin' => 'ADMIN',
+                'secretary' => 'SECRETARY',
+                'treasurer' => 'TREASURER',
+                'inventory_officer' => 'INVENTORY OFFICER',
+                default => strtoupper($user->user_type)
+            };
+            
             AdminLog::createLog(
                 $user->id,
                 'LOGOUT',
-                strtoupper($user->user_type) . ": {$user->full_name} | LOGOUT",
+                "{$userTypeDisplay}: {$user->full_name} | LOGOUT",
                 $request
             );
         }

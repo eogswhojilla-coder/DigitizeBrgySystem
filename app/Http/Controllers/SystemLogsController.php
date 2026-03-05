@@ -31,12 +31,23 @@ class SystemLogsController extends Controller
 
         // Transform logs for display
         $transformedLogs = $logs->through(function ($log) {
+            $userTypeDisplay = 'SYSTEM';
+            if ($log->user) {
+                $userTypeDisplay = match($log->user->user_type ?? 'admin') {
+                    'admin' => 'ADMIN',
+                    'secretary' => 'SECRETARY',
+                    'treasurer' => 'TREASURER',
+                    'inventory_officer' => 'INVENTORY OFFICER',
+                    default => strtoupper($log->user->user_type ?? 'admin')
+                };
+            }
+            
             return [
                 'id' => $log->id,
                 'user_name' => $log->user 
                     ? ($log->user->full_name ?? 'Unknown User')
                     : 'System',
-                'user_type' => $log->user ? strtoupper($log->user->user_type ?? 'admin') : 'SYSTEM',
+                'user_type' => $userTypeDisplay,
                 'action' => $log->action,
                 'message' => $log->message,
                 'ip_address' => $log->ip_address,

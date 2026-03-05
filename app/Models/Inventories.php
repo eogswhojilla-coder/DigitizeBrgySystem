@@ -21,4 +21,12 @@ class Inventories extends Model
         'price',
         'gcash_qr',
     ];
+
+    /**
+     * Get all borrow requests for this inventory item
+     */
+    public function borrowRequests()
+    {
+        return $this->hasMany(BorrowRequest::class, 'inventory_id');
+    }
 }

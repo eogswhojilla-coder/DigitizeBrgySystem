@@ -13,6 +13,7 @@ import Button from "@/app/_components/button";
 export default function TabsSection() {
     const [activeTab, setActiveTab] = useState("basic");
     const [completedSteps, setCompletedSteps] = useState(["basic"]); // Track completed steps
+    const [isOfficial, setIsOfficial] = useState(false); // Save as resident by default
 
     const {
         register,
@@ -207,7 +208,7 @@ export default function TabsSection() {
                         >
                             <span className="text-lg">+</span>
                             <span>
-                                {isSubmitting ? "Saving..." : "Save Official"}
+                                {isSubmitting ? "Saving..." : "Save Resident"}
                             </span>
                         </Button>
                     )}

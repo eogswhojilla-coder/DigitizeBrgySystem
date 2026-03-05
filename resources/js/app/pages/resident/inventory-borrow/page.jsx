@@ -7,13 +7,14 @@ import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import axios from "axios";
 import moment from "moment";
-import { useDispatch, useSelector } from "react-redux";
-import { get_inventories_thunk } from "@/app/redux/inventories-thunk";
 
 export default function Page() {
-    const dispatch = useDispatch();
-    const { inventories } = useSelector((state) => state.inventories);
-    
+    const [myBorrowRequests, setMyBorrowRequests] = useState([]);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [receiptPreview, setReceiptPreview] = useState(null);
+    const [viewingRequest, setViewingRequest] = useState(null);
+    const [availableInventories, setAvailableInventories] = useState([]);
+
     const {
         register,
         handleSubmit,
@@ -22,21 +23,44 @@ export default function Page() {
         formState: { errors, isSubmitting },
     } = useForm();
 
-    const [myBorrowRequests, setMyBorrowRequests] = useState([]);
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [receiptPreview, setReceiptPreview] = useState(null);
-    const [viewingRequest, setViewingRequest] = useState(null);
-
     useEffect(() => {
-        dispatch(get_inventories_thunk());
+        // Fetch available inventories from resident-specific endpoint
+        fetchAvailableInventories();
         fetchMyBorrowRequests();
-    }, [dispatch]);
+    }, []);
 
-    const inventoryData = inventories?.data || inventories || [];
-    const availableItems = inventoryData.filter((item) => {
-        const available = item.quantity - (item.borrowed || 0) - (item.damaged || 0);
-        return item.status === "Active" && available > 0;
-    });
+    const fetchAvailableInventories = async () => {
+        try {
+            console.log('[Inventory] Fetching available inventories...');
+            const response = await axios.get("/api/inventories/available");
+            console.log('[Inventory] API Response status:', response.status);
+            console.log('[Inventory] API Response data:', response.data);
+            
+            const items = response.data.data || response.data;
+            console.log('[Inventory] Parsed items:', items);
+            console.log('[Inventory] Items count:', items.length);
+            
+            setAvailableInventories(items);
+        } catch (error) {
+            console.error("[Inventory] Error fetching available inventories:", error);
+            console.error("[Inventory] Error status:", error.response?.status);
+            console.error("[Inventory] Error data:", error.response?.data);
+            console.error("[Inventory] Error message:", error.message);
+            
+            // Show error to user
+            if (error.response?.status === 401) {
+                console.error("[Inventory] Authentication error - user not logged in or session expired");
+            } else if (error.response?.status === 403) {
+                console.error("[Inventory] Permission denied - user doesn't have resident role");
+            } else if (error.response?.status === 419) {
+                console.error("[Inventory] CSRF token mismatch");
+            }
+            
+            setAvailableInventories([]);
+        }
+    };
+
+    const availableItems = availableInventories;
 
     const fetchMyBorrowRequests = async () => {
         try {
@@ -80,9 +104,11 @@ export default function Page() {
                 }
             }
 
+            const token = document.head.querySelector('meta[name="csrf-token"]');
             await axios.post("/api/borrow-requests", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
+                    'X-CSRF-TOKEN': token ? token.content : ''
                 },
             });
 

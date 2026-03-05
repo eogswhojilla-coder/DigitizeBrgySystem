@@ -26,7 +26,15 @@ class RegistrationController extends Controller
                 'firstName' => 'required|string',
                 'lastName' => 'required|string',
                 'username' => 'required|string|unique:users,username',
-                'password' => 'required|string|min:6',
+                'password' => [
+                    'required',
+                    'string',
+                    'min:8',
+                    'regex:/[a-z]/',      // at least one lowercase letter
+                    'regex:/[A-Z]/',      // at least one uppercase letter
+                    'regex:/[0-9]/',      // at least one digit
+                    'regex:/[@$!%*#?&]/', // at least one special character
+                ],
                 'houseNumber' => 'required|string',
                 'street' => 'required|string',
                 'purokSitio' => 'required|string',

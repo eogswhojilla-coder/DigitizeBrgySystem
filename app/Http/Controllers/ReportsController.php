@@ -18,7 +18,6 @@ class ReportsController extends Controller
         $filters = [
             'voters' => $request->input('voters'),
             'age' => $request->input('age'),
-            'status' => $request->input('status'),
             'pwd' => $request->input('pwd'),
             'singleParent' => $request->input('singleParent'),
             'senior' => $request->input('senior'),
@@ -37,11 +36,6 @@ class ReportsController extends Controller
         if ($request->filled('age')) {
             $age = (int)$request->age;
             $query->whereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) = ?', [$age]);
-        }
-
-        // Filter by status
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
         }
 
         // Filter by PWD
@@ -88,7 +82,6 @@ class ReportsController extends Controller
                     'pwd' => $resident->pwd ? 'YES' : 'NO',
                     'singleParent' => $resident->singleParent ? 'YES' : 'NO',
                     'voters' => $resident->voters ? 'YES' : 'NO',
-                    'status' => $resident->status ?? 'ACTIVE',
                     'senior' => $isSenior ? 'YES' : 'NO',
                     'address' => $resident->address,
                     'gender' => $resident->gender,
@@ -119,10 +112,6 @@ class ReportsController extends Controller
         if ($request->filled('age')) {
             $age = (int)$request->age;
             $query->whereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) = ?', [$age]);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
         }
 
         if ($request->filled('pwd')) {
@@ -165,7 +154,6 @@ class ReportsController extends Controller
                     'pwd' => $resident->pwd ? 'YES' : 'NO',
                     'singleParent' => $resident->singleParent ? 'YES' : 'NO',
                     'voters' => $resident->voters ? 'YES' : 'NO',
-                    'status' => $resident->status ?? 'ACTIVE',
                     'senior' => $isSenior ? 'YES' : 'NO',
                     'address' => $resident->address,
                     'gender' => $resident->gender,
@@ -175,7 +163,6 @@ class ReportsController extends Controller
         $filters = [
             'voters' => $request->input('voters'),
             'age' => $request->input('age'),
-            'status' => $request->input('status'),
             'pwd' => $request->input('pwd'),
             'singleParent' => $request->input('singleParent'),
             'senior' => $request->input('senior'),

@@ -144,9 +144,11 @@ export default function Page() {
                 formData.append("payment_receipt", receiptFile);
             }
 
+            const token = document.head.querySelector('meta[name="csrf-token"]');
             await axios.post("/api/certificate-requests", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
+                    'X-CSRF-TOKEN': token ? token.content : ''
                 },
             });
 
@@ -310,12 +312,9 @@ export default function Page() {
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option value="">Select certificate type</option>
-                                    <option value="">Barangay Certificate</option>
-                                    <option value="">Certificate of Residency</option>
-                                    <option value="">Barangay Indigency</option>
                                     {certificateTypes.map((type) => (
                                         <option key={type.id} value={type.id}>
-                                            {type.name} - ₱{parseFloat(type.fee).toFixed(2)}
+                                            {type.name} {type.has_fee && type.fee > 0 ? `- ₱${parseFloat(type.fee).toFixed(2)}` : '- Free'}
                                         </option>
                                     ))}
                                 </select>
@@ -403,19 +402,30 @@ export default function Page() {
                                             <div className="text-center">
                                                 {/* Display certificate type specific GCash QR code */}
                                                 <div className="bg-white p-4 rounded-lg shadow-md inline-block">
-                                                    {selectedCertificateType.gcash_qr_url ? (
+                                                    {selectedCertificateType?.gcash_qr_url ? (
                                                         <img 
                                                             src={selectedCertificateType.gcash_qr_url} 
                                                             alt="GCash QR Code"
-                                                            className="w-48 h-48 object-contain"
+                                                            className="w-48 h-48 object-contain mx-auto"
                                                             onError={(e) => {
+                                                                console.error('Failed to load QR code:', selectedCertificateType.gcash_qr_url);
                                                                 e.target.style.display = 'none';
-                                                                e.target.nextSibling.style.display = 'flex';
+                                                                if (e.target.nextElementSibling) {
+                                                                    e.target.nextElementSibling.style.display = 'flex';
+                                                                }
                                                             }}
                                                         />
                                                     ) : null}
-                                                    <div className={`${selectedCertificateType.gcash_qr_url ? 'hidden' : 'flex'} w-48 h-48 items-center justify-center bg-gray-200 text-gray-500 text-sm text-center`}>
-                                                        GCash QR Code<br/>Not Available
+                                                    <div 
+                                                        className={`${selectedCertificateType?.gcash_qr_url ? 'hidden' : 'flex'} w-48 h-48 items-center justify-center bg-gray-200 text-gray-500 text-sm text-center flex-col gap-2 rounded`}
+                                                        style={{ display: selectedCertificateType?.gcash_qr_url ? 'none' : 'flex' }}
+                                                    >
+                                                        <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                                        </svg>
+                                                        <span className="font-semibold">GCash QR Code</span>
+                                                        <span className="text-xs">Not Available</span>
+                                                        <span className="text-xs text-red-500">Please contact the barangay</span>
                                                     </div>
                                                 </div>
                                                 <p className="text-xs text-gray-600 mt-2">Scan to pay via GCash</p>
@@ -501,10 +511,16 @@ export default function Page() {
                                             <div className="bg-blue-100 p-2 rounded-lg">
                                                 <FileText className="w-6 h-6 text-blue-600" />
                                             </div>
-                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-800">
-                                                <DollarSign className="w-4 h-4 mr-1" />
-                                                ₱{parseFloat(type.fee).toFixed(2)}
-                                            </span>
+                                            {type.has_fee && type.fee > 0 ? (
+                                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-800">
+                                                    <DollarSign className="w-4 h-4 mr-1" />
+                                                    ₱{parseFloat(type.fee).toFixed(2)}
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-100 text-blue-800">
+                                                    Free
+                                                </span>
+                                            )}
                                         </div>
                                         <h3 className="text-lg font-bold text-gray-900 mb-2">
                                             {type.name}
@@ -588,7 +604,10 @@ export default function Page() {
                                                     {request.purpose}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm text-gray-700 font-medium">
-                                                    ₱{parseFloat(request.certificate_type?.fee || 0).toFixed(2)}
+                                                    {request.certificate_type?.has_fee && request.certificate_type?.fee > 0 
+                                                        ? `₱${parseFloat(request.certificate_type.fee).toFixed(2)}`
+                                                        : 'Free'
+                                                    }
                                                 </td>
                                                 <td className="px-4 py-3 text-sm text-gray-700">
                                                     {moment(request.created_at).format("MMM DD, YYYY")}

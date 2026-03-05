@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('username')->nullable();
-            $table->enum('user_type', ['admin', 'secretary', 'resident'])->nullable();
+            $table->enum('user_type', ['admin', 'secretary', 'treasurer', 'inventory_officer', 'resident'])->nullable();
             $table->string('contact')->nullable();
             $table->string('image')->nullable();
             $table->string('password')->nullable();
@@ -28,9 +28,7 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+    
     public function down(): void
     {
         Schema::dropIfExists('users');

@@ -12,15 +12,31 @@ import {
 import SearchSection from "./sections/search-section";
 import TableSection from "./sections/table-section";
 import PaginationSection from "./sections/pagination-section";
+import ViewDetailSection from "./sections/view-detail-section";
 import store from "@/app/store/store";
 import { get_barangay_officials_thunk } from "@/app/redux/barangay-official-thunk";
 
 const DataTable = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [selectedOfficial, setSelectedOfficial] = useState(null);
+
     useEffect(() => {
         store.dispatch(get_barangay_officials_thunk());
     }, []);
+
+    const handleViewDetails = (official) => {
+        setSelectedOfficial(official);
+        setIsViewModalOpen(true);
+    };
+
+    const handleCloseModal = (value) => {
+        setIsViewModalOpen(value);
+        if (!value) {
+            setSelectedOfficial(null);
+        }
+    };
 
     return (
         <div className="bg-white min-h-screen p-6">
@@ -28,10 +44,16 @@ const DataTable = () => {
             <SearchSection />
             {/* Table */}
 
-            <TableSection />
+            <TableSection onViewDetails={handleViewDetails} />
             {/* Pagination */}
 
             <PaginationSection />
+
+            <ViewDetailSection 
+                isOpen={isViewModalOpen}
+                onClose={handleCloseModal}
+                official={selectedOfficial}
+            />
         </div>
     );
 };

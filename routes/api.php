@@ -7,6 +7,7 @@ use App\Http\Controllers\BarangayInformationController;
 use App\Http\Controllers\BarangayResidentController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\BlotterController;
+use App\Http\Controllers\NotificationController;
 
 use App\Http\Controllers\FamiliesController;
 use App\Http\Controllers\FamilyMemberController;
@@ -42,10 +43,26 @@ Route::middleware(['auth:sanctum', 'permission:residents.view'])->group(function
     Route::resource('barangay_residents', BarangayResidentController::class);
     Route::resource('barangay_officials', BarangayResidentController::class);
     Route::get('residents/search', [BarangayResidentController::class, 'search']);
+    
+    // Archived residents
+    Route::get('archived_residents', [App\Http\Controllers\ArchivedResidentController::class, 'index']);
+    Route::get('archived_residents/generate-pdf', [App\Http\Controllers\ArchivedResidentController::class, 'generatePdf']);
+    
+    // Official end term
+    Route::get('official_end_term/generate-pdf', [App\Http\Controllers\BarangayOfficialEndTermController::class, 'generatePdf']);
 });
 
 Route::middleware(['auth:sanctum', 'permission:residents.update'])->group(function () {
     Route::put('barangay_residents/{id}/assign-position', [BarangayResidentController::class, 'assignPosition']);
+    Route::post('check-expired-officials', [App\Http\Controllers\BarangayOfficialEndTermController::class, 'checkAndMoveExpiredOfficials']);
+    
+    // Archive operations
+    Route::post('archived_residents', [App\Http\Controllers\ArchivedResidentController::class, 'store']);
+    Route::post('archived_residents/{id}/restore', [App\Http\Controllers\ArchivedResidentController::class, 'restore']);
+});
+
+Route::middleware(['auth:sanctum', 'permission:residents.delete'])->group(function () {
+    Route::delete('archived_residents/{id}', [App\Http\Controllers\ArchivedResidentController::class, 'destroy']);
 });
 
 // Position Management
@@ -58,9 +75,21 @@ Route::middleware(['auth:sanctum', 'permission:blotter.view'])->group(function (
     Route::resource('blotters', BlotterController::class);
 });
 
-// Inventory Management (requires permission)
+// ============================================
+// PUBLIC INVENTORY VIEWING (Residents & Auth Users)
+// Must be defined BEFORE resource routes to prevent conflicts
+// ============================================
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('inventories/available', [App\Http\Controllers\Api\ResidentController::class, 'getAvailableInventories']);
+    Route::get('my-borrow-requests', [App\Http\Controllers\Api\ResidentController::class, 'getMyBorrowRequests']);
+});
+
+// Inventory Management (requires permission - Admin only)
 Route::middleware(['auth:sanctum', 'permission:inventory.view'])->group(function () {
     Route::resource('inventories', InventoriesController::class);
+    
+    // Inventory Reports
+    Route::get('inventory-reports', [InventoriesController::class, 'getInventoryReports']);
 });
 
 // Admin Borrow Request Management (requires permission)
@@ -100,10 +129,20 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('certificate-types', [CertificateTypeController::class, 'index']);
     Route::get('certificate-types/{certificate_type}', [CertificateTypeController::class, 'show']);
 
-    // Announcement Management (admin only)
+    // Public announcement viewing (for all authenticated users including residents)
+    Route::get('announcement', [AnnouncementController::class, 'index']);
+    Route::get('announcement/{announcement}', [AnnouncementController::class, 'show']);
+    Route::get('announcement_calendar', [AnnouncementCalendarController::class, 'index']);
+    Route::get('announcement_calendar/{announcement_calendar}', [AnnouncementCalendarController::class, 'show']);
+
+    // Announcement Management (admin only - create, update, delete)
     Route::middleware(['permission:announcements.create'])->group(function () {
-        Route::resource('announcement', AnnouncementController::class);
-        Route::resource('announcement_calendar', AnnouncementCalendarController::class);
+        Route::post('announcement', [AnnouncementController::class, 'store']);
+        Route::put('announcement/{announcement}', [AnnouncementController::class, 'update']);
+        Route::delete('announcement/{announcement}', [AnnouncementController::class, 'destroy']);
+        Route::post('announcement_calendar', [AnnouncementCalendarController::class, 'store']);
+        Route::put('announcement_calendar/{announcement_calendar}', [AnnouncementCalendarController::class, 'update']);
+        Route::delete('announcement_calendar/{announcement_calendar}', [AnnouncementCalendarController::class, 'destroy']);
     });
 
     // Admin Certificate Requests (requires permissions)
@@ -145,21 +184,26 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // ============================================
     // RESIDENT PORTAL APIs (NO PERMISSION CHECKS)
     // ============================================
-    Route::middleware(['role:resident'])->group(function () {
+    Route::middleware(['auth:sanctum', 'role:resident'])->group(function () {
         // Resident Certificate Requests
         Route::get('my-certificate-requests', [App\Http\Controllers\Api\ResidentController::class, 'getMyCertificateRequests']);
         Route::post('certificate-requests', [App\Http\Controllers\Api\ResidentController::class, 'submitCertificateRequest']);
         Route::get('certificate-requests/{certificateRequest}/print', [CertificateRequestController::class, 'printCertificate']);
 
-        // Resident Inventory Borrow APIs
-        Route::get('inventories/available', [App\Http\Controllers\Api\ResidentController::class, 'getAvailableInventories']);
-        Route::get('my-borrow-requests', [App\Http\Controllers\Api\ResidentController::class, 'getMyBorrowRequests']);
+        // Resident Inventory Borrow - Submit requests only (viewing moved to public section above)
         Route::post('borrow-requests', [App\Http\Controllers\Api\ResidentController::class, 'submitBorrowRequest']);
 
         // Resident Blotter Notifications
         Route::get('my-blotter-notifications', [App\Http\Controllers\Api\ResidentController::class, 'getMyBlotterNotifications']);
         Route::post('mark-notification-read/{id}', [App\Http\Controllers\Api\ResidentController::class, 'markNotificationAsRead']);
         Route::post('mark-all-notifications-read', [App\Http\Controllers\Api\ResidentController::class, 'markAllNotificationsAsRead']);
+
+        // All Notifications (includes announcements, blotter, etc.)
+        Route::get('notifications', [NotificationController::class, 'index']);
+        Route::get('notifications/unread', [NotificationController::class, 'unread']);
+        Route::post('notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
 
         // Resident Profile
         Route::get('my-profile', [App\Http\Controllers\Api\ResidentController::class, 'getMyProfile']);

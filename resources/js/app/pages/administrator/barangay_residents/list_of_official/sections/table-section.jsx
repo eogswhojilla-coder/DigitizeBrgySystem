@@ -1,10 +1,10 @@
 import { router } from "@inertiajs/react";
-import { Edit2, X } from "lucide-react";
+import { Eye } from "lucide-react";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import Table from "@/app/_components/table";
 
-export default function TableSection() {
+export default function TableSection({ onViewDetails }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [positionFilter, setPositionFilter] = useState("ALL POSITION");
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -34,6 +34,7 @@ export default function TableSection() {
             singleParent: official.singleParent === 'yes' ? 'YES' : 'NO',
             voters: official.voters === 'yes' || official.voters === 'registered' ? 'YES' : 'NO',
             status: 'ACTIVE',
+            fullData: official, // Keep full official data for detail view
         }))
         : [];
 
@@ -144,18 +145,13 @@ export default function TableSection() {
             </div>
         ),
         action: (
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 justify-center">
                 <button
-                    onClick={() => router.visit(`/administrator/barangay_residents/list_of_official/${official.id}`)}
-                    className="p-1 text-yellow-600 hover:bg-yellow-50 rounded transition-colors"
+                    onClick={() => onViewDetails(official.fullData)}
+                    className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                    title="View Details"
                 >
-                    <Edit2 className="w-4 h-4" />
-                </button>
-                <button 
-                    onClick={() => console.log("Delete", official.id)}
-                    className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                >
-                    <X className="w-4 h-4" />
+                    <Eye className="w-4 h-4" />
                 </button>
             </div>
         ),

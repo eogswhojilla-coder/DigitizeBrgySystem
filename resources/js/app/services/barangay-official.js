@@ -34,3 +34,13 @@ export function update_barangay_officials_service(data) {
         return result;
     } catch (error) {}
 }
+
+export async function check_expired_officials_service() {
+    try {
+        const result = await axios.post("/api/check-expired-officials");
+        return result;
+    } catch (error) {
+        console.error("Error checking expired officials:", error);
+        throw error;
+    }
+}

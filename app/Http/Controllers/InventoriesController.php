@@ -327,4 +327,247 @@ class InventoriesController extends Controller
             'data' => $borrowRequest
         ], 200);
     }
+
+    /**
+     * Get inventory reports based on type
+     */
+    public function getInventoryReports(Request $request)
+    {
+        $reportType = $request->query('type', 'most-borrowed');
+
+        switch ($reportType) {
+            case 'most-borrowed':
+                return $this->getMostBorrowedItems();
+            
+            case 'low-stock':
+                return $this->getLowStockItems();
+            
+            case 'overdue':
+                return $this->getOverdueReturns();
+            
+            case 'damaged':
+                return $this->getDamagedItems();
+            
+            case 'borrow-history':
+                return $this->getBorrowHistory();
+            
+            default:
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid report type'
+                ], 400);
+        }
+    }
+
+    /**
+     * Get most borrowed items with statistics
+     */
+    private function getMostBorrowedItems()
+    {
+        $mostBorrowed = Inventories::withCount(['borrowRequests as total_borrowed' => function ($query) {
+            $query->where('status', 'approved')
+                  ->orWhere('status', 'returned');
+        }])
+        ->with(['borrowRequests' => function ($query) {
+            $query->where('status', 'approved')
+                  ->orWhere('status', 'returned')
+                  ->orderBy('created_at', 'desc')
+                  ->limit(5);
+        }])
+        ->having('total_borrowed', '>', 0)
+        ->orderBy('total_borrowed', 'desc')
+        ->get()
+        ->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'description' => $item->description,
+                'quantity' => $item->quantity,
+                'borrowed' => $item->borrowed ?? 0,
+                'damaged' => $item->damaged ?? 0,
+                'condition' => $item->condition,
+                'total_borrowed' => $item->total_borrowed,
+                'currently_borrowed' => $item->borrowed ?? 0,
+                'recent_requests' => $item->borrowRequests
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $mostBorrowed
+        ], 200);
+    }
+
+    /**
+     * Get low stock items
+     */
+    private function getLowStockItems()
+    {
+        $lowStock = Inventories::where(function ($query) {
+            $query->whereColumn('quantity', '<=', 'minimum_quantity')
+                  ->orWhere(function ($q) {
+                      $q->whereNull('minimum_quantity')
+                        ->where('quantity', '<=', 5);
+                  });
+        })
+        ->where('status', 'Active')
+        ->orderBy('quantity', 'asc')
+        ->get()
+        ->map(function ($item) {
+            $minimumQty = $item->minimum_quantity ?? 5;
+            $available = $item->quantity - ($item->borrowed ?? 0);
+            
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'description' => $item->description,
+                'quantity' => $item->quantity,
+                'borrowed' => $item->borrowed ?? 0,
+                'available' => $available,
+                'minimum_quantity' => $minimumQty,
+                'status' => $item->status,
+                'shortage' => max(0, $minimumQty - $item->quantity),
+                'alert_level' => $item->quantity <= ($minimumQty * 0.5) ? 'critical' : 'warning'
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $lowStock
+        ], 200);
+    }
+
+    /**
+     * Get overdue returns
+     */
+    private function getOverdueReturns()
+    {
+        $overdue = BorrowRequest::with(['user', 'inventory'])
+            ->where('status', 'approved')
+            ->where('return_date', '<', now())
+            ->orderBy('return_date', 'asc')
+            ->get()
+            ->map(function ($request) {
+                $daysOverdue = now()->diffInDays($request->return_date);
+                
+                return [
+                    'id' => $request->id,
+                    'request_number' => $request->request_number,
+                    'item_name' => $request->inventory->name ?? 'N/A',
+                    'borrower_name' => $request->user ? 
+                        "{$request->user->first_name} {$request->user->last_name}" : 'N/A',
+                    'borrower_email' => $request->user->email ?? 'N/A',
+                    'contact_number' => $request->contact_number,
+                    'quantity' => $request->quantity,
+                    'borrow_date' => $request->borrow_date->format('Y-m-d'),
+                    'expected_return_date' => $request->return_date->format('Y-m-d'),
+                    'days_overdue' => $daysOverdue,
+                    'urgency' => $daysOverdue > 7 ? 'high' : ($daysOverdue > 3 ? 'medium' : 'low'),
+                    'purpose' => $request->purpose
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $overdue
+        ], 200);
+    }
+
+    /**
+     * Get damaged items
+     */
+    private function getDamagedItems()
+    {
+        $damaged = Inventories::where(function ($query) {
+            $query->where('damaged', '>', 0)
+                  ->orWhere('condition', 'Damaged');
+        })
+        ->with(['borrowRequests' => function ($query) {
+            $query->whereIn('condition_after_return', ['Damaged', 'Lost'])
+                  ->where('status', 'returned')
+                  ->with('user')
+                  ->orderBy('actual_return_date', 'desc')
+                  ->limit(5);
+        }])
+        ->get()
+        ->map(function ($item) {
+            $damagedIncidents = $item->borrowRequests->map(function ($request) {
+                return [
+                    'incident_date' => $request->actual_return_date?->format('Y-m-d'),
+                    'borrower' => $request->user ? 
+                        "{$request->user->first_name} {$request->user->last_name}" : 'N/A',
+                    'condition' => $request->condition_after_return,
+                    'quantity_affected' => $request->quantity,
+                    'remarks' => $request->remarks
+                ];
+            });
+
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'description' => $item->description,
+                'total_quantity' => $item->quantity,
+                'damaged_count' => $item->damaged ?? 0,
+                'condition' => $item->condition,
+                'location' => $item->location,
+                'status' => $item->status,
+                'damage_percentage' => $item->quantity > 0 ? 
+                    round(($item->damaged / ($item->quantity + $item->damaged)) * 100, 2) : 0,
+                'recent_incidents' => $damagedIncidents
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $damaged
+        ], 200);
+    }
+
+    /**
+     * Get complete borrow history
+     */
+    private function getBorrowHistory()
+    {
+        $history = BorrowRequest::with(['user', 'inventory', 'approvedBy'])
+            ->where('status', 'returned')
+            ->orderBy('actual_return_date', 'desc')
+            ->get()
+            ->map(function ($request) {
+                $borrowDuration = $request->actual_return_date && $request->borrow_date ? 
+                    $request->borrow_date->diffInDays($request->actual_return_date) : 0;
+                
+                $wasLate = $request->actual_return_date && $request->return_date ? 
+                    $request->actual_return_date->gt($request->return_date) : false;
+
+                return [
+                    'id' => $request->id,
+                    'request_number' => $request->request_number,
+                    'item_name' => $request->inventory->name ?? 'N/A',
+                    'item_description' => $request->inventory->description ?? '',
+                    'borrower_name' => $request->user ? 
+                        "{$request->user->first_name} {$request->user->last_name}" : 'N/A',
+                    'borrower_email' => $request->user->email ?? 'N/A',
+                    'contact_number' => $request->contact_number,
+                    'quantity' => $request->quantity,
+                    'purpose' => $request->purpose,
+                    'borrow_date' => $request->borrow_date->format('Y-m-d'),
+                    'expected_return_date' => $request->return_date->format('Y-m-d'),
+                    'actual_return_date' => $request->actual_return_date?->format('Y-m-d'),
+                    'duration_days' => $borrowDuration,
+                    'condition_after_return' => $request->condition_after_return,
+                    'was_late' => $wasLate,
+                    'days_late' => $wasLate ? 
+                        $request->return_date->diffInDays($request->actual_return_date) : 0,
+                    'approved_by' => $request->approvedBy ? 
+                        "{$request->approvedBy->first_name} {$request->approvedBy->last_name}" : 'N/A',
+                    'remarks' => $request->remarks,
+                    'created_at' => $request->created_at->format('Y-m-d H:i:s')
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $history
+        ], 200);
+    }
 }

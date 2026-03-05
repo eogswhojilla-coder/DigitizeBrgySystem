@@ -268,8 +268,12 @@ export default function Page() {
                 }
             }
 
+            const token = document.head.querySelector('meta[name="csrf-token"]');
             await axios.post("/api/certificate-types", formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: { 
+                    'Content-Type': 'multipart/form-data',
+                    'X-CSRF-TOKEN': token ? token.content : ''
+                }
             });
 
             await Swal.fire({

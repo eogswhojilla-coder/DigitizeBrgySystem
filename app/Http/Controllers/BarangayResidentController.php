@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\BarangayResident;
+use App\Models\BarangayOfficialEndTerm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class BarangayResidentController extends Controller
 {
@@ -84,7 +86,15 @@ class BarangayResidentController extends Controller
     
     public function index(Request $request)
     {
+        // Automatically check and move expired officials before loading list
+        if ($request->is('api/barangay_officials*')) {
+            $this->checkAndMoveExpiredOfficials();
+        }
+
         $query = BarangayResident::query();
+
+        // Exclude archived residents
+        $query->where('is_archived', false);
 
         // Filter by isOfficial based on route
         if ($request->is('api/barangay_officials*')) {
@@ -160,15 +170,16 @@ class BarangayResidentController extends Controller
     {
         $searchTerm = $request->input('search', '');
         
-        $residents = BarangayResident::where(function($query) use ($searchTerm) {
-            $query->where('firstName', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('middleName', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('lastName', 'like', '%' . $searchTerm . '%')
-                  ->orWhereRaw("CONCAT(firstName, ' ', middleName, ' ', lastName) like ?", ['%' . $searchTerm . '%'])
-                  ->orWhereRaw("CONCAT(firstName, ' ', lastName) like ?", ['%' . $searchTerm . '%']);
-        })
-        ->limit(10)
-        ->get(['id', 'firstName', 'middleName', 'lastName', 'residentId']);
+        $residents = BarangayResident::where('is_archived', false)
+            ->where(function($query) use ($searchTerm) {
+                $query->where('firstName', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('middleName', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('lastName', 'like', '%' . $searchTerm . '%')
+                      ->orWhereRaw("CONCAT(firstName, ' ', middleName, ' ', lastName) like ?", ['%' . $searchTerm . '%'])
+                      ->orWhereRaw("CONCAT(firstName, ' ', lastName) like ?", ['%' . $searchTerm . '%']);
+            })
+            ->limit(10)
+            ->get(['id', 'firstName', 'middleName', 'lastName', 'residentId']);
         
         return response()->json($residents);
     }
@@ -221,6 +232,55 @@ class BarangayResidentController extends Controller
                 'message' => 'Error assigning position',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Private method to check and move expired officials
+     * Called automatically when loading officials list
+     */
+    private function checkAndMoveExpiredOfficials()
+    {
+        $today = Carbon::now();
+
+        // Get all active officials whose term has ended (exclude archived)
+        $expiredOfficials = BarangayResident::where('isOfficial', true)
+            ->where('is_archived', false)
+            ->whereNotNull('endDate')
+            ->whereDate('endDate', '<', $today)
+            ->get();
+
+        foreach ($expiredOfficials as $official) {
+            // Check if already moved to prevent duplicates
+            $existingEndTerm = BarangayOfficialEndTerm::where('official_id', $official->id)
+                ->where('term_to', $official->endDate)
+                ->first();
+
+            if (!$existingEndTerm) {
+                // Create end term record
+                BarangayOfficialEndTerm::create([
+                    'official_id' => $official->id,
+                    'position' => $official->position,
+                    'senior' => Carbon::parse($official->dateOfBirth)->age >= 60,
+                    'term_from' => $official->startDate,
+                    'term_to' => $official->endDate,
+                    'pwd' => $official->pwd,
+                    'single_parent' => $official->singleParent,
+                    'voters' => $official->voters,
+                    'status' => 'NOT ACTIVE',
+                    'date_deleted' => now(),
+                ]);
+
+                // Remove official status and clear position data
+                $official->update([
+                    'isOfficial' => false,
+                    'position' => null,
+                    'startDate' => null,
+                    'endDate' => null,
+                ]);
+
+                Log::info("Moved expired official to end term: {$official->firstName} {$official->lastName}");
+            }
         }
     }
 }

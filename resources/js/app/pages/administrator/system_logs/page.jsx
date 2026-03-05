@@ -40,15 +40,26 @@ const SystemLogs = () => {
 
   const getMessageColor = (action) => {
     switch (action?.toUpperCase()) {
-      case 'LOGIN': return 'text-green-700 bg-green-50';
-      case 'LOGOUT': return 'text-orange-700 bg-orange-50';
+      case 'LOGIN': return 'text-green-700 bg-green-50 border-green-200';
+      case 'LOGOUT': return 'text-orange-700 bg-orange-50 border-orange-200';
       case 'CREATE':
       case 'ADD':
-      case 'ADDED': return 'text-blue-700 bg-blue-50';
+      case 'ADDED': return 'text-blue-700 bg-blue-50 border-blue-200';
       case 'UPDATE':
-      case 'EDIT': return 'text-yellow-700 bg-yellow-50';
-      case 'DELETE': return 'text-red-700 bg-red-50';
-      default: return 'text-gray-700 bg-gray-50';
+      case 'EDIT': return 'text-yellow-700 bg-yellow-50 border-yellow-200';
+      case 'DELETE': return 'text-red-700 bg-red-50 border-red-200';
+      default: return 'text-gray-700 bg-gray-50 border-gray-200';
+    }
+  };
+
+  const getUserTypeBadgeColor = (userType) => {
+    switch (userType?.toUpperCase()) {
+      case 'ADMIN': return 'bg-blue-600 text-white';
+      case 'SECRETARY': return 'bg-purple-600 text-white';
+      case 'TREASURER': return 'bg-green-600 text-white';
+      case 'INVENTORY OFFICER': return 'bg-orange-600 text-white';
+      case 'SYSTEM': return 'bg-gray-600 text-white';
+      default: return 'bg-gray-500 text-white';
     }
   };
 
@@ -111,6 +122,12 @@ const SystemLogs = () => {
                     No. ↕
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    User Type
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Action
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Message ↕
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
@@ -122,13 +139,28 @@ const SystemLogs = () => {
                 {logs.data && logs.data.length > 0 ? (
                   logs.data.map((log, index) => (
                     <tr key={log.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                         {log.id}
                       </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getMessageColor(log.action)}`}>
-                          {log.message}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${getUserTypeBadgeColor(log.user_type)}`}>
+                          {log.user_type}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-block px-3 py-1 rounded border text-xs font-semibold ${getMessageColor(log.action)}`}>
+                          {log.action}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-900">
+                          {log.message}
+                        </div>
+                        {log.ip_address && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            IP: {log.ip_address}
+                          </div>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {log.date}
@@ -137,7 +169,7 @@ const SystemLogs = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="3" className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
                       No logs found
                     </td>
                   </tr>

@@ -38,22 +38,6 @@ export default function SearchReportSection({ filters, onFilterChange, onFilter,
                         />
                     </div>
 
-                    {/* STATUS */}
-                    <div className="flex items-center gap-3">
-                        <label className="bg-blue-600 text-white px-4 py-2 rounded font-medium min-w-fit">
-                            STATUS
-                        </label>
-                        <select
-                            className="flex-1 border border-gray-300 rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value={filters.status}
-                            onChange={(e) => onFilterChange('status', e.target.value)}
-                        >
-                            <option value="">--SELECT STATUS--</option>
-                            <option value="ACTIVE">ACTIVE</option>
-                            <option value="INACTIVE">INACTIVE</option>
-                        </select>
-                    </div>
-
                     {/* PWD */}
                     <div className="flex items-center gap-3">
                         <label className="bg-blue-600 text-white px-4 py-2 rounded font-medium min-w-fit">

@@ -9,6 +9,7 @@ class BarangayResident extends Model
     protected $fillable = [
             'residentId',
             'isOfficial',
+            'is_archived',
 
             // Basic Info
            'position',
@@ -63,6 +64,11 @@ class BarangayResident extends Model
            'profileImage',
           
 
+    ];
+
+    protected $casts = [
+        'isOfficial' => 'boolean',
+        'is_archived' => 'boolean',
     ];
 
     /**

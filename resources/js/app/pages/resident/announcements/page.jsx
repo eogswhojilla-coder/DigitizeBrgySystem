@@ -15,8 +15,17 @@ export default function Page() {
     const [viewMode, setViewMode] = useState("list"); // "list" or "calendar"
     
     useEffect(() => {
+        // Initial load
         dispatch(get_announcement_thunk());
         dispatch(get_announcement_calendar_thunk());
+        
+        // Auto-refresh every 30 seconds for real-time updates
+        const interval = setInterval(() => {
+            dispatch(get_announcement_thunk());
+            dispatch(get_announcement_calendar_thunk());
+        }, 30000); // 30 seconds
+        
+        return () => clearInterval(interval);
     }, [dispatch]);
 
     const announcementData = announcements?.data || announcements || [];

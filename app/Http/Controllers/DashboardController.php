@@ -164,10 +164,15 @@ class DashboardController extends Controller
                 ->limit(5)
                 ->get()
                 ->map(function ($transaction) {
+                    $borrowerName = 'N/A';
+                    if ($transaction->user) {
+                        $borrowerName = trim($transaction->user->first_name . ' ' . $transaction->user->last_name);
+                    }
+                    
                     return [
                         'id' => $transaction->id,
                         'item' => $transaction->inventory->name ?? 'N/A',
-                        'borrower' => $transaction->user->first_name . ' ' . $transaction->user->last_name,
+                        'borrower' => $borrowerName,
                         'date' => $transaction->created_at->format('Y-m-d'),
                         'status' => $transaction->status ?? 'Borrowed',
                         'quantity' => $transaction->quantity ?? 1,

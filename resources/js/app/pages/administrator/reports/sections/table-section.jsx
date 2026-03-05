@@ -43,10 +43,6 @@ export default function TableSection({ residents = [] }) {
             accessor: "voters",
         },
         {
-            header: "Status",
-            accessor: "status",
-        },
-        {
             header: "Senior",
             accessor: "senior",
         },
@@ -61,15 +57,6 @@ export default function TableSection({ residents = [] }) {
         pwd: resident.pwd || "-",
         singleParent: resident.singleParent || "-",
         voters: resident.voters || "-",
-        status: (
-            <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                resident.status === 'ACTIVE' 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
-            }`}>
-                {resident.status}
-            </span>
-        ),
         senior: resident.senior || "-",
     }));
 

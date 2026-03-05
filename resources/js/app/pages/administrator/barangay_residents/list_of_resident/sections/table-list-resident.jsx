@@ -5,7 +5,10 @@ import moment from "moment";
 import DeleteSection from "./delete-section";
 import ViewDetailSection from "./view-detail.section";
 import AssignPositionSection from "./assign-position-section";
+import ArchiveModalSection from "./archive-modal-section";
 import Table from "@/app/_components/table";
+import store from "@/app/store/store";
+import { get_barangay_residents_thunk } from "@/app/redux/barangay-resident-thunk";
 
 export default function TableListResident() {
     const { residents } = useSelector((store) => store.barangay_residents);
@@ -47,6 +50,11 @@ export default function TableListResident() {
         if (!value) {
             setSelectedResident(null);
         }
+    };
+
+    const handleArchiveSuccess = () => {
+        // Refresh the residents list after archiving
+        store.dispatch(get_barangay_residents_thunk());
     };
 
     console.log("residents", residents);
@@ -169,7 +177,10 @@ export default function TableListResident() {
                         >
                             <Briefcase className="w-4 h-4" />
                         </button>
-                        <DeleteSection data={resident} />
+                        <ArchiveModalSection 
+                            resident={resident}
+                            onArchiveSuccess={handleArchiveSuccess}
+                        />
                     </div>
                 ),
             };

@@ -12,16 +12,16 @@ class UserSeeder extends Seeder
     {
         // Admin User
         User::create([
-            'first_name' => 'Barangay',
-            'last_name' => 'Admin',
-            'email' => 'admin@gmail.com',
+            'first_name' => 'HEAD',
+            'last_name' => 'IT',
+            'email' => 'super.admin@gmail.com',
             'password' => Hash::make('admin'),
             'user_type' => 'admin',
             'status' => 'approved', // Admin is always approved
         ]);
 
         // Resident User
-        User::create([
+        $residentUser = User::create([
             'first_name' => 'Juan',
             'last_name' => 'Dela Cruz',
             'email' => 'resident@gmail.com',
@@ -29,6 +29,14 @@ class UserSeeder extends Seeder
             'user_type' => 'resident',
             'status' => 'approved', // Set as approved by default
         ]);
+        
+        // Assign Resident role if Spatie roles exist
+        if (class_exists(\Spatie\Permission\Models\Role::class)) {
+            $residentRole = \Spatie\Permission\Models\Role::where('name', 'Resident')->first();
+            if ($residentRole) {
+                $residentUser->assignRole('Resident');
+            }
+        }
         
         $this->call([
             BarangayResidentsSeeder::class,

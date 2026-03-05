@@ -22,8 +22,17 @@ export default function Page() {
     const { inventories = [] } = useSelector((state) => state.inventories);
 
     useEffect(() => {
+        // Initial load
         dispatch(get_announcement_thunk());
         dispatch(get_inventories_thunk());
+        
+        // Auto-refresh every 30 seconds for real-time updates
+        const interval = setInterval(() => {
+            dispatch(get_announcement_thunk());
+            dispatch(get_inventories_thunk());
+        }, 30000); // 30 seconds
+        
+        return () => clearInterval(interval);
     }, [dispatch]);
 
     const announcementData = announcements?.data || announcements;

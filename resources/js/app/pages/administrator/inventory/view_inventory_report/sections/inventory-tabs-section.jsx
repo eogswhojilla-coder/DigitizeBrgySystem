@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
     Package,
     FileText,
@@ -17,10 +17,34 @@ import InventoryCardsSection from './inventory-cards-section';
 
 export default function InventoryTabsSection() {
     const [selectedReport, setSelectedReport] = useState('most-borrowed');
-    
-    // Get inventory data from Redux
-    const inventoriesState = useSelector((state) => state.inventories);
-    const inventories = inventoriesState?.inventories?.data || inventoriesState?.inventories || [];
+    const [reportData, setReportData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    // Fetch report data when report type changes
+    useEffect(() => {
+        fetchReportData(selectedReport);
+    }, [selectedReport]);
+
+    const fetchReportData = async (reportType) => {
+        setLoading(true);
+        setError(null);
+        
+        try {
+            const response = await axios.get(`/api/inventory-reports?type=${reportType}`);
+            setReportData(response.data.data || []);
+        } catch (error) {
+            console.error('Error fetching report data:', error);
+            setError('Failed to load report data. Please try again.');
+            setReportData([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleRefresh = () => {
+        fetchReportData(selectedReport);
+    };
 
     return (
         <>
@@ -88,27 +112,44 @@ export default function InventoryTabsSection() {
                             Borrow History
                         </button>
                     </div>
+
+                    <button
+                        onClick={handleRefresh}
+                        disabled={loading}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:bg-gray-400 transition-all"
+                    >
+                        {loading ? 'Loading...' : 'Refresh Data'}
+                    </button>
                 </div>
             </div>
 
+            {/* Error Message */}
+            {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative">
+                    {error}
+                </div>
+            )}
+
+            {/* Loading State */}
+            {loading && (
+                <div className="text-center py-8">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <p className="mt-2 text-gray-600">Loading report data...</p>
+                </div>
+            )}
+
             {/* Show different report sections based on selection */}
-            {selectedReport === 'most-borrowed' && (
+            {!loading && (
                 <>
-                    <InventoryCardsSection inventories={inventories} />
-                    <InventoryTableSection inventories={inventories} reportType="most-borrowed" />
+                    {selectedReport === 'most-borrowed' && reportData.length > 0 && (
+                        <InventoryCardsSection inventories={reportData} />
+                    )}
+                    <InventoryTableSection 
+                        data={reportData} 
+                        reportType={selectedReport}
+                        onRefresh={handleRefresh}
+                    />
                 </>
-            )}
-            {selectedReport === 'low-stock' && (
-                <InventoryTableSection inventories={inventories} reportType="low-stock" />
-            )}
-            {selectedReport === 'overdue' && (
-                <InventoryTableSection inventories={inventories} reportType="overdue" />
-            )}
-            {selectedReport === 'damaged' && (
-                <InventoryTableSection inventories={inventories} reportType="damaged" />
-            )}
-            {selectedReport === 'borrow-history' && (
-                <InventoryTableSection inventories={inventories} reportType="borrow-history" />
             )}
         </>
     );

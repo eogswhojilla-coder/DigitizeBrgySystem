@@ -155,6 +155,10 @@ class ResidentController extends Controller
             ->get()
             ->map(function ($item) {
                 $item->available = $item->quantity - ($item->borrowed ?? 0);
+                // Add GCash QR URL for payment
+                $item->gcash_qr_url = $item->gcash_qr 
+                    ? asset('storage/' . $item->gcash_qr) 
+                    : null;
                 return $item;
             })
             ->filter(function ($item) {

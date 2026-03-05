@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Edit2, X, Search, RotateCcw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Edit2, X, Search, RotateCcw, FileText, Download } from 'lucide-react';
 import Layout from '../../layout';
 import Button from '@/app/_components/button';
 import SearchTableArcSection from './sections/search-table-arc-section';
@@ -7,6 +7,9 @@ import ActionButtonArcSection from './sections/action-button-arc-section';
 import TableArcSection from './sections/table-arc-section';
 import Pagination from '@/app/_components/pagination';
 import PaginationSection from './sections/pagination-section';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 const ResidentList = () => {
   const [filters, setFilters] = useState({
@@ -21,32 +24,47 @@ const ResidentList = () => {
     senior: '',
     residentNumber: ''
   });
+  
+  const [archivedResidents, setArchivedResidents] = useState({
+    data: [],
+    current_page: 1,
+    last_page: 1,
+    per_page: 10,
+    total: 0,
+  });
+  const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [archiveReasonFilter, setArchiveReasonFilter] = useState('');
 
-  // Sample resident data for testing
-  const residents = [
-    {
-      id: 1,
-      image: '/api/placeholder/40/40',
-      residentNumber: '1648321043900',
-      name: 'Wacky D. Hojilla',
-      age: 21,
-      pwd: 'NO',
-      singleParent: 'NO',
-      voters: 'YES',
-      status: 'ACTIVE'
-    },
-    {
-      id: 2,
-      image: '/api/placeholder/40/40',
-      residentNumber: '1135321697721',
-      name: 'Janvee M. Romano',
-      age: '',
-      pwd: 'NO',
-      singleParent: 'NO',
-      voters: 'NO',
-      status: 'ACTIVE'
+  const fetchArchivedResidents = async (page = 1) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: page,
+        per_page: archivedResidents.per_page,
+      });
+
+      if (searchQuery) {
+        params.append('search', searchQuery);
+      }
+
+      if (archiveReasonFilter) {
+        params.append('archive_reason', archiveReasonFilter);
+      }
+
+      const response = await axios.get(`/api/archived_residents?${params.toString()}`);
+      setArchivedResidents(response.data);
+    } catch (error) {
+      console.error('Error fetching archived residents:', error);
+      toast.error('Failed to load archived residents');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchArchivedResidents();
+  }, [searchQuery, archiveReasonFilter]);
 
   const handleFilterChange = (field, value) => {
     setFilters(prev => ({
@@ -56,8 +74,7 @@ const ResidentList = () => {
   };
 
   const handleSearch = () => {
-    // Implement search logic here
-    console.log('Searching with filters:', filters);
+    fetchArchivedResidents(1);
   };
 
   const handleReset = () => {
@@ -73,19 +90,127 @@ const ResidentList = () => {
       senior: '',
       residentNumber: ''
     });
+    setSearchQuery('');
+    setArchiveReasonFilter('');
+  };
+
+  const handlePageChange = (page) => {
+    fetchArchivedResidents(page);
+  };
+
+  const handleRestore = async (archivedId) => {
+    try {
+      const response = await axios.post(`/api/archived_residents/${archivedId}/restore`);
+      if (response.data.success) {
+        toast.success('Resident restored successfully');
+        fetchArchivedResidents(archivedResidents.current_page);
+      }
+    } catch (error) {
+      console.error('Error restoring resident:', error);
+      toast.error('Failed to restore resident');
+    }
+  };
+
+  const handleGeneratePDF = async (type) => {
+    try {
+      const params = new URLSearchParams();
+
+      if (type === 'filtered' && !archiveReasonFilter) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Select a Reason',
+          text: 'Please select an archive reason filter to generate a filtered report.',
+        });
+        return;
+      }
+
+      if (searchQuery) {
+        params.append('search', searchQuery);
+      }
+
+      if (type === 'filtered' && archiveReasonFilter) {
+        params.append('archive_reason', archiveReasonFilter);
+      }
+
+      const url = `/api/archived_residents/generate-pdf?${params.toString()}`;
+      
+      // Create a temporary link to trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `archived-residents-${type}-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success('PDF generated successfully');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error('Failed to generate PDF');
+    }
   };
 
   return (
     <div className="bg-gray-50 min-h-screen p-6">
       {/* Header */}
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
-        <SearchTableArcSection
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onSearch={handleSearch}
-          onReset={handleReset}
-        />
-        <ActionButtonArcSection />
+        <div className="mb-4 flex justify-between items-center">
+          <div>
+            <h2 className="text-xl font-bold text-gray-800">Archived Residents</h2>
+            <p className="text-sm text-gray-600">
+              Total Archived: {archivedResidents.total || 0}
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleGeneratePDF('general')}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors"
+              title="Generate General Report"
+            >
+              <FileText className="w-4 h-4" />
+              General Report PDF
+            </button>
+            <button
+              onClick={() => handleGeneratePDF('filtered')}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 transition-colors"
+              title="Generate Report by Selected Reason"
+            >
+              <Download className="w-4 h-4" />
+              Filtered Report PDF
+            </button>
+          </div>
+        </div>
+        
+        {/* Search and Filters */}
+        <div className="flex gap-4 mb-4">
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="Search by name or resident number..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <select
+            value={archiveReasonFilter}
+            onChange={(e) => setArchiveReasonFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Reasons</option>
+            <option value="moved_out">Moved Out</option>
+            <option value="passed_away">Passed Away</option>
+            <option value="duplicate_entry">Duplicate Entry</option>
+            <option value="lost_jurisdiction">Lost Jurisdiction</option>
+            <option value="inactive_years">Inactive Years</option>
+          </select>
+          <button
+            onClick={handleReset}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 flex items-center gap-2"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Reset
+          </button>
+        </div>
       </div>
 
       {/* Table */}
@@ -96,37 +221,50 @@ const ResidentList = () => {
             <div className="col-span-1">IMAGE</div>
             <div className="col-span-2">RESIDENT NUMBER</div>
             <div className="col-span-2">NAME</div>
-            <div className="col-span-1">AGE</div>
-            <div className="col-span-1">PWD</div>
-            <div className="col-span-1">SINGLE PARENT</div>
-            <div className="col-span-1">VOTERS</div>
-            <div className="col-span-1">STATUS</div>
+            <div className="col-span-2">ARCHIVE REASON</div>
+            <div className="col-span-2">ARCHIVE DATE</div>
+            <div className="col-span-1">WAS OFFICIAL</div>
             <div className="col-span-2">ACTION</div>
           </div>
         </div>
 
         {/* Table Body */}
         <div className="divide-y divide-gray-200">
-          {residents.length === 0 ? (
+          {loading ? (
             <div className="text-center py-8 text-gray-500">
-              No data available in table
+              Loading...
+            </div>
+          ) : archivedResidents.data.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              No archived residents found
             </div>
           ) : (
-            residents.map((resident, index) => (
+            archivedResidents.data.map((resident, index) => (
               <div
                 key={resident.id}
                 className={`grid grid-cols-12 gap-4 px-4 py-3 items-center ${
                   index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                 } hover:bg-blue-50 transition-colors`}
               >
-                <TableArcSection resident={resident} />
+                <TableArcSection 
+                  resident={resident} 
+                  onRestore={handleRestore}
+                />
               </div>
             ))
           )}
         </div>
-       
       </div>
-      <div className="mt-4"> <PaginationSection/></div>
+      
+      <div className="mt-4">
+        <PaginationSection 
+          currentPage={archivedResidents.current_page}
+          lastPage={archivedResidents.last_page}
+          total={archivedResidents.total}
+          perPage={archivedResidents.per_page}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

@@ -227,10 +227,9 @@
             <span class="signature-title">PUNONG BARANGAY</span>
         </div>
     </div>
-    <!-- </div> -->
 
     <!-- Details and QR Code -->
-    <!-- <div class="details-container">
+    <div class="details-container">
         <div class="details-left">
             <p><strong>Purpose:</strong> {{ strtoupper($purpose ?? 'General Purpose') }}</p>
             <p><strong>Certificate No.:</strong> {{ $barangayId ?? 'CODE' }}</p>
@@ -247,12 +246,12 @@
                 </div>
             @endif
         </div>
-    </div> -->
+    </div>
 
     <!-- Note -->
-    <!-- <div class="note">
+    <div class="note">
         <p><strong>Note:</strong> This Certificate is valid for Six(6) months after the date of issue.</p>
-    </div> -->
+    </div>
 
     <script>
         // Auto-print functionality
