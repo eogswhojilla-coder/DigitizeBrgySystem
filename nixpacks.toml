@@ -1,12 +1,5 @@
 [phases.setup]
-nixPkgs = ["php82", "php82Extensions.gd", "nodejs", "composer"]
-
-[phases.build]
-cmds = [
-  "composer install --no-dev --optimize-autoloader",
-  "npm install",
-  "npm run build"
-]
+nixPkgs = ["php82", "php82Extensions.gd", "nodejs"]
 
 [start]
 cmd = "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"
