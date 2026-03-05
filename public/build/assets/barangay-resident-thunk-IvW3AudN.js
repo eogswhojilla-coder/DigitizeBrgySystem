@@ -1,1 +1,0 @@
-import{g as e}from"./barangay-resident-service-BoZFP9VT.js";import{f as n}from"./app-CKI9f3Se.js";function o(){return async function(t,s){const a=await e();t(n.actions.setResidents(a.data))}}export{o as g};

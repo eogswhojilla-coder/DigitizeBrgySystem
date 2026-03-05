@@ -5,8 +5,11 @@
 namespace Stripe;
 
 /**
- * A Promotion Code represents a customer-redeemable code for a <a href="https://stripe.com/docs/api#coupons">coupon</a>. It can be used to
- * create multiple codes for a single coupon.
+ * A Promotion Code represents a customer-redeemable code for a <a href="https://stripe.com/docs/api#coupons">coupon</a>.
+ * You can create multiple codes for a single coupon.
+ *
+ * If you enable promotion codes in your <a href="https://stripe.com/docs/customer-management/configure-portal">customer portal configuration</a>, then customers can redeem a code themselves when updating a subscription in the portal.
+ * Customers can also view the currently active promotion codes and coupons on each of their subscriptions in the portal.
  *
  * @property string $id Unique identifier for the object.
  * @property string $object String representing the object's type. Objects of the same type share the same value.
@@ -32,7 +35,7 @@ class PromotionCode extends ApiResource
      * A promotion code points to a coupon. You can optionally restrict the code to a
      * specific customer, redemption limit, and expiration date.
      *
-     * @param null|array{active?: bool, code?: string, coupon: string, customer?: string, expand?: string[], expires_at?: int, max_redemptions?: int, metadata?: StripeObject, restrictions?: array{currency_options?: StripeObject, first_time_transaction?: bool, minimum_amount?: int, minimum_amount_currency?: string}} $params
+     * @param null|array{active?: bool, code?: string, coupon: string, customer?: string, expand?: string[], expires_at?: int, max_redemptions?: int, metadata?: array<string, string>, restrictions?: array{currency_options?: array<string, array{minimum_amount?: int}>, first_time_transaction?: bool, minimum_amount?: int, minimum_amount_currency?: string}} $params
      * @param null|array|string $options
      *
      * @return PromotionCode the created resource
@@ -95,7 +98,7 @@ class PromotionCode extends ApiResource
      * passed. Most fields are, by design, not editable.
      *
      * @param string $id the ID of the resource to update
-     * @param null|array{active?: bool, expand?: string[], metadata?: null|StripeObject, restrictions?: array{currency_options?: StripeObject}} $params
+     * @param null|array{active?: bool, expand?: string[], metadata?: null|array<string, string>, restrictions?: array{currency_options?: array<string, array{minimum_amount?: int}>}} $params
      * @param null|array|string $opts
      *
      * @return PromotionCode the updated resource

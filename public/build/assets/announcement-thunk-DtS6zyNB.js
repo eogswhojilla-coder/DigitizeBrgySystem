@@ -1,0 +1,1 @@
+import{g as e}from"./accouncement-service-dUnwiL_Z.js";import{d as a}from"./app-BGqoMSN7.js";function r(){return async function(n,c){const t=await e();n(a.actions.setAnnouncements(t.data))}}function u(){return async function(n,c){const t=await e();n(a.actions.setCalendars(t.data))}}export{u as a,r as g};

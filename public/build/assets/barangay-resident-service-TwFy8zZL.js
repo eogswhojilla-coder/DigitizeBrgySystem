@@ -1,0 +1,1 @@
+import{b as t}from"./app-BGqoMSN7.js";function s(r){try{return t.post("/api/barangay_residents",r)}catch{}}async function n(){try{return t.get("/api/barangay_residents"+window.location.search)}catch{}}async function c(r){try{return t.delete(`/api/barangay_residents/${r}`)}catch{}}export{s as c,c as d,n as g};

@@ -1,1 +1,0 @@
-import{j as e}from"./app-CKI9f3Se.js";import{D as t}from"./download-C3ANc6Ik.js";import"./createLucideIcon-hVdl5qom.js";function s(){return e.jsx(e.Fragment,{children:e.jsxs("button",{className:"px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 flex items-center gap-1",children:[e.jsx(t,{className:"w-4 h-4"})," Excel"]})})}export{s as default};
