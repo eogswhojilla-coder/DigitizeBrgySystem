@@ -1,1 +1,0 @@
-import{j as e}from"./app-BGqoMSN7.js";import{D as t}from"./download-ClQ__SW3.js";import"./createLucideIcon-BbcKcpBy.js";function n(){return e.jsx(e.Fragment,{children:e.jsxs("button",{className:"px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 flex items-center gap-1",children:[e.jsx(t,{className:"w-4 h-4"})," PDF"]})})}export{n as default};
