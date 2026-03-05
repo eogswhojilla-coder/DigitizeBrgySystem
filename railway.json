@@ -1,0 +1,6 @@
+{
+  "extends": ["laravel"],
+  "install": {
+    "extensions": ["gd"]
+  }
+}

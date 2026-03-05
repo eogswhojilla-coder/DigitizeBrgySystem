@@ -1,0 +1,8 @@
+# Railway will auto-detect Laravel and handle most setup
+# We just need to ensure GD extension is installed for barcode/QR generation
+
+[phases.setup]
+aptPkgs = ['libpng-dev', 'libjpeg-dev', 'libfreetype6-dev']
+
+[phases.install]
+cmds = ['install-php-extensions gd']
