@@ -1,0 +1,1 @@
+import{b as r}from"./app-D9vM4QHx.js";function s(a){try{return r.post("/api/barangay_officials",a)}catch{}}async function e(){try{return r.get("/api/barangay_officials"+window.location.search)}catch{}}export{s as c,e as g};

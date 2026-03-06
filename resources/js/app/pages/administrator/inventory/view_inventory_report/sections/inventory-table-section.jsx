@@ -93,26 +93,26 @@ export default function InventoryTableSection({ data = [], reportType = 'most-bo
             case 'most-borrowed':
                 return (
                     <tr key={item.id || index} className="hover:bg-gray-50 transition-colors">
-                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">{item.item_name}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.category}</td>
-                        <td className="border border-gray-300 px-4 py-3 font-semibold text-blue-600">{item.total_borrowed}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.currently_borrowed}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.available_quantity}</td>
+                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">{item.item_name || item.name || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.category || item.category_name || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 font-semibold text-blue-600">{item.total_borrowed || 0}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.currently_borrowed || 0}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.available_quantity || 0}</td>
                     </tr>
                 );
             case 'low-stock':
                 return (
                     <tr key={item.id || index} className="hover:bg-gray-50 transition-colors">
-                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">{item.item_name}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.category}</td>
-                        <td className="border border-gray-300 px-4 py-3 font-semibold text-red-600">{item.current_quantity}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.minimum_quantity}</td>
-                        <td className="border border-gray-300 px-4 py-3 font-semibold text-orange-600">{item.shortage}</td>
+                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">{item.item_name || item.name || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.category || item.category_name || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 font-semibold text-red-600">{item.current_quantity || 0}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.minimum_quantity || 0}</td>
+                        <td className="border border-gray-300 px-4 py-3 font-semibold text-orange-600">{item.shortage || 0}</td>
                         <td className="border border-gray-300 px-4 py-3">
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                 item.alert_level === 'critical' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
                             }`}>
-                                {item.alert_level}
+                                {item.alert_level || 'warning'}
                             </span>
                         </td>
                     </tr>
@@ -120,18 +120,18 @@ export default function InventoryTableSection({ data = [], reportType = 'most-bo
             case 'overdue':
                 return (
                     <tr key={item.id || index} className="hover:bg-gray-50 transition-colors">
-                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">{item.item_name}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.borrower_name}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-600">{item.borrower_contact}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.expected_return_date}</td>
-                        <td className="border border-gray-300 px-4 py-3 font-semibold text-red-600">{item.days_overdue} days</td>
+                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">{item.item_name || item.name || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.borrower_name || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-600">{item.borrower_contact || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.expected_return_date || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 font-semibold text-red-600">{item.days_overdue || 0} days</td>
                         <td className="border border-gray-300 px-4 py-3">
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                 item.urgency === 'high' ? 'bg-red-100 text-red-800' :
                                 item.urgency === 'medium' ? 'bg-orange-100 text-orange-800' :
                                 'bg-yellow-100 text-yellow-800'
                             }`}>
-                                {item.urgency}
+                                {item.urgency || 'low'}
                             </span>
                         </td>
                     </tr>
@@ -139,33 +139,33 @@ export default function InventoryTableSection({ data = [], reportType = 'most-bo
             case 'damaged':
                 return (
                     <tr key={item.id || index} className="hover:bg-gray-50 transition-colors">
-                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">{item.item_name}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.category}</td>
-                        <td className="border border-gray-300 px-4 py-3 font-semibold text-red-600">{item.damaged_count}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.total_quantity}</td>
-                        <td className="border border-gray-300 px-4 py-3 font-semibold text-orange-600">{item.damage_percentage}%</td>
+                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">{item.item_name || item.name || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.category || item.category_name || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 font-semibold text-red-600">{item.damaged_count || 0}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.total_quantity || 0}</td>
+                        <td className="border border-gray-300 px-4 py-3 font-semibold text-orange-600">{item.damage_percentage || 0}%</td>
                     </tr>
                 );
             case 'borrow-history':
                 return (
                     <tr key={item.id || index} className="hover:bg-gray-50 transition-colors">
-                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">{item.item_name}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.borrower_name}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.borrow_date}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.return_date}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-600">{item.duration_days} days</td>
+                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">{item.item_name || item.name || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.borrower_name || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.borrow_date || item.borrowed_at || 'N/A'}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.return_date || item.returned_at || item.returned_date || 'Not yet returned'}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-600">{item.duration_days || 0} days</td>
                         <td className="border border-gray-300 px-4 py-3">
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                 item.condition_after_return === 'Good' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                             }`}>
-                                {item.condition_after_return}
+                                {item.condition_after_return || 'N/A'}
                             </span>
                         </td>
                         <td className="border border-gray-300 px-4 py-3">
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                 item.was_late ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
                             }`}>
-                                {item.was_late ? `Late (${item.days_late}d)` : 'On Time'}
+                                {item.was_late ? `Late (${item.days_late || 0}d)` : 'On Time'}
                             </span>
                         </td>
                     </tr>
