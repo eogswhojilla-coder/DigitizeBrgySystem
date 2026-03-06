@@ -348,4 +348,119 @@ class RegistrationController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get all approved accounts (history)
+     */
+    public function getApprovedAccounts(Request $request)
+    {
+        try {
+            $query = User::with(['resident', 'approver'])
+                ->where('status', 'approved')
+                ->where('user_type', 'resident');
+            
+            // Add search functionality
+            if ($request->has('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('first_name', 'like', "%{$search}%")
+                      ->orWhere('last_name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('username', 'like', "%{$search}%");
+                });
+            }
+            
+            $approvedAccounts = $query->orderBy('approval_date', 'desc')->paginate(10);
+            
+            return response()->json($approvedAccounts, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching approved accounts',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Revert approved account back to pending
+     */
+    public function revertToPending(Request $request, $id)
+    {
+        try {
+            $user = User::with('resident')->find($id);
+            
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found'
+                ], 404);
+            }
+
+            if ($user->status !== 'approved') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Only approved accounts can be reverted to pending'
+                ], 400);
+            }
+            
+            $user->status = 'pending';
+            $user->admin_remarks = $request->input('admin_remarks', 'Reverted to pending for review');
+            $user->approved_by = null;
+            $user->approval_date = null;
+            $user->save();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Account reverted to pending successfully',
+                'data' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error reverting account to pending',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Cancel an approved account
+     */
+    public function cancelAccount(Request $request, $id)
+    {
+        try {
+            $user = User::with('resident')->find($id);
+            
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found'
+                ], 404);
+            }
+
+            if ($user->status !== 'approved') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Only approved accounts can be cancelled'
+                ], 400);
+            }
+            
+            $user->status = 'cancelled';
+            $user->admin_remarks = $request->input('admin_remarks', 'Account cancelled by administrator');
+            $user->save();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Account cancelled successfully',
+                'data' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error cancelling account',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -4,18 +4,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { get_pending_accounts_thunk } from '@/app/redux/pending-accounts-thunk';
 import { approve_account_service, reject_account_service } from '@/app/services/registration-service';
 import Swal from 'sweetalert2';
-import { Check, X, Eye } from 'lucide-react';
+import { Check, X, Eye, Clock, CheckCircle2 } from 'lucide-react';
 import ViewRegistrationDetailSection from './sections/view-registration-detail-section';
+import ApprovedAccountHistory from './sections/approved-account-history';
 
 export default function Page() {
   const dispatch = useDispatch();
   const { accounts } = useSelector((store) => store.pendingAccounts);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [activeTab, setActiveTab] = useState('pending'); // 'pending' or 'approved'
 
   useEffect(() => {
-    dispatch(get_pending_accounts_thunk());
-  }, []);
+    if (activeTab === 'pending') {
+      dispatch(get_pending_accounts_thunk());
+    }
+  }, [activeTab]);
 
   const handleViewDetails = (id) => {
     setSelectedUserId(id);
@@ -81,12 +85,52 @@ export default function Page() {
     <Layout>
       <div className="bg-white min-h-screen p-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Account Approval</h1>
-          <p className="text-gray-600">Pending resident registration requests</p>
+          <h1 className="text-2xl font-bold text-gray-800">Account Approval Management</h1>
+          <p className="text-gray-600">Manage resident registration requests and approved accounts</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
+        {/* Tabs */}
+        <div className="mb-6 border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8">
+            <button
+              onClick={() => setActiveTab('pending')}
+              className={`
+                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2
+                ${activeTab === 'pending'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }
+              `}
+            >
+              <Clock className="w-5 h-5" />
+              Pending Accounts
+              {accounts?.total > 0 && (
+                <span className="ml-2 py-0.5 px-2 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                  {accounts.total}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('approved')}
+              className={`
+                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2
+                ${activeTab === 'approved'
+                  ? 'border-green-500 text-green-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }
+              `}
+            >
+              <CheckCircle2 className="w-5 h-5" />
+              Approved History
+            </button>
+          </nav>
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === 'pending' ? (
+          <>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+              <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-blue-100">
                 <tr>
@@ -188,6 +232,10 @@ export default function Page() {
           userId={selectedUserId}
           onSuccess={handleSuccess}
         />
+          </>
+        ) : (
+          <ApprovedAccountHistory />
+        )}
       </div>
     </Layout>
   )

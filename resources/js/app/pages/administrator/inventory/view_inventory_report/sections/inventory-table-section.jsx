@@ -152,7 +152,7 @@ export default function InventoryTableSection({ data = [], reportType = 'most-bo
                         <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">{item.item_name || item.name || 'N/A'}</td>
                         <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.borrower_name || 'N/A'}</td>
                         <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.borrow_date || item.borrowed_at || 'N/A'}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.return_date || item.returned_at || item.returned_date || 'Not yet returned'}</td>
+                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{item.actual_return_date || item.return_date || item.returned_at || item.returned_date || 'Not yet returned'}</td>
                         <td className="border border-gray-300 px-4 py-3 text-gray-600">{item.duration_days || 0} days</td>
                         <td className="border border-gray-300 px-4 py-3">
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${

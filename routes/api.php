@@ -32,9 +32,12 @@ Route::post('/register-resident', [RegistrationController::class, 'registerResid
 // Account approval routes (admin only - requires permission)
 Route::middleware(['auth:sanctum', 'permission:residents.approve'])->group(function () {
     Route::get('/pending-accounts', [RegistrationController::class, 'getPendingAccounts']);
+    Route::get('/approved-accounts', [RegistrationController::class, 'getApprovedAccounts']);
     Route::get('/resident-details/{id}', [RegistrationController::class, 'getResidentDetails']);
     Route::post('/approve-account/{id}', [RegistrationController::class, 'approveAccount']);
     Route::post('/reject-account/{id}', [RegistrationController::class, 'rejectAccount']);
+    Route::post('/revert-to-pending/{id}', [RegistrationController::class, 'revertToPending']);
+    Route::post('/cancel-account/{id}', [RegistrationController::class, 'cancelAccount']);
     Route::post('/set-temporary-resident/{id}', [RegistrationController::class, 'setTemporaryResident']);
 });
 

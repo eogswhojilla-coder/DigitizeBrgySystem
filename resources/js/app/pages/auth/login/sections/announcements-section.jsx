@@ -1,4 +1,10 @@
+import React, { useState } from 'react';
+
 export default function AnnouncementsSection({ announcements = [] }) {
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAllAnnouncements, setShowAllAnnouncements] = useState(false);
+
   // Fallback announcements if backend data is empty
   const fallbackAnnouncements = [
     { 
@@ -33,6 +39,21 @@ export default function AnnouncementsSection({ announcements = [] }) {
 
   // Use backend announcements if available, otherwise use fallback
   const displayAnnouncements = announcements.length > 0 ? announcements : fallbackAnnouncements;
+  
+  // Limit announcements to 6 initially
+  const visibleAnnouncements = showAllAnnouncements 
+    ? displayAnnouncements 
+    : displayAnnouncements.slice(0, 6);
+
+  const openModal = (announcement) => {
+    setSelectedAnnouncement(announcement);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => setSelectedAnnouncement(null), 300);
+  };
 
   return (
     <section 
@@ -63,7 +84,7 @@ export default function AnnouncementsSection({ announcements = [] }) {
 
         {/* Announcements Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayAnnouncements.map((a, index) => (
+          {visibleAnnouncements.map((a, index) => (
             <div
               key={a.id}
               className="group relative rounded-2xl bg-gradient-to-b from-white/5 to-white/0 border border-white/10 hover:border-green-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 overflow-hidden"
@@ -109,7 +130,10 @@ export default function AnnouncementsSection({ announcements = [] }) {
                 </p>
 
                 {/* Action Button */}
-                <button className="group/btn flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-green-400 transition-colors">
+                <button 
+                  onClick={() => openModal(a)}
+                  className="group/btn flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-green-400 transition-colors"
+                >
                   <span>Read Full Announcement</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -136,33 +160,133 @@ export default function AnnouncementsSection({ announcements = [] }) {
         </div>
 
         {/* View All Button */}
-        <div className="mt-16 text-center">
-          <button className="group relative px-8 py-4 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 hover:border-green-500/30 transition-all duration-300 overflow-hidden">
-            <span className="relative z-10 flex items-center gap-2">
-              View All Announcements
+        {displayAnnouncements.length > 6 && (
+          <div className="mt-16 text-center">
+            <button 
+              onClick={() => setShowAllAnnouncements(!showAllAnnouncements)}
+              className="group relative px-8 py-4 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 hover:border-green-500/30 transition-all duration-300 overflow-hidden"
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                {showAllAnnouncements ? 'Show Less' : 'View All Announcements'}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={`transition-transform ${showAllAnnouncements ? 'rotate-180' : 'group-hover:translate-x-1'}`}
+                >
+                  {showAllAnnouncements ? (
+                    <>
+                      <path d="m18 15-6-6-6 6" />
+                    </>
+                  ) : (
+                    <>
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </>
+                  )}
+                </svg>
+              </span>
+              {/* Button Glow */}
+              <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-500/10 to-transparent blur-lg" />
+              </div>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Announcement Modal */}
+      {isModalOpen && selectedAnnouncement && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          onClick={closeModal}
+        >
+          <div 
+            className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-slate-900 border border-white/10 rounded-2xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 z-10 p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all duration-200"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
+                width="24"
+                height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="group-hover:translate-x-1 transition-transform"
               >
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
               </svg>
-            </span>
-            {/* Button Glow */}
-            <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-500/10 to-transparent blur-lg" />
+            </button>
+
+            {/* Modal Image */}
+            {selectedAnnouncement.image && (
+              <div className="relative h-64 md:h-80 overflow-hidden rounded-t-2xl">
+                <img 
+                  src={selectedAnnouncement.image} 
+                  alt={selectedAnnouncement.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
+              </div>
+            )}
+
+            {/* Modal Content */}
+            <div className="p-6 md:p-8">
+              {/* Date Badge */}
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-2 h-2 rounded-full bg-green-500" />
+                <span className="font-mono text-xs tracking-widest text-green-400 uppercase">
+                  {selectedAnnouncement.date}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
+                {selectedAnnouncement.title}
+              </h2>
+
+              {/* Full Description */}
+              <div className="text-slate-300 leading-relaxed space-y-4">
+                {selectedAnnouncement.description.includes('<') ? (
+                  <div 
+                    dangerouslySetInnerHTML={{ __html: selectedAnnouncement.description }}
+                    className="prose prose-invert prose-slate max-w-none prose-headings:text-white prose-p:text-slate-300 prose-a:text-green-400 prose-strong:text-white"
+                  />
+                ) : (
+                  <p className="text-base md:text-lg">{selectedAnnouncement.description}</p>
+                )}
+              </div>
+
+              {/* Close Button at Bottom */}
+              <div className="mt-8 flex justify-end">
+                <button
+                  onClick={closeModal}
+                  className="px-6 py-3 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-400 font-medium border border-green-500/20 hover:border-green-500/30 transition-all duration-200"
+                >
+                  Close
+                </button>
+              </div>
             </div>
-          </button>
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }

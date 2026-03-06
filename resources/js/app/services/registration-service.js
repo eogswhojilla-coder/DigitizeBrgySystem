@@ -80,3 +80,30 @@ export async function set_temporary_resident_service(id, admin_remarks = '') {
         throw error;
     }
 }
+
+export async function get_approved_accounts_service() {
+    try {
+        const result = await axios.get("/api/approved-accounts" + window.location.search);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function revert_to_pending_service(id, admin_remarks = '') {
+    try {
+        const result = await axios.post(`/api/revert-to-pending/${id}`, { admin_remarks });
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function cancel_account_service(id, admin_remarks = '') {
+    try {
+        const result = await axios.post(`/api/cancel-account/${id}`, { admin_remarks });
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}

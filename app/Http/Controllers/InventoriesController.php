@@ -312,19 +312,31 @@ class InventoriesController extends Controller
             'remarks' => $request->remarks
         ]);
 
-        // Update inventory: decrease borrowed count
+        // Update inventory counts
         $inventory = $borrowRequest->inventory;
-        $inventory->decrement('borrowed', $borrowRequest->quantity);
+        $returnQuantity = $borrowRequest->quantity;
+        
+        // Always decrease borrowed count since item is no longer borrowed
+        $inventory->decrement('borrowed', $returnQuantity);
 
-        // If damaged or lost, update damaged count
-        if (in_array($request->condition_after_return, ['Damaged', 'Lost'])) {
-            $inventory->increment('damaged', $borrowRequest->quantity);
+        // Handle condition-specific logic
+        if (in_array($request->condition_after_return, ['Good', 'Fair'])) {
+            // Good or Fair condition: item is returned to available pool
+            // No additional action needed - decrementing borrowed already increases availability
+            // Available = quantity - borrowed - damaged
+        } else if (in_array($request->condition_after_return, ['Damaged', 'Lost'])) {
+            // Damaged or Lost: item should be marked as damaged
+            // This prevents it from being available again
+            $inventory->increment('damaged', $returnQuantity);
         }
+
+        // Refresh inventory to get updated counts
+        $inventory->refresh();
 
         return response()->json([
             'success' => true,
             'message' => 'Item marked as returned successfully',
-            'data' => $borrowRequest
+            'data' => $borrowRequest->load('inventory')
         ], 200);
     }
 
