@@ -88,7 +88,9 @@ export default function TableAdministratorUserSection() {
                     <button className="p-2 text-yellow-600 hover:bg-yellow-50 rounded-full transition-colors">
                         <Edit2 className="w-4 h-4" />
                     </button>
-                    <DeleteSection data={administrator} />
+                    {roleName !== "Super Admin" && (
+                        <DeleteSection data={administrator} />
+                    )}
                 </div>
             ),
         };

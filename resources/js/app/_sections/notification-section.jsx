@@ -1,7 +1,37 @@
-import { BellIcon } from "@heroicons/react/24/outline";
+import { BellIcon, DocumentTextIcon, ClipboardDocumentListIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "@inertiajs/react";
 import notificationService from "@/app/services/notification-service";
+
+const getNotificationIcon = (type) => {
+    switch (type) {
+        case 'certificate_request':
+            return (
+                <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
+                    <DocumentTextIcon className="h-4 w-4 text-purple-600" />
+                </div>
+            );
+        case 'borrow_request':
+            return (
+                <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                    <ClipboardDocumentListIcon className="h-4 w-4 text-green-600" />
+                </div>
+            );
+        case 'registration':
+            return (
+                <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center">
+                    <UserPlusIcon className="h-4 w-4 text-orange-600" />
+                </div>
+            );
+        case 'announcement':
+        default:
+            return (
+                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                    <BellIcon className="h-4 w-4 text-blue-600" />
+                </div>
+            );
+    }
+};
 
 export default function NotificationSection() {
     const [notifications, setNotifications] = useState([]);
@@ -102,9 +132,9 @@ export default function NotificationSection() {
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-96 max-h-[32rem] overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                <div className="absolute right-0 mt-2 w-96 max-h-[32rem] overflow-hidden rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-gray-700 z-50">
                     {/* Header */}
-                    <div className="flex items-center justify-between border-b px-4 py-3">
+                    <div className="flex items-center justify-between border-b dark:border-gray-700 px-4 py-3">
                         <h3 className="text-sm font-semibold text-gray-900">
                             Notifications
                         </h3>
@@ -132,20 +162,16 @@ export default function NotificationSection() {
                             notifications.map((notification) => (
                                 <div
                                     key={notification.id}
-                                    className="border-b last:border-b-0 hover:bg-gray-50 transition-colors"
+                                    className="border-b last:border-b-0 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                 >
                                     <Link
-                                        href={notification.data?.url || '/resident/announcements'}
+                                        href={notification.data?.url || '#'}
                                         onClick={() => handleMarkAsRead(notification.id)}
                                         className="block px-4 py-3"
                                     >
                                         <div className="flex items-start gap-3">
                                             <div className="flex-shrink-0 mt-1">
-                                                {notification.data?.type === 'announcement' && (
-                                                    <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                                        <BellIcon className="h-4 w-4 text-blue-600" />
-                                                    </div>
-                                                )}
+                                                {getNotificationIcon(notification.data?.type)}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-medium text-gray-900">
@@ -167,14 +193,14 @@ export default function NotificationSection() {
 
                     {/* Footer */}
                     {notifications.length > 0 && (
-                        <div className="border-t bg-gray-50 px-4 py-2">
-                            <Link
-                                href="/resident/announcements"
-                                className="block text-center text-sm font-medium text-blue-600 hover:text-blue-800"
-                                onClick={() => setIsOpen(false)}
+                        <div className="border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 px-4 py-2">
+                            <button
+                                onClick={handleMarkAllAsRead}
+                                disabled={loading}
+                                className="block w-full text-center text-sm font-medium text-blue-600 hover:text-blue-800 disabled:opacity-50"
                             >
-                                View all announcements
-                            </Link>
+                                {loading ? 'Clearing...' : 'Clear all notifications'}
+                            </button>
                         </div>
                     )}
                 </div>

@@ -142,17 +142,17 @@ function BackupManager({ backups }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Database Backup & Restore</h1>
-          <p className="text-gray-600 mt-2">Manage your database backups securely</p>
+          <h1 className="text-xl sm:text-3xl font-bold text-gray-800">Database Backup & Restore</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">Manage your database backups securely</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           
           {/* Upload Backup Section */}
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
             <div className="mb-6">
               <h2 className="text-xl font-semibold text-blue-600 mb-4">Upload & Generate Backup</h2>
               
@@ -224,9 +224,9 @@ function BackupManager({ backups }) {
           </div>
 
           {/* Backup File Section */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-blue-600">Backup Files ({backups.length})</h2>
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl font-semibold text-blue-600">Backup Files ({backups.length})</h2>
               <button
                 onClick={() => router.reload({ only: ['backups'] })}
                 className="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100 transition-colors"

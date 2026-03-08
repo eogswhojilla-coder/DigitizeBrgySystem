@@ -12,13 +12,14 @@ import { Link } from "@inertiajs/react";
 import NotificationSection from "./notification-section";
 import SearchSection from "./search-section";
 import HeaderMenuSection from "./header-menu-section";
+import DarkModeToggle from "@/app/_components/dark-mode-toggle";
 
 export default function TopbarSection({ userNavigation }) {
     const dispatch = useDispatch();
 
     return (
         <div className="sticky top-0 z-40 lg:mx-auto w-full  lg:px-0">
-            <div className="flex h-16 items-center gap-x-4 border-b shadow-md border-gray-300 bg-white px-4 shadow-xs sm:gap-x-6 sm:px-6 lg:px-0 lg:shadow-none">
+            <div className="flex h-16 items-center gap-x-4 border-b shadow-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 shadow-xs sm:gap-x-6 sm:px-6 lg:px-0 lg:shadow-none">
                 <button
                     type="button"
                     onClick={() => dispatch(setSidebarOpen(true))}
@@ -65,6 +66,7 @@ export default function TopbarSection({ userNavigation }) {
                         </div>
                     </div>
                     <div className="flex items-center gap-x-4 lg:gap-x-6">
+                        <DarkModeToggle />
                         <NotificationSection />
                         <HeaderMenuSection userNavigation={userNavigation}/>
                         {/* Profile dropdown */}

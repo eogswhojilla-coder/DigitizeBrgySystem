@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import BasicInfoSection from "./basic-info-section";
 import NewOfficialLayout from "../layout";
 import OtherInfoSection from "./other-info-section";
@@ -14,6 +14,7 @@ export default function TabsSection() {
     const [activeTab, setActiveTab] = useState("basic");
     const [completedSteps, setCompletedSteps] = useState(["basic"]); // Track completed steps
     const [isOfficial, setIsOfficial] = useState(false); // Save as resident by default
+    const resetImageRef = useRef(null);
 
     const {
         register,
@@ -22,6 +23,7 @@ export default function TabsSection() {
         reset,
         trigger,
         watch,
+        setValue,
         formState: { errors },
     } = useForm();
 
@@ -115,6 +117,7 @@ export default function TabsSection() {
             setActiveTab("basic");
             setCompletedSteps(["basic"]);
             setIsOfficial(false);
+            if (resetImageRef.current) resetImageRef.current();
             
         } catch (error) {
             console.error('Submission error:', error);
@@ -129,7 +132,7 @@ export default function TabsSection() {
     };
 
     return (
-        <div className="min-h-screen p-6 bg-gray-50">
+        <div className="min-h-screen p-3 sm:p-4 md:p-6 bg-gray-50">
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="max-w-7xl mx-auto"
@@ -185,6 +188,41 @@ export default function TabsSection() {
                     </div>
                 </div>
 
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <NewOfficialLayout 
+                        errors={errors} 
+                        register={register}
+                        onResetImage={resetImageRef}
+                    >
+                        {activeTab === "basic" && (
+                            <BasicInfoSection
+                                errors={errors}
+                                register={register}
+                            />
+                        )}
+                        {activeTab === "other" && (
+                            <OtherInfoSection
+                                errors={errors}
+                                register={register}
+                                watch={watch}
+                                setValue={setValue}
+                            />
+                        )}
+                        {activeTab === "guardian" && (
+                            <GuardianSection
+                                errors={errors}
+                                register={register}
+                            />
+                        )}
+                        {activeTab === "account" && (
+                            <AccountSection
+                                errors={errors}
+                                register={register}
+                            />
+                        )}
+                    </NewOfficialLayout>
+                </div>
+
                 {/* Navigation Buttons */}
                 <div className="py-6 flex items-center justify-between">
                     <div className="flex gap-2">
@@ -212,39 +250,6 @@ export default function TabsSection() {
                             </span>
                         </Button>
                     )}
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <NewOfficialLayout 
-                        errors={errors} 
-                        register={register}
-                    >
-                        {activeTab === "basic" && (
-                            <BasicInfoSection
-                                errors={errors}
-                                register={register}
-                            />
-                        )}
-                        {activeTab === "other" && (
-                            <OtherInfoSection
-                                errors={errors}
-                                register={register}
-                                watch={watch}
-                            />
-                        )}
-                        {activeTab === "guardian" && (
-                            <GuardianSection
-                                errors={errors}
-                                register={register}
-                            />
-                        )}
-                        {activeTab === "account" && (
-                            <AccountSection
-                                errors={errors}
-                                register={register}
-                            />
-                        )}
-                    </NewOfficialLayout>
                 </div>
             </form>
         </div>

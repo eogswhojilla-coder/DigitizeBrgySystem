@@ -4,22 +4,22 @@ export default function AboutSection() {
     const [imgError, setImgError] = useState(false);
     const barangayData = {
         captain: "Hon. Francis R. Eusebio",
-        contact: "+63 (02) 8123-4567",
-        email: "brgy.sanisidro@email.gov.ph",
+        contact: "729-8353",
+        email: "barangay_two@yahoo.com",
         officeHours: "Mon–Fri, 8:00 AM – 5:00 PM",
         address:
             "Don Juan Subd., Pres. Quirino St., Brgy. II, Barangay Hall, San Carlos City, Negros Occidental, Philippines",
-        population: "12,847",
+        population: "7016",
     };
 
     return (
         <section
             id="about"
             aria-labelledby="about-heading"
-            className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-slate-950 text-slate-200"
+            className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200"
         >
             {/* Background Effects */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 -z-10" />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-0 dark:opacity-20 -z-10" />
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-[100px] -z-10" />
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[80px] -z-10" />
 
@@ -33,7 +33,7 @@ export default function AboutSection() {
                         </span>
                         <h2
                             id="about-heading"
-                            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6"
+                            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-white mb-6"
                         >
                             Serving the Community <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">
@@ -44,7 +44,7 @@ export default function AboutSection() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-lg text-slate-400 leading-relaxed">
+                    <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
                         Barangay 2 has been at the heart of our local community,
                         delivering responsive and compassionate governance. Our
                         barangay management system modernizes access to public
@@ -56,20 +56,36 @@ export default function AboutSection() {
                     {/* Info Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                         {[
-                            { label: "Barangay Captain", value: barangayData.captain },
-                            { label: "Contact Number", value: barangayData.contact },
-                            { label: "Email Address", value: barangayData.email },
-                            { label: "Office Hours", value: barangayData.officeHours },
-                            { label: "Address", value: barangayData.address, span: "sm:col-span-2" },
+                            {
+                                label: "Barangay Captain",
+                                value: barangayData.captain,
+                            },
+                            {
+                                label: "Contact Number",
+                                value: barangayData.contact,
+                            },
+                            {
+                                label: "Email Address",
+                                value: barangayData.email,
+                            },
+                            {
+                                label: "Office Hours",
+                                value: barangayData.officeHours,
+                            },
+                            {
+                                label: "Address",
+                                value: barangayData.address,
+                                span: "sm:col-span-2",
+                            },
                         ].map(({ label, value, span = "" }) => (
                             <div
                                 key={label}
-                                className={`p-4 rounded-xl bg-white/5 border border-white/10 hover:border-yellow-500/30 hover:bg-white/10 transition-all duration-300 ${span}`}
+                                className={`p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-yellow-500/30 hover:bg-slate-100 dark:hover:bg-white/10 transition-all duration-300 ${span}`}
                             >
                                 <div className="font-mono text-xs tracking-wider text-yellow-500 mb-1 uppercase">
                                     {label}
                                 </div>
-                                <div className="text-sm text-slate-300 break-words">
+                                <div className="text-sm text-slate-600 dark:text-slate-300 break-words">
                                     {value}
                                 </div>
                             </div>
@@ -82,7 +98,7 @@ export default function AboutSection() {
                     {/* Card Glow Effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-blue-500/20 rounded-3xl blur-2xl -z-10" />
 
-                    <div className="relative bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 md:p-10 border border-white/10 shadow-2xl">
+                    <div className="relative bg-white dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 md:p-10 border border-slate-200 dark:border-white/10 shadow-2xl">
                         {/* Logo Section */}
                         <div className="text-center mb-8">
                             {!imgError && (
@@ -95,7 +111,7 @@ export default function AboutSection() {
                                             onError={() => setImgError(true)}
                                         />
                                     </div>
-                                    <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center border-4 border-slate-900">
+                                    <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center border-4 border-white dark:border-slate-900">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="16"
@@ -114,7 +130,7 @@ export default function AboutSection() {
                                 </div>
                             )}
 
-                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                            <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2">
                                 Barangay II
                             </h3>
                             <p className="text-sm font-mono text-yellow-500 uppercase tracking-widest">
@@ -128,12 +144,14 @@ export default function AboutSection() {
                         {/* Mission Statement */}
                         <div className="text-center mb-8">
                             <div className="text-4xl mb-4">"</div>
-                            <p className="text-slate-300 italic leading-relaxed">
+                            <p className="text-slate-500 dark:text-slate-300 italic leading-relaxed">
                                 A community united in progress, rooted in
                                 integrity, and committed to uplifting every
                                 resident's quality of life.
                             </p>
-                            <div className="text-4xl mt-4 text-slate-600">"</div>
+                            <div className="text-4xl mt-4 text-slate-300 dark:text-slate-600">
+                                "
+                            </div>
                         </div>
 
                         {/* Population Stats */}
@@ -142,7 +160,7 @@ export default function AboutSection() {
                             <div className="font-mono text-xs tracking-widest text-yellow-500 mb-2 uppercase">
                                 Population
                             </div>
-                            <div className="text-4xl md:text-5xl font-bold text-white mb-1">
+                            <div className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-1">
                                 {barangayData.population}
                             </div>
                             <div className="text-sm text-slate-400">

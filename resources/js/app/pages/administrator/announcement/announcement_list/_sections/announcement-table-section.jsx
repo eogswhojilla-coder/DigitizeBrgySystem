@@ -11,7 +11,7 @@ import { Controller, useForm } from 'react-hook-form';
 import Input from '@/app/_components/input';
 import Wysiwyg from '@/app/_components/wysiwyg';
 import Button from '@/app/_components/button';
-import { DatePicker } from 'antd';
+import { DatePicker, Image } from 'antd';
 
 const { RangePicker } = DatePicker;
 
@@ -311,6 +311,28 @@ export default function AnnouncementTableSection() {
                                 dangerouslySetInnerHTML={{ __html: selectedAnnouncement.description }} 
                             />
                         </div>
+
+                        {/* Attachments */}
+                        {selectedAnnouncement.files && selectedAnnouncement.files.length > 0 && (
+                            <div>
+                                <label className="text-sm font-semibold text-gray-500 uppercase block mb-2">
+                                    Attachments ({selectedAnnouncement.files.length})
+                                </label>
+                                <Image.PreviewGroup>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                        {selectedAnnouncement.files.map((file, index) => (
+                                            <Image
+                                                key={index}
+                                                src={file.files}
+                                                alt={`Attachment ${index + 1}`}
+                                                className="!w-full !h-40 object-cover rounded-lg"
+                                                style={{ objectFit: 'cover', height: '160px', width: '100%' }}
+                                            />
+                                        ))}
+                                    </div>
+                                </Image.PreviewGroup>
+                            </div>
+                        )}
                     </div>
                 )}
             </Modal>

@@ -60,8 +60,8 @@ export default function Page() {
 
     return (
         <Layout>
-            <div className="bg-gray-50 min-h-screen p-6 gap-4">
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
+            <div className="bg-gray-50 min-h-screen p-3 sm:p-4 md:p-6 gap-4">
+                <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6">
                     <SearchTableSection onFilterChange={handleFilterChange} />
                     <ActionButtonSection />
                 </div>

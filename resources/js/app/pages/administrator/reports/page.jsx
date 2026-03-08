@@ -63,12 +63,12 @@ function ResidentReport({ residents, initialFilters, totalCount }) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
+        <div className="min-h-screen bg-gray-50 p-3 sm:p-4 md:p-6">
             <div className="">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-800">
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
                             Resident Report
                         </h1>
                         <p className="text-sm text-gray-600 mt-1">

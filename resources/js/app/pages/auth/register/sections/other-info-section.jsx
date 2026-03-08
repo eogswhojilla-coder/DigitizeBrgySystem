@@ -1,10 +1,108 @@
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-export default function OtherInfoSection({ register, errors, watch }) {
+export default function OtherInfoSection({ register, errors, watch, setValue }) {
     const residencyStatus = watch ? watch("residencyStatus") : "";
     const dateStartedLiving = watch ? watch("dateStartedLiving") : "";
+    const selectedZone = watch ? watch("zone") : "";
+
+    // Zone and street data for Barangay 2
+    const zoneStreets = {
+        "Don Juan Subdivision": [
+            "Pres. Ramon Magsaysay St.",
+            "Pres. Osmeña St.",
+            "Pres. Aguinaldo St.",
+            "Gen Romulo St.",
+            "Pres. Quirino St.",
+            "Pres. Garcia St.",
+            "Pres. Jose Laurel St.",
+            "Pres. Quezon St.",
+        ],
+        "Don Juan Extension": [
+            "Extension Road",
+            "Main Street",
+            "Side Street",
+            "Corner Street",
+        ],
+        "Margarita Village": [
+            "T.C. Lacson Ave.",
+            "M.B. Ramas St.",
+            "C.B. Rabacal St.",
+            "E.A. Parana St.",
+            "F.B. Kyamko St.",
+            "O.V. Gaviola St.",
+            "P/CPT. A.C. Lacson St.",
+            "L.Y. Apuhin St.",
+            "E.L Ramos St.",
+            "C.Y. Antonio St.",
+            "S.C. Carmona St.",
+            "Margarita Extension",
+        ],
+        Mondragon: ["Mondragon St.", "Quisumbing St.", "Eusebio Rd."],
+        Caballero: [
+            "Magsaysay St.",
+            "Caballero St.",
+            "Jose Abad Santos St.",
+            "Endrina St.",
+        ],
+        Mansfield: [
+            "Beer St.",
+            "Sake St.",
+            "Wine St.",
+            "Rum St.",
+            "Tequila St.",
+            "Cognac St.",
+            "Champagne St.",
+            "Absinthe St.",
+            "Gin St.",
+            "Vodka St.",
+            "Whiskey St.",
+            "Brandy St.",
+        ],
+        "San Julio": [
+            "Nangka St.",
+            "Caimito St.",
+            "Mapa St.",
+            "Chico St.",
+            "Ilang Ilang St.",
+            "Pili St.",
+            "Campanilla St.",
+            "Zenia St.",
+            "Sampaguita St.",
+            "Gumamela St.",
+            "Dahlia St.",
+            "Calachuchi St.",
+            "Jasmin St.",
+            "Santol St.",
+            "Casoy St.",
+        ],
+        "Teachers Village": [
+            "Sapphire St.",
+            "Gold St.",
+            "Silver St.",
+            "Ruby St.",
+            "Pearl St.",
+            "Jade St.",
+        ],
+        Bulangan: ["Broce St."],
+        Sumakwel: [
+            "Sumakwel Avenue",
+            "Tribal Street",
+            "Heritage Road",
+            "Cultural Street",
+        ],
+    };
+
+    const zones = Object.keys(zoneStreets);
+    const availableStreets = selectedZone ? zoneStreets[selectedZone] || [] : [];
+
+    // Reset street when zone changes
+    useEffect(() => {
+        if (selectedZone && setValue) {
+            setValue("street", "");
+        }
+    }, [selectedZone, setValue]);
 
     // Calculate resident type based on duration
     const calculateResidentType = (dateStarted) => {
@@ -32,8 +130,57 @@ export default function OtherInfoSection({ register, errors, watch }) {
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <h3 className="text-sm font-semibold text-gray-700 mb-4">Current Address</h3>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Zone <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    {...register("zone", {
+                                        required: "Zone is required",
+                                    })}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                        errors?.zone ? 'border-red-500' : 'border-gray-300'
+                                    }`}
+                                >
+                                    <option value="">Select Zone</option>
+                                    {zones.map((zone) => (
+                                        <option key={zone} value={zone}>
+                                            {zone}
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors?.zone && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.zone.message}</p>
+                                )}
+                            </div>
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Street <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    {...register("street", {
+                                        required: "Street is required",
+                                    })}
+                                    disabled={!selectedZone}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed ${
+                                        errors?.street ? 'border-red-500' : 'border-gray-300'
+                                    }`}
+                                >
+                                    <option value="">
+                                        {selectedZone ? "Select Street" : "Select Zone First"}
+                                    </option>
+                                    {availableStreets.map((street) => (
+                                        <option key={street} value={street}>
+                                            {street}
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors?.street && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.street.message}</p>
+                                )}
+                            </div>
+                            <div className="space-y-2 mt-6">
                                 <Input
                                     register={register("houseNumber", {
                                         required: "House number is required",
@@ -43,43 +190,6 @@ export default function OtherInfoSection({ register, errors, watch }) {
                                     type="text"
                                     name="houseNumber"
                                     placeholder="e.g., 123"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Input
-                                    register={register("street", {
-                                        required: "Street is required",
-                                    })}
-                                    error={errors?.street?.message}
-                                    label="Street"
-                                    type="text"
-                                    name="street"
-                                    placeholder="e.g., Main Street"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                            <div className="space-y-2">
-                                <Input
-                                    register={register("purokSitio", {
-                                        required: "Purok/Sitio is required",
-                                    })}
-                                    error={errors?.purokSitio?.message}
-                                    label="Purok / Sitio"
-                                    type="text"
-                                    name="purokSitio"
-                                    placeholder="e.g., Purok 1"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Input
-                                    register={register("subdivision")}
-                                    error={errors?.subdivision?.message}
-                                    label="Subdivision (Optional)"
-                                    type="text"
-                                    name="subdivision"
-                                    placeholder="e.g., Green Valley"
                                 />
                             </div>
                         </div>

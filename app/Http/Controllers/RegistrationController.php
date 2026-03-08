@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\BarangayResident;
 use App\Models\User;
 use App\Notifications\AccountApprovedNotification;
+use App\Notifications\NewResidentRegistrationNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class RegistrationController extends Controller
 {
@@ -37,8 +39,7 @@ class RegistrationController extends Controller
                 ],
                 'houseNumber' => 'required|string',
                 'street' => 'required|string',
-                'purokSitio' => 'required|string',
-                'subdivision' => 'nullable|string',
+                'zone' => 'required|string',
                 'zip' => 'required|string',
                 'residencyStatus' => 'required|string',
                 'residencyStatusOther' => 'nullable|string',
@@ -92,8 +93,7 @@ class RegistrationController extends Controller
             $addressParts = array_filter([
                 $request->houseNumber,
                 $request->street,
-                $request->purokSitio,
-                $request->subdivision,
+                $request->zone,
                 'Barangay II',
                 'San Carlos City',
                 'Negros Occidental'
@@ -102,17 +102,7 @@ class RegistrationController extends Controller
             
             // Handle image upload if present
             if ($request->hasFile('profileImage')) {
-                $image = $request->file('profileImage');
-                $imageName = time() . '_' . uniqid() . '.' . $image->extension();
-                
-                // Ensure directory exists
-                $directory = public_path('images/residents');
-                if (!file_exists($directory)) {
-                    mkdir($directory, 0755, true);
-                }
-                
-                $image->move($directory, $imageName);
-                $residentData['profileImage'] = $imageName;
+                $residentData['profileImage'] = \App\Helpers\FileHelper::toBase64($request->file('profileImage'));
             }
             
             // Clean empty strings to null
@@ -140,6 +130,10 @@ class RegistrationController extends Controller
             ]);
             
             DB::commit();
+
+            // Notify admin users about new registration
+            $admins = User::where('user_type', '!=', 'resident')->get();
+            Notification::send($admins, new NewResidentRegistrationNotification($user));
             
             return response()->json([
                 'success' => true,

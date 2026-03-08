@@ -1,0 +1,1 @@
+import{a as s,j as t}from"./app-Xia9h4g6.js";import{P as a}from"./pagination-KV478nMo.js";import"./search-lib-DkgW8ww6.js";function m(){const{residents:e}=s(n=>n.barangay_residents);return console.log("residents",e),t.jsx(t.Fragment,{children:t.jsx(a,{data:e})})}export{m as default};

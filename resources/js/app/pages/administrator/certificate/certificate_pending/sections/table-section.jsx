@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Filter, CheckCircle, XCircle, Eye, DollarSign, FileText, X } from 'lucide-react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { Image } from 'antd';
 
 export default function TableSection() {
     const [requests, setRequests] = useState([]);
@@ -310,7 +311,7 @@ export default function TableSection() {
                                         {request.request_number}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {request.user?.name}
+                                        {request.user?.first_name} {request.user?.last_name}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         {request.certificate_type?.name}
@@ -428,14 +429,28 @@ export default function TableSection() {
                             {/* Resident Information */}
                             <div className="bg-gray-50 rounded-lg p-4">
                                 <h3 className="font-semibold text-lg mb-3 text-gray-900">Resident Information</h3>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-sm text-gray-600">Name</p>
-                                        <p className="font-medium text-gray-900">{selectedRequest.user?.name}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-600">Email</p>
-                                        <p className="font-medium text-gray-900">{selectedRequest.user?.email}</p>
+                                <div className="flex items-start gap-4">
+                                    {selectedRequest.user?.resident?.profileImage && (
+                                        <div className="flex-shrink-0">
+                                            <Image
+                                                src={selectedRequest.user.resident.profileImage.startsWith('data:') 
+                                                    ? selectedRequest.user.resident.profileImage 
+                                                    : `/images/residents/${selectedRequest.user.resident.profileImage}`}
+                                                alt="Resident Photo"
+                                                className="!w-24 !h-24 object-cover rounded-lg"
+                                                style={{ objectFit: 'cover', width: '96px', height: '96px' }}
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="grid grid-cols-2 gap-4 flex-1">
+                                        <div>
+                                            <p className="text-sm text-gray-600">Name</p>
+                                            <p className="font-medium text-gray-900">{selectedRequest.user?.first_name} {selectedRequest.user?.middle_name} {selectedRequest.user?.last_name}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-600">Email</p>
+                                            <p className="font-medium text-gray-900">{selectedRequest.user?.email}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -490,7 +505,7 @@ export default function TableSection() {
                                                 <>
                                                     <div>
                                                         <p className="text-sm text-gray-600">Verified By</p>
-                                                        <p className="font-medium text-gray-900">{selectedRequest.payment_verified_by?.name}</p>
+                                                        <p className="font-medium text-gray-900">{selectedRequest.payment_verified_by?.first_name} {selectedRequest.payment_verified_by?.last_name}</p>
                                                     </div>
                                                     <div>
                                                         <p className="text-sm text-gray-600">Verified At</p>
@@ -505,7 +520,13 @@ export default function TableSection() {
                                             <div className="mt-4">
                                                 <p className="text-sm text-gray-600 mb-2">Payment Receipt</p>
                                                 <div className="bg-white rounded-lg p-4 border border-gray-200">
-                                                    {selectedRequest.receipt_path.endsWith('.pdf') ? (
+                                                    {selectedRequest.receipt_path.startsWith('data:') || !selectedRequest.receipt_path.endsWith('.pdf') ? (
+                                                        <img
+                                                            src={selectedRequest.receipt_path.startsWith('data:') ? selectedRequest.receipt_path : `/storage/${selectedRequest.receipt_path}`}
+                                                            alt="Payment Receipt"
+                                                            className="max-w-full h-auto max-h-96 object-contain mx-auto"
+                                                        />
+                                                    ) : (
                                                         <a
                                                             href={`/storage/${selectedRequest.receipt_path}`}
                                                             target="_blank"
@@ -515,12 +536,6 @@ export default function TableSection() {
                                                             <FileText size={20} />
                                                             View PDF Receipt
                                                         </a>
-                                                    ) : (
-                                                        <img
-                                                            src={`/storage/${selectedRequest.receipt_path}`}
-                                                            alt="Payment Receipt"
-                                                            className="max-w-full h-auto max-h-96 object-contain mx-auto"
-                                                        />
                                                     )}
                                                 </div>
                                             </div>
@@ -558,7 +573,13 @@ export default function TableSection() {
                                 <div className="bg-gray-50 rounded-lg p-4">
                                     <h3 className="font-semibold text-lg mb-3 text-gray-900">Valid ID</h3>
                                     <div className="bg-white rounded-lg p-4 border border-gray-200">
-                                        {selectedRequest.valid_id_path.endsWith('.pdf') ? (
+                                        {selectedRequest.valid_id_path.startsWith('data:') || !selectedRequest.valid_id_path.endsWith('.pdf') ? (
+                                            <img
+                                                src={selectedRequest.valid_id_path.startsWith('data:') ? selectedRequest.valid_id_path : `/storage/${selectedRequest.valid_id_path}`}
+                                                alt="Valid ID"
+                                                className="max-w-full h-auto max-h-96 object-contain mx-auto"
+                                            />
+                                        ) : (
                                             <a
                                                 href={`/storage/${selectedRequest.valid_id_path}`}
                                                 target="_blank"
@@ -568,12 +589,6 @@ export default function TableSection() {
                                                 <FileText size={20} />
                                                 View PDF Document
                                             </a>
-                                        ) : (
-                                            <img
-                                                src={`/storage/${selectedRequest.valid_id_path}`}
-                                                alt="Valid ID"
-                                                className="max-w-full h-auto max-h-96 object-contain mx-auto"
-                                            />
                                         )}
                                     </div>
                                 </div>

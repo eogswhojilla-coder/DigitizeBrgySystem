@@ -2,7 +2,17 @@ import axios from "axios";
 
 export function create_barangay_residents_service(data) {
     try {
-        const result = axios.post("/api/barangay_residents", data);
+        const formData = new FormData();
+        for (const key in data) {
+            if (key === 'profileImage') {
+                if (data[key] && data[key][0]) {
+                    formData.append(key, data[key][0]);
+                }
+            } else if (data[key] !== null && data[key] !== undefined) {
+                formData.append(key, data[key]);
+            }
+        }
+        const result = axios.post("/api/barangay_residents", formData);
         return result;
     } catch (error) {}
 }

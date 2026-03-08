@@ -183,24 +183,13 @@ export default function CertificateTypeSection() {
 
             if (editingType) {
                 // Update existing type
-                const token = document.head.querySelector('meta[name="csrf-token"]');
                 await axios.post(`/api/certificate-types/${editingType.id}`, formData, {
-                    headers: { 
-                        'Content-Type': 'multipart/form-data',
-                        'X-CSRF-TOKEN': token ? token.content : ''
-                    },
                     params: { _method: 'PUT' }
                 });
                 Swal.fire("Updated!", "Certificate type has been updated.", "success");
             } else {
                 // Create new type
-                const token = document.head.querySelector('meta[name="csrf-token"]');
-                await axios.post("/api/certificate-types", formData, {
-                    headers: { 
-                        'Content-Type': 'multipart/form-data',
-                        'X-CSRF-TOKEN': token ? token.content : ''
-                    }
-                });
+                await axios.post("/api/certificate-types", formData);
                 Swal.fire("Created!", "Certificate type has been created.", "success");
             }
 
@@ -223,8 +212,8 @@ export default function CertificateTypeSection() {
     }
 
     return (
-        <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex justify-between mb-6">
+        <div className="bg-white rounded-lg shadow p-3 sm:p-4 md:p-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-3 mb-4 sm:mb-6">
                 <h2 className="text-lg font-semibold">Certificate Types</h2>
                 <Button onClick={openAddModal}>
                     <PlusIcon className="h-5 w-5 mr-2" />

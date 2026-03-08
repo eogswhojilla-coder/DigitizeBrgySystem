@@ -17,7 +17,7 @@ export default function SearchSection() {
                     name="search"
                     type="search"
                     placeholder="Search..."
-                    className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
+                    className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 dark:text-gray-100 bg-transparent placeholder:text-gray-400 focus:ring-0 sm:text-sm"
                 />
             </form>
         </>

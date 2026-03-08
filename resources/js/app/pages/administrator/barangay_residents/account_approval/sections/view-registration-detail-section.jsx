@@ -156,7 +156,7 @@ export default function ViewRegistrationDetailSection({ isOpen, onClose, userId,
           <div className="flex justify-center mb-6">
             <div className="relative">
               <img
-                src={`/images/residents/${residentData.profileImage}`}
+                src={residentData.profileImage.startsWith('data:') ? residentData.profileImage : `/images/residents/${residentData.profileImage}`}
                 alt="Profile"
                 className="w-32 h-32 rounded-full object-cover border-4 border-blue-200 shadow-lg"
               />
@@ -206,8 +206,7 @@ export default function ViewRegistrationDetailSection({ isOpen, onClose, userId,
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
             <InfoField label="House Number" value={residentData.houseNumber || 'N/A'} />
             <InfoField label="Street" value={residentData.street || 'N/A'} />
-            <InfoField label="Purok / Sitio" value={residentData.purokSitio || 'N/A'} />
-            <InfoField label="Subdivision" value={residentData.subdivision || 'N/A'} />
+            <InfoField label="Zone" value={residentData.zone || 'N/A'} />
             <InfoField label="Barangay" value={residentData.barangay || 'N/A'} />
             <InfoField label="Municipality" value={residentData.municipality || 'N/A'} />
             <InfoField label="Province" value={residentData.province || 'N/A'} />

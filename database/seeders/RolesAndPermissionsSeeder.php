@@ -71,6 +71,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'settings.manage',
             'backups.manage',
             'logs.view',
+
+            // RESIDENT-SPECIFIC
+            'certificates.request',
+            'borrow.request',
+            'profile.view',
+            'profile.update',
+            'notifications.view',
         ];
 
         // Create all permissions for 'web' guard (used by sanctum)

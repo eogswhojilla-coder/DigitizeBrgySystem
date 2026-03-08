@@ -5,8 +5,8 @@ import React from 'react'
 export default function SearchReportSection({ filters, onFilterChange, onFilter, onReset }) {
     return (
         <>
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 md:p-6 mb-4 sm:mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
 
                     {/* VOTERS */}
                     <div className="flex items-center gap-3">
@@ -88,7 +88,7 @@ export default function SearchReportSection({ filters, onFilterChange, onFilter,
                 </div>
 
                 {/* Filter Buttons */}
-                <div className="flex gap-4 justify-end">
+                <div className="flex flex-wrap gap-3 sm:gap-4 justify-end">
                     <Button
                         onClick={onFilter}
                         variant="primary"

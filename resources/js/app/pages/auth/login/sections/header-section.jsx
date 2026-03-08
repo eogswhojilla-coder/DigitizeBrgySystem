@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { Link } from "@inertiajs/react";
+import DarkModeToggle from "@/app/_components/dark-mode-toggle";
 
 const navigation = [
     { name: "About", id: "about" },
@@ -19,7 +20,7 @@ export default function HeaderSection() {
     };
 
     return (
-        <header className="sticky top-0 z-50 bg-gray-900  shadow-md">
+        <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md border-b border-gray-200 dark:border-gray-800">
             <nav
                 aria-label="Global"
                 className="mx-auto flex max-w-7xl items-center justify-between gap-x-6 p-6 lg:px-8"
@@ -34,7 +35,7 @@ export default function HeaderSection() {
                         />
                     </a>
 
-                    <p className="text-md font-bold text-white tracking-tight ">
+                    <p className="text-md font-bold text-slate-900 dark:text-white tracking-tight">
                         BARANGAY PORTAL
                     </p>
                 </div>
@@ -44,22 +45,23 @@ export default function HeaderSection() {
                         <button
                             key={item.name}
                             onClick={() => scrollTo(item.id)}
-                            className="text-sm/6 font-semibold text-white  hover:text-gray-300 transition-colors"
+                            className="text-sm/6 font-semibold text-slate-700 dark:text-white hover:text-indigo-600 dark:hover:text-gray-300 transition-colors"
                         >
                             {item.name}
                         </button>
                     ))}
                 </div>
-                <div className="flex flex-1 items-center justify-end gap-x-6">
+                <div className="flex flex-1 items-center justify-end gap-x-4">
+                    <DarkModeToggle />
                     <Link
                         href="/auth/login"
-                        className="hidden text-sm/6 font-semibold text-white lg:block  hover:text-gray-300 transition-colors"
+                        className="hidden text-sm/6 font-semibold text-slate-700 dark:text-white lg:block hover:text-indigo-600 dark:hover:text-gray-300 transition-colors"
                     >
                         Log in
                     </Link>
                     <Link
                         href="/auth/register"
-                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400 dark:focus-visible:outline-indigo-500"
+                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                         Sign up
                     </Link>

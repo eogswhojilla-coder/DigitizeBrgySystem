@@ -406,7 +406,7 @@ export default function Layout({ children }) {
             <div className="lg:pl-72">
                 <TopbarSection userNavigation={userNavigation} />
 
-                <main className="p-3">
+                <main className="p-2 sm:p-3 lg:p-4">
                     <div>{children}</div>
                     {/* <FloatingButtonSection /> */}
                 </main>

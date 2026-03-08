@@ -10,7 +10,7 @@ import DevelopersSection from "./developers-sections";
 
 export default function BarangayLanding({ announcements, highlights }) {
     return (
-        <div className="font-serif bg-gray-50 text-slate-900 overflow-x-hidden">
+        <div className="font-serif bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 overflow-x-hidden">
             <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:wght@300;400;600&family=DM+Mono:wght@400;500&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -150,6 +150,8 @@ export default function BarangayLanding({ announcements, highlights }) {
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f7f8fc; }
         ::-webkit-scrollbar-thumb { background: #dde1ec; border-radius: 3px; }
+        .dark ::-webkit-scrollbar-track { background: #0f172a; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
         
         /* Responsive */
         @media (max-width: 768px) {

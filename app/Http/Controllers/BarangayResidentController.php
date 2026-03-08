@@ -4,39 +4,39 @@ namespace App\Http\Controllers;
 
 use App\Models\BarangayResident;
 use App\Models\BarangayOfficialEndTerm;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class BarangayResidentController extends Controller
 {
     public function store(Request $request)
     {
+        DB::beginTransaction();
+        
         try {
             // Generate resident ID: mmddyyss format
             $now = now();
             $residentId = $now->format('mdys'); // month, day, year (2 digits), seconds
             
             // Get all data except sensitive/file fields
-            $data = $request->except(['profileImage', 'confirmPassword', 'image']);
+            $data = $request->except(['profileImage', 'confirmPassword', 'image', 'username', 'password']);
             
             // Add auto-generated fields
             $data['residentId'] = $residentId;
             $data['isOfficial'] = filter_var($request->input('isOfficial', false), FILTER_VALIDATE_BOOLEAN);
             
-            // Handle password hashing if present
-            if (!empty($data['password'])) {
-                $data['password'] = bcrypt($data['password']);
-            } else {
-                unset($data['password']);
-            }
+            // Auto-fill locked fields
+            $data['barangay'] = 'Barangay II';
+            $data['municipality'] = 'San Carlos City';
+            $data['province'] = 'Negros Occidental';
             
             // Handle image upload if present
             if ($request->hasFile('profileImage')) {
-                $image = $request->file('profileImage');
-                $imageName = time() . '_' . uniqid() . '.' . $image->extension();
-                $image->move(public_path('images/residents'), $imageName);
-                $data['profileImage'] = $imageName;
+                $data['profileImage'] = \App\Helpers\FileHelper::toBase64($request->file('profileImage'));
             }
             
             // If not official, clear position-related fields
@@ -55,14 +55,36 @@ class BarangayResidentController extends Controller
             
             $resident = BarangayResident::create($data);
             
+            // Create User account with approved status if username and password are provided
+            $user = null;
+            if ($request->filled('username') && $request->filled('password')) {
+                $user = User::create([
+                    'first_name' => $request->input('firstName'),
+                    'middle_name' => $request->input('middleName'),
+                    'last_name' => $request->input('lastName'),
+                    'email' => $request->input('emailAddress'),
+                    'username' => $request->input('username'),
+                    'contact' => $request->input('contactNumber'),
+                    'password' => Hash::make($request->input('password')),
+                    'user_type' => 'resident',
+                    'status' => 'approved',
+                    'barangay_resident_id' => $resident->id,
+                    'approved_by' => auth()->id(),
+                    'approval_date' => now(),
+                ]);
+            }
+            
+            DB::commit();
+            
             return response()->json([
                 'success' => true,
-                'message' => 'Barangay information created successfully',
+                'message' => 'Resident created successfully with approved account',
                 'data' => $resident,
                 'residentId' => $residentId
             ], 201);
             
         } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
             Log::error('Database error creating resident: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -71,6 +93,7 @@ class BarangayResidentController extends Controller
             ], 500);
             
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Error creating resident: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
             

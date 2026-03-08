@@ -1,4 +1,4 @@
-import { Badge, Modal } from "antd";
+import { Badge, Image, Modal } from "antd";
 import moment from "moment";
 import React, { useState } from "react";
 import { Bell, Calendar, Clock } from "lucide-react";
@@ -109,6 +109,27 @@ export default function ViewDaySection({ data = [] }) {
                                             __html: item.description,
                                         }}
                                     />
+                                </div>
+                            )}
+                            {item.files && item.files.length > 0 && (
+                                <div className="bg-white border border-gray-200 p-4 rounded-lg">
+                                    <div className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                                        <span className="w-1 h-6 bg-blue-600 rounded"></span>
+                                        Attachments ({item.files.length})
+                                    </div>
+                                    <Image.PreviewGroup>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            {item.files.map((file, fileIndex) => (
+                                                <Image
+                                                    key={fileIndex}
+                                                    src={file.files}
+                                                    alt={`Attachment ${fileIndex + 1}`}
+                                                    className="!w-full !h-32 object-cover rounded-lg"
+                                                    style={{ objectFit: 'cover', height: '128px', width: '100%' }}
+                                                />
+                                            ))}
+                                        </div>
+                                    </Image.PreviewGroup>
                                 </div>
                             )}
                         </div>

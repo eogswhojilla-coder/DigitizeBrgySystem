@@ -73,6 +73,7 @@ export default function LoginFormSection() {
                     bottom: -80px; right: -80px;
                     animation-delay: -4s;
                 }
+
                 @keyframes floatOrb {
                     0%, 100% { transform: translateY(0) scale(1); }
                     50% { transform: translateY(-30px) scale(1.05); }
@@ -548,8 +549,14 @@ export default function LoginFormSection() {
                                             value={data.email}
                                             onChange={(e) => setData("email", e.target.value)}
                                             autoComplete="email"
+                                            style={errors.email ? { borderColor: 'rgba(239,68,68,0.7)' } : {}}
                                         />
                                     </div>
+                                    {errors.email && (
+                                        <p style={{ color: '#f87171', fontSize: '0.82rem', marginTop: '6px' }}>
+                                            {errors.email}
+                                        </p>
+                                    )}
                                 </div>
 
                                 {/* Password */}
@@ -564,7 +571,7 @@ export default function LoginFormSection() {
                                             value={data.password}
                                             onChange={(e) => setData("password", e.target.value)}
                                             autoComplete="current-password"
-                                            style={{ paddingRight: "44px" }}
+                                            style={{ paddingRight: "44px", ...(errors.password ? { borderColor: 'rgba(239,68,68,0.7)' } : {}) }}
                                         />
                                         <button
                                             type="button"
@@ -574,6 +581,11 @@ export default function LoginFormSection() {
                                             {showPassword ? <FaEyeSlash size={15} /> : <FaEye size={15} />}
                                         </button>
                                     </div>
+                                    {errors.password && (
+                                        <p style={{ color: '#f87171', fontSize: '0.82rem', marginTop: '6px' }}>
+                                            {errors.password}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 

@@ -150,17 +150,17 @@ const ResidentList = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen p-6">
+    <div className="bg-gray-50 min-h-screen p-3 sm:p-4 md:p-6">
       {/* Header */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
-        <div className="mb-4 flex justify-between items-center">
+      <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6">
+        <div className="mb-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
           <div>
-            <h2 className="text-xl font-bold text-gray-800">Archived Residents</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-gray-800">Archived Residents</h2>
             <p className="text-sm text-gray-600">
               Total Archived: {archivedResidents.total || 0}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => handleGeneratePDF('general')}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors"
@@ -181,7 +181,7 @@ const ResidentList = () => {
         </div>
         
         {/* Search and Filters */}
-        <div className="flex gap-4 mb-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4">
           <div className="flex-1">
             <input
               type="text"
@@ -215,8 +215,9 @@ const ResidentList = () => {
 
       {/* Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
         {/* Table Header */}
-        <div className="bg-blue-700 text-white">
+        <div className="bg-blue-700 text-white min-w-[800px]">
           <div className="grid grid-cols-12 gap-4 px-4 py-3 text-sm font-medium">
             <div className="col-span-1">IMAGE</div>
             <div className="col-span-2">RESIDENT NUMBER</div>
@@ -253,6 +254,7 @@ const ResidentList = () => {
               </div>
             ))
           )}
+        </div>
         </div>
       </div>
       

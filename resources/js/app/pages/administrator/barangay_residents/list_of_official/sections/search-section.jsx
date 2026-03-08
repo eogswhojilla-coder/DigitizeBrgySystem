@@ -9,7 +9,7 @@ export default function SearchSection() {
     const totalOfficials = officials?.total || officials?.data?.length || 0;
     return (
         <>
-            <div className="flex justify-between items-center mb-6 bg-gray-100 p-4 rounded-lg border">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 sm:mb-6 bg-gray-100 p-3 sm:p-4 rounded-lg border">
                 <div className="flex items-center">
                     <span className="text-gray-700 font-semibold">NUMBER OF OFFICIAL</span>
                     <span className="ml-2 bg-gray-600 text-white px-2 py-1 rounded text-sm">

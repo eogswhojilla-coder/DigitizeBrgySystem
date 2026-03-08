@@ -89,7 +89,7 @@ export default function TableSection({ residents = [] }) {
                         <Table columns={columns} data={tableData} />
 
                         {/* Pagination */}
-                        <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-3 sm:px-6 py-3 sm:py-4 border-t bg-gray-50">
                             <div className="text-sm text-gray-600">
                                 Showing {startIndex + 1} to {Math.min(endIndex, residents.length)} of {residents.length} residents
                             </div>

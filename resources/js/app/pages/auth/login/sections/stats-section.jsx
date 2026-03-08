@@ -36,7 +36,7 @@ function AnimatedCounter({ target, label, suffix = "", icon }) {
     return (
         <div
             ref={ref}
-            className="group relative p-8 rounded-2xl bg-gradient-to-b from-white/5 to-white/0 border border-white/10 hover:border-yellow-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20"
+            className="group relative p-8 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-yellow-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/20"
         >
             {/* Card Glow Effect */}
             <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -54,7 +54,7 @@ function AnimatedCounter({ target, label, suffix = "", icon }) {
 
             {/* Counter Number */}
             <div className="text-center mb-3">
-                <div className="text-4xl md:text-5xl font-bold text-white">
+                <div className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
                     {count.toLocaleString()}
                     <span className="text-yellow-500">{suffix}</span>
                 </div>
@@ -75,9 +75,9 @@ function AnimatedCounter({ target, label, suffix = "", icon }) {
 
 export default function StatsSection() {
     return (
-        <section className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-slate-950 text-slate-200">
+        <section className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-gray-50 dark:bg-slate-950 text-slate-700 dark:text-slate-200">
             {/* Background Effects */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 -z-10" />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-0 dark:opacity-20 -z-10" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-yellow-500/5 rounded-full blur-[120px] -z-10" />
             <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[100px] -z-10" />
 
@@ -87,13 +87,13 @@ export default function StatsSection() {
                     <span className="inline-block py-1 px-3 rounded-full bg-yellow-500/10 text-yellow-500 text-xs font-bold tracking-widest uppercase mb-4 border border-yellow-500/20">
                         By The Numbers
                     </span>
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
                         Barangay <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">
                             At a Glance
                         </span>
                     </h2>
-                    <p className="text-lg text-slate-400 leading-relaxed">
+                    <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
                         A snapshot of our community's growth, engagement, and impact through the years.
                     </p>
                 </div>
@@ -127,7 +127,7 @@ export default function StatsSection() {
                 <div className="mt-16 p-8 rounded-3xl bg-gradient-to-r from-yellow-500/10 to-amber-600/10 border border-yellow-500/20">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                         <div>
-                            <div className="text-3xl md:text-4xl font-bold text-white mb-2">
+                            <div className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">
                                 <span className="text-yellow-500">99%</span>
                             </div>
                             <div className="text-sm text-slate-400">
@@ -135,7 +135,7 @@ export default function StatsSection() {
                             </div>
                         </div>
                         <div>
-                            <div className="text-3xl md:text-4xl font-bold text-white mb-2">
+                            <div className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">
                                 <span className="text-yellow-500">24/7</span>
                             </div>
                             <div className="text-sm text-slate-400">
@@ -143,7 +143,7 @@ export default function StatsSection() {
                             </div>
                         </div>
                         <div>
-                            <div className="text-3xl md:text-4xl font-bold text-white mb-2">
+                            <div className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">
                                 <span className="text-yellow-500">15+</span>
                             </div>
                             <div className="text-sm text-slate-400">

@@ -2,8 +2,18 @@ import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
 import React, { useState } from "react";
 
-export default function NewResidentLayout({ children, register, errors }) {
+export default function NewResidentLayout({ children, register, errors, onResetImage }) {
     const [imagePreview, setImagePreview] = useState(null);
+
+    React.useEffect(() => {
+        if (onResetImage) {
+            onResetImage.current = () => {
+                setImagePreview(null);
+                const input = document.getElementById("profileImage");
+                if (input) input.value = "";
+            };
+        }
+    }, [onResetImage]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -13,6 +23,8 @@ export default function NewResidentLayout({ children, register, errors }) {
                 setImagePreview(reader.result);
             };
             reader.readAsDataURL(file);
+        } else {
+            setImagePreview(null);
         }
     };
 
@@ -71,9 +83,10 @@ export default function NewResidentLayout({ children, register, errors }) {
                             id="profileImage"
                             type="file"
                             accept="image/*"
-                            onChange={handleImageChange}
                             className="hidden"
-                            {...register("profileImage")}
+                            {...register("profileImage", {
+                                onChange: handleImageChange
+                            })}
                         />
                     </div>
                     <p className="text-xs text-center text-gray-500">

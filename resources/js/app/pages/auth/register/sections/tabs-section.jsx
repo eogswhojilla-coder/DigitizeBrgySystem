@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import BasicInfoSection from "./basic-info-section";
 import OtherInfoSection from "./other-info-section";
 import GuardianSection from "./guardian-section";
@@ -14,6 +14,7 @@ import { router } from "@inertiajs/react";
 export default function TabsSection() {
     const [activeTab, setActiveTab] = useState("basic");
     const [completedSteps, setCompletedSteps] = useState(["basic"]); // Track completed steps
+    const resetImageRef = useRef(null);
 
     const {
         register,
@@ -22,6 +23,7 @@ export default function TabsSection() {
         reset,
         trigger,
         watch,
+        setValue,
         formState: { errors },
     } = useForm();
 
@@ -106,6 +108,7 @@ export default function TabsSection() {
             });
             
             reset();
+            if (resetImageRef.current) resetImageRef.current();
             setActiveTab("basic");
             setCompletedSteps(["basic"]);
             
@@ -193,6 +196,48 @@ export default function TabsSection() {
                     </div>
                 </div>
 
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <NewResidentLayout errors={errors} register={register} onResetImage={resetImageRef}>
+                        {activeTab === "basic" && (
+                            <BasicInfoSection
+                                errors={errors}
+                                register={register}
+                            />
+                        )}
+                        {activeTab === "other" && (
+                            <OtherInfoSection
+                                errors={errors}
+                                register={register}
+                                watch={watch}
+                                setValue={setValue}
+                            />
+                        )}
+                        {activeTab === "guardian" && (
+                            <GuardianSection
+                                errors={errors}
+                                register={register}
+                            />
+                        )}
+                        {activeTab === "account" && (
+                            <AccountSection
+                                errors={errors}
+                                register={register}
+                            />
+                        )}
+                    </NewResidentLayout>
+                    {/* Back to Login Button */}
+                    <div className="mb-6">
+                        <button
+                            type="button"
+                            onClick={handleBackToLogin}
+                            className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors font-medium"
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                            Back to Login
+                        </button>
+                    </div>
+                </div>
+
                 {/* Navigation Buttons */}
                 <div className="py-6 flex items-center justify-between">
                     <div className="flex gap-2">
@@ -221,47 +266,6 @@ export default function TabsSection() {
                             <span>{isSubmitting ? "Saving..." : " Save"}</span>
                         </Button>
                     )}
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <NewResidentLayout errors={errors} register={register}>
-                        {activeTab === "basic" && (
-                            <BasicInfoSection
-                                errors={errors}
-                                register={register}
-                            />
-                        )}
-                        {activeTab === "other" && (
-                            <OtherInfoSection
-                                errors={errors}
-                                register={register}
-                                watch={watch}
-                            />
-                        )}
-                        {activeTab === "guardian" && (
-                            <GuardianSection
-                                errors={errors}
-                                register={register}
-                            />
-                        )}
-                        {activeTab === "account" && (
-                            <AccountSection
-                                errors={errors}
-                                register={register}
-                            />
-                        )}
-                    </NewResidentLayout>
-                    {/* Back to Login Button */}
-                    <div className="mb-6">
-                        <button
-                            type="button"
-                            onClick={handleBackToLogin}
-                            className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors font-medium"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                            Back to Login
-                        </button>
-                    </div>
                 </div>
             </form>
         </div>

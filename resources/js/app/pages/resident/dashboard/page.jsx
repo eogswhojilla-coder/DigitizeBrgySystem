@@ -46,20 +46,20 @@ export default function Page() {
 
     return (
         <Layout>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
                 {/* Welcome Header */}
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
-                    <h1 className="text-3xl font-bold">
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg p-4 sm:p-6 text-white">
+                    <h1 className="text-xl sm:text-3xl font-bold">
                         Welcome to Resident Portal
                     </h1>
-                    <p className="mt-2 text-blue-100">
+                    <p className="mt-1 sm:mt-2 text-sm sm:text-base text-blue-100">
                         Access barangay services and stay updated with
                         announcements.
                     </p>
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <Card
                         icon={<Bell className="w-8 h-8 text-blue-600" />}
                         label="Total Announcements"
@@ -89,9 +89,9 @@ export default function Page() {
                 </div>
 
                 {/* Recent Announcements */}
-                <div className="bg-white rounded-xl shadow-lg p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                    <div className="flex items-center justify-between mb-4 sm:mb-6">
+                        <h2 className="text-lg sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
                             <Bell className="w-6 h-6 text-blue-600" />
                             Recent Announcements
                         </h2>
@@ -144,7 +144,7 @@ export default function Page() {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                     {/* Certificate */}
 
                     {/* Certificate */}

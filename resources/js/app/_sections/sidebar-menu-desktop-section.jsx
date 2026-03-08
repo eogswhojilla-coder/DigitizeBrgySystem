@@ -26,7 +26,7 @@ export default function SidebarDesktopSection({
                                             className={classNames(
                                                 item.current
                                                     ? "bg-blue-500 text-white"
-                                                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-500",
+                                                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-blue-500",
                                                 "group flex gap-x-3 rounded-md p-2 py-3 text-sm/6 font-semibold"
                                             )}
                                         >
@@ -51,7 +51,7 @@ export default function SidebarDesktopSection({
                     <li className="mt-auto px-2">
                         <a
                             href="#"
-                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-black"
+                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-black dark:text-gray-200"
                         >
                            <FcServices className="h-6 w-6"  />
                             Settings

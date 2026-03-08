@@ -8,7 +8,7 @@ export default function ViewDetailSection({ isOpen, onClose, official }) {
 
     const resident = official.resident;
     const imageUrl = resident.profileImage 
-        ? `/images/residents/${resident.profileImage}` 
+        ? (resident.profileImage.startsWith('data:') ? resident.profileImage : `/images/residents/${resident.profileImage}`) 
         : null;
 
     const age = resident.dateOfBirth 
@@ -162,8 +162,7 @@ export default function ViewDetailSection({ isOpen, onClose, official }) {
                             <div className="grid grid-cols-2 gap-4">
                                 <InfoItem label="House Number" value={resident.houseNumber} />
                                 <InfoItem label="Street" value={resident.street} />
-                                <InfoItem label="Purok/Sitio" value={resident.purokSitio} />
-                                <InfoItem label="Subdivision" value={resident.subdivision} />
+                                <InfoItem label="Zone" value={resident.zone} />
                                 <InfoItem label="Barangay" value={resident.barangay} />
                                 <InfoItem label="Municipality" value={resident.municipality} />
                                 <InfoItem label="Province" value={resident.province} />

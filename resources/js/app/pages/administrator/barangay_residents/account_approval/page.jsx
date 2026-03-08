@@ -83,15 +83,15 @@ export default function Page() {
 
   return (
     <Layout>
-      <div className="bg-white min-h-screen p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Account Approval Management</h1>
-          <p className="text-gray-600">Manage resident registration requests and approved accounts</p>
+      <div className="bg-white min-h-screen p-3 sm:p-4 md:p-6">
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Account Approval Management</h1>
+          <p className="text-sm sm:text-base text-gray-600">Manage resident registration requests and approved accounts</p>
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
+        <div className="mb-4 sm:mb-6 border-b border-gray-200">
+          <nav className="-mb-px flex space-x-4 sm:space-x-8 overflow-x-auto">
             <button
               onClick={() => setActiveTab('pending')}
               className={`

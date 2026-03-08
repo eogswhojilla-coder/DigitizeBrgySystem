@@ -61,7 +61,7 @@ class ResidentController extends Controller
             // Store the valid ID
             $validIdPath = null;
             if ($request->hasFile('valid_id')) {
-                $validIdPath = $request->file('valid_id')->store('certificate_ids', 'public');
+                $validIdPath = \App\Helpers\FileHelper::toBase64($request->file('valid_id'));
             }
 
             $certificateRequest = CertificateRequest::create([

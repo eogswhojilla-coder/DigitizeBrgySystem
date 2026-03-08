@@ -72,9 +72,18 @@ window.axios.interceptors.request.use(
         const stateChangingMethods = ['post', 'put', 'patch', 'delete'];
         const method = config.method?.toLowerCase();
         
-        if (stateChangingMethods.includes(method) && !hasValidCsrfCookie()) {
-            console.log('[CSRF] Cookie missing, initializing...');
-            await initializeCsrf();
+        if (stateChangingMethods.includes(method)) {
+            if (!hasValidCsrfCookie()) {
+                console.log('[CSRF] Cookie missing, initializing...');
+                csrfInitialized = false;
+                csrfInitPromise = null;
+                await initializeCsrf();
+            }
+
+            // Remove any manually set X-CSRF-TOKEN header — let the XSRF-TOKEN cookie handle it
+            if (config.headers['X-CSRF-TOKEN']) {
+                delete config.headers['X-CSRF-TOKEN'];
+            }
         }
         
         return config;
@@ -86,32 +95,28 @@ window.axios.interceptors.request.use(
 
 /**
  * Axios response interceptor
- * Handle 419 CSRF token mismatch errors
+ * Handle 419 CSRF token mismatch errors by refreshing the cookie and retrying
  */
 window.axios.interceptors.response.use(
     response => response,
     async error => {
-        if (error.response && error.response.status === 419) {
+        if (error.response && error.response.status === 419 && !error.config._retry) {
             console.warn('[CSRF] Token mismatch detected (419). Reinitializing...');
+            error.config._retry = true;
             
-            // Reset CSRF state
+            // Reset CSRF state and re-fetch cookie
             csrfInitialized = false;
             csrfInitPromise = null;
             
-            // Try to reinitialize and retry the request once
-            if (!error.config._retry) {
-                error.config._retry = true;
-                
-                try {
-                    await initializeCsrf();
-                    return axios.request(error.config);
-                } catch (retryError) {
-                    console.error('[CSRF] Retry failed, reloading page...');
-                    window.location.reload();
-                }
-            } else {
-                console.error('[CSRF] Retry already attempted, reloading page...');
-                window.location.reload();
+            try {
+                await initializeCsrf();
+
+                // For FormData requests, we can't re-read the body, 
+                // but Axios with withXSRFToken will attach the fresh cookie automatically
+                return axios.request(error.config);
+            } catch (retryError) {
+                console.error('[CSRF] Retry failed');
+                return Promise.reject(retryError);
             }
         }
         

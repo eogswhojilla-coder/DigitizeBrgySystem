@@ -9,6 +9,8 @@ use App\Models\Certificate;
 use App\Enums\CertificateRequestStatus;
 use App\Enums\PaymentStatus;
 use App\Services\CertificateGenerationService;
+use App\Notifications\CertificateRequestApprovedNotification;
+use App\Notifications\CertificateRequestRejectedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +22,7 @@ class CertificateRequestController extends Controller
 {
     public function index(Request $request)
     {
-        $query = CertificateRequest::with(['user', 'certificateType', 'verifiedBy', 'approvedBy', 'rejectedBy', 'releasedBy'])
+        $query = CertificateRequest::with(['user.resident', 'certificateType', 'verifiedBy', 'approvedBy', 'rejectedBy', 'releasedBy'])
             ->latest();
 
         // Filter by status if provided
@@ -75,7 +77,7 @@ class CertificateRequestController extends Controller
     public function show(CertificateRequest $certificateRequest)
     {
         $certificateRequest->load([
-            'user', 
+            'user.resident', 
             'certificateType', 
             'verifiedBy', 
             'approvedBy', 
@@ -132,6 +134,12 @@ class CertificateRequestController extends Controller
             'remarks' => $request->remarks
         ]);
 
+        // Send notification to the resident
+        $certificateRequest->load(['user', 'certificateType']);
+        if ($certificateRequest->user) {
+            $certificateRequest->user->notify(new CertificateRequestApprovedNotification($certificateRequest));
+        }
+
         return response()->json([
             'message' => 'Request approved successfully',
             'request' => $certificateRequest->fresh(['user', 'certificateType', 'approvedBy'])
@@ -156,6 +164,12 @@ class CertificateRequestController extends Controller
             'rejected_at' => now(),
             'remarks' => $request->remarks
         ]);
+
+        // Send notification to the resident
+        $certificateRequest->load(['user', 'certificateType']);
+        if ($certificateRequest->user) {
+            $certificateRequest->user->notify(new CertificateRequestRejectedNotification($certificateRequest));
+        }
 
         return response()->json([
             'message' => 'Request rejected successfully',
@@ -239,12 +253,47 @@ class CertificateRequestController extends Controller
 
         try {
             // Load necessary relationships
-            $certificateRequest->load(['user', 'certificateType']);
+            $certificateRequest->load(['user.resident', 'certificateType']);
 
             // Check if certificate already exists
             $certificate = $certificateRequest->certificate;
             
             if (!$certificate) {
+                $user = $certificateRequest->user;
+                $resident = $user->resident;
+
+                // Build resident name
+                $residentName = $resident
+                    ? trim(($resident->firstName ?? '') . ' ' . ($resident->middleName ?? '') . ' ' . ($resident->lastName ?? ''))
+                    : trim(($user->first_name ?? '') . ' ' . ($user->middle_name ?? '') . ' ' . ($user->last_name ?? ''));
+
+                // Build address from resident record
+                $addressParts = [];
+                if ($resident) {
+                    if ($resident->houseNumber) $addressParts[] = $resident->houseNumber;
+                    if ($resident->street) $addressParts[] = $resident->street;
+                    if ($resident->zone) $addressParts[] = $resident->zone;
+                    if ($resident->barangay) $addressParts[] = $resident->barangay;
+                    if ($resident->municipality) $addressParts[] = $resident->municipality;
+                    if ($resident->province) $addressParts[] = $resident->province;
+                }
+                $residentAddress = !empty($addressParts)
+                    ? implode(', ', $addressParts)
+                    : ($resident->address ?? 'BARANGAY II, SAN CARLOS CITY, NEGROS OCCIDENTAL');
+
+                // Calculate age from date of birth
+                $age = 'N/A';
+                if ($resident && $resident->dateOfBirth) {
+                    try {
+                        $age = \Carbon\Carbon::parse($resident->dateOfBirth)->age;
+                    } catch (\Exception $e) {
+                        $age = 'N/A';
+                    }
+                }
+
+                // Get civil status
+                $civilStatus = $resident->civilStatus ?? 'Single';
+
                 // Create new certificate
                 $certificate = Certificate::create([
                     'certificate_request_id' => $certificateRequest->id,
@@ -253,13 +302,12 @@ class CertificateRequestController extends Controller
                     'issued_at' => now(),
                     'valid_until' => now()->addMonths(6),
                     'metadata' => [
-                        'resident_name' => $certificateRequest->user->first_name 
-                            ? trim($certificateRequest->user->first_name . ' ' . ($certificateRequest->user->middle_name ?? '') . ' ' . ($certificateRequest->user->last_name ?? ''))
-                            : $certificateRequest->user->name,
-                        'resident_address' => $certificateRequest->user->address ?? 'N/A',
-                        'age' => $certificateRequest->user->age ?? 'N/A',
-                        'civil_status' => $certificateRequest->user->civil_status ?? 'N/A',
+                        'resident_name' => $residentName,
+                        'resident_address' => $residentAddress,
+                        'age' => $age,
+                        'civil_status' => $civilStatus,
                         'purpose' => $certificateRequest->purpose,
+                        'resident_image' => $resident->profileImage ?? null,
                     ]
                 ]);
 

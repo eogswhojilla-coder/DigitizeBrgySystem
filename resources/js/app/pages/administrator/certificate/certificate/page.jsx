@@ -7,8 +7,8 @@ import { Tab } from '@headlessui/react';
 export default function Page() {
     return (
         <Layout>
-            <div className="p-6">
-                <h1 className="text-2xl font-bold text-gray-900 mb-6">
+            <div className="p-3 sm:p-4 md:p-6">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
                     Certificate Management
                 </h1>
 

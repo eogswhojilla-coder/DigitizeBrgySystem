@@ -72,6 +72,23 @@ class CertificateGenerationService
             // Generate QR code as base64 image (PNG format, size: medium)
             $qrCodeImage = DNS2D::getBarcodePNG($qrData, 'QRCODE', 4, 4);
             
+            // Get resident profile image as base64 for PDF
+            $residentImageBase64 = null;
+            $residentImageFile = $certificate->metadata['resident_image'] ?? null;
+            if ($residentImageFile) {
+                if (str_starts_with($residentImageFile, 'data:')) {
+                    // Already a base64 data URI - extract just the base64 part
+                    $parts = explode(',', $residentImageFile, 2);
+                    $residentImageBase64 = $parts[1] ?? null;
+                } else {
+                    // Legacy: filename stored, read from filesystem
+                    $imagePath = public_path('images/residents/' . $residentImageFile);
+                    if (file_exists($imagePath)) {
+                        $residentImageBase64 = base64_encode(file_get_contents($imagePath));
+                    }
+                }
+            }
+
             // Prepare data for the view
             $viewData = [
                 'certificate' => $certificate,
@@ -92,6 +109,7 @@ class CertificateGenerationService
                 'ctcAmountPaid' => number_format($certificate->certificateRequest->amount_paid ?? 0, 2),
                 'ctcIssuedAt' => 'BRGY. II',
                 'qrCodeImage' => $qrCodeImage, // Base64 encoded QR code
+                'residentImage' => $residentImageBase64, // Base64 encoded resident photo
             ];
 
             Log::info('Creating PDF from template', ['template' => $templateName]);

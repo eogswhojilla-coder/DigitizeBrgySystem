@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Inventories;
 use App\Models\BorrowRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Helpers\FileHelper;
 use App\Notifications\BorrowRequestApprovedNotification;
 use App\Notifications\BorrowRequestDeclinedNotification;
 
@@ -42,8 +42,7 @@ class InventoriesController extends Controller
         } else {
             // Handle GCash QR upload
             if ($request->hasFile('gcash_qr')) {
-                $qrPath = $request->file('gcash_qr')->store('inventory/qr', 'public');
-                $data['gcash_qr'] = $qrPath;
+                $data['gcash_qr'] = FileHelper::toBase64($request->file('gcash_qr'));
             }
         }
 
@@ -55,11 +54,9 @@ class InventoriesController extends Controller
     {
         $inventories = Inventories::orderBy('id', 'desc')->paginate(5);
         
-        // Add QR URL to response
+        // Add QR URL to response (base64 is already a data URI)
         $inventories->getCollection()->transform(function ($inventory) {
-            $inventory->gcash_qr_url = $inventory->gcash_qr 
-                ? asset('storage/' . $inventory->gcash_qr) 
-                : null;
+            $inventory->gcash_qr_url = $inventory->gcash_qr ?: null;
             return $inventory;
         });
         
@@ -94,22 +91,11 @@ class InventoriesController extends Controller
         // If has_fee is false, set price and gcash_qr to null
         if (isset($data['has_fee']) && !$data['has_fee']) {
             $data['price'] = null;
-            
-            // Delete old QR if exists
-            if ($inventory->gcash_qr) {
-                Storage::disk('public')->delete($inventory->gcash_qr);
-            }
             $data['gcash_qr'] = null;
         } else if (isset($data['has_fee']) && $data['has_fee']) {
             // Handle GCash QR upload
             if ($request->hasFile('gcash_qr')) {
-                // Delete old QR if exists
-                if ($inventory->gcash_qr) {
-                    Storage::disk('public')->delete($inventory->gcash_qr);
-                }
-                
-                $qrPath = $request->file('gcash_qr')->store('inventory/qr', 'public');
-                $data['gcash_qr'] = $qrPath;
+                $data['gcash_qr'] = FileHelper::toBase64($request->file('gcash_qr'));
             }
         }
 
@@ -123,11 +109,6 @@ class InventoriesController extends Controller
     public function destroy(Request $request, $id)
     {
         $inventory = Inventories::findOrFail($id);
-        
-        // Delete QR code if exists
-        if ($inventory->gcash_qr) {
-            Storage::disk('public')->delete($inventory->gcash_qr);
-        }
         
         $inventory->delete();
         return response()->json([
@@ -166,9 +147,14 @@ class InventoriesController extends Controller
                 'remarks' => $request->remarks,
                 'payment_reference' => $request->payment_reference,
                 'payment_receipt_url' => $request->payment_receipt 
-                    ? asset('storage/' . $request->payment_receipt) 
+                    ? ($request->payment_receipt && str_starts_with($request->payment_receipt, 'data:') ? $request->payment_receipt : asset('storage/' . $request->payment_receipt))
                     : null,
                 'availableStock' => $request->inventory ? $request->inventory->quantity - ($request->inventory->borrowed ?? 0) : 0,
+                'has_fee' => $request->inventory ? $request->inventory->has_fee : false,
+                'price_per_unit' => $request->inventory ? $request->inventory->price : null,
+                'total_payment' => ($request->inventory && $request->inventory->has_fee && $request->inventory->price) 
+                    ? $request->inventory->price * $request->quantity 
+                    : null,
                 'approved_by' => $request->approvedBy ? $request->approvedBy->first_name . ' ' . $request->approvedBy->last_name : null,
                 'approved_at' => $request->approved_at?->format('Y-m-d H:i:s'),
                 'rejected_by' => $request->rejectedBy ? $request->rejectedBy->first_name . ' ' . $request->rejectedBy->last_name : null,
@@ -393,6 +379,7 @@ class InventoriesController extends Controller
             return [
                 'id' => $item->id,
                 'name' => $item->name,
+                'category' => $item->category,
                 'description' => $item->description,
                 'quantity' => $item->quantity,
                 'borrowed' => $item->borrowed ?? 0,
@@ -432,6 +419,7 @@ class InventoriesController extends Controller
             return [
                 'id' => $item->id,
                 'name' => $item->name,
+                'category' => $item->category,
                 'description' => $item->description,
                 'quantity' => $item->quantity,
                 'borrowed' => $item->borrowed ?? 0,
@@ -517,6 +505,7 @@ class InventoriesController extends Controller
             return [
                 'id' => $item->id,
                 'name' => $item->name,
+                'category' => $item->category,
                 'description' => $item->description,
                 'total_quantity' => $item->quantity,
                 'damaged_count' => $item->damaged ?? 0,

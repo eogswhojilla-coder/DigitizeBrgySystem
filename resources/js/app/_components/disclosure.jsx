@@ -20,8 +20,8 @@ export default function DisclosureComponent({
             <button
                 onClick={() => setOpenIndex(isOpen ? null : i)}
                 className={classNames(
-                    item.current ? "bg-blue-500 text-white" : "hover:bg-gray-50",
-                    "group flex w-full items-center gap-x-3 rounded-md p-2 py-3 text-left text-sm/6 font-semibold text-gray-700"
+                    item.current ? "bg-blue-500 text-white" : "hover:bg-gray-50 dark:hover:bg-gray-700",
+                    "group flex w-full items-center gap-x-3 rounded-md p-2 py-3 text-left text-sm/6 font-semibold text-gray-700 dark:text-gray-300"
                 )}
             >
                 <div className="flex w-full items-center justify-between">
@@ -56,9 +56,9 @@ export default function DisclosureComponent({
                                 href={subItem.href}
                                 className={classNames(
                                     subItem.current
-                                        ? "bg-blue-100"
-                                        : "hover:bg-gray-50",
-                                    "block rounded-md py-2 pr-2 pl-4 text-sm/6 text-gray-700"
+                                        ? "bg-blue-100 dark:bg-blue-900/50"
+                                        : "hover:bg-gray-50 dark:hover:bg-gray-700",
+                                    "block rounded-md py-2 pr-2 pl-4 text-sm/6 text-gray-700 dark:text-gray-300"
                                 )}
                             >
                                 <div className="flex gap-3">

@@ -1,4 +1,4 @@
-import { Badge, Modal } from "antd";
+import { Badge, Image, Modal } from "antd";
 import moment from "moment";
 import React, { useState, useEffect } from "react";
 
@@ -79,6 +79,24 @@ export default function ViewDaySection({ data = [] }) {
                                             __html: item.description,
                                         }}
                                     />
+                                </div>
+                            )}
+                            {item.files && item.files.length > 0 && (
+                                <div className="mt-3">
+                                    <div className="font-medium text-gray-700 mb-2">Attachments ({item.files.length}):</div>
+                                    <Image.PreviewGroup>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {item.files.map((file, fileIndex) => (
+                                                <Image
+                                                    key={fileIndex}
+                                                    src={file.files}
+                                                    alt={`Attachment ${fileIndex + 1}`}
+                                                    className="!w-full !h-32 object-cover rounded-lg"
+                                                    style={{ objectFit: 'cover', height: '128px', width: '100%' }}
+                                                />
+                                            ))}
+                                        </div>
+                                    </Image.PreviewGroup>
                                 </div>
                             )}
                         </div>

@@ -12,7 +12,7 @@ export default function ViewFamilySection({ family, isOpen, onClose }) {
         <Modal isOpen={isOpen} onClose={onClose} width="max-w-5xl">
             {/* Header */}
             <div className="pb-6 border-b">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                     Family Details
                 </h2>
                 <p className="text-gray-500 mt-1">
@@ -22,8 +22,8 @@ export default function ViewFamilySection({ family, isOpen, onClose }) {
 
             <div className="max-h-[70vh] overflow-y-auto pt-6 space-y-8">
                 {/* Information Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="bg-gray-100 rounded-xl p-6 border-l-4 border-blue-500">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
+                    <div className="bg-gray-100 rounded-xl p-4 sm:p-6 border-l-4 border-blue-500">
                         <h3 className="text-lg font-semibold text-blue-800 mb-4">
                             Family Information
                         </h3>
@@ -44,7 +44,7 @@ export default function ViewFamilySection({ family, isOpen, onClose }) {
 
                     {/* Household Details */}
                     {family?.household && (
-                        <div className="bg-gray-100 rounded-xl p-6   shadow-sm border-l-4 border-blue-500">
+                        <div className="bg-gray-100 rounded-xl p-4 sm:p-6   shadow-sm border-l-4 border-blue-500">
                             <h3 className="text-lg font-semibold text-blue-800 mb-4">
                                 Household Details
                             </h3>
@@ -129,7 +129,7 @@ export default function ViewFamilySection({ family, isOpen, onClose }) {
 
                 {/* Notes */}
                 {family?.household?.notes && (
-                    <div className="bg-gray-100 rounded-xl p-6 border-l-4 border-blue-500">
+                    <div className="bg-gray-100 rounded-xl p-4 sm:p-6 border-l-4 border-blue-500">
                         <h3 className="text-lg font-semibold text-blue-800 mb-2">
                             Notes
                         </h3>

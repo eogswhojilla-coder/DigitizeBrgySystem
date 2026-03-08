@@ -23,8 +23,8 @@ function PositionManagementTable() {
     }, []);
 
     return (
-        <div className="bg-gray-50 min-h-screen p-6">
-            <div className=" space-y-6">
+        <div className="bg-gray-50 min-h-screen p-3 sm:p-4 md:p-6">
+            <div className=" space-y-4 sm:space-y-6">
                 {/* Header */}
                 <AddPositionSection />
 

@@ -8,10 +8,10 @@ use App\Models\AnnouncementFile;
 use App\Models\User;
 use App\Notifications\AnnouncementCreatedNotification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
+use App\Helpers\FileHelper;
 
 class AnnouncementController extends Controller
 {
@@ -74,21 +74,15 @@ class AnnouncementController extends Controller
             'type' => 'announcement',
         ]);
         
-        // Handle file uploads
+        // Handle file uploads - store as base64 in database
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $index => $uploadedFile) {
                 try {
-                    // Store locally
-                    $path = $uploadedFile->store('announcements/' . date("Y/m"), 'public');
-                    $url = Storage::disk('public')->url($path);
-                    
-                    // If using S3, uncomment this:
-                    // $path = $uploadedFile->store('announcements/' . date("Y/m"), 's3');
-                    // $url = Storage::disk('s3')->url($path);
+                    $base64 = FileHelper::toBase64($uploadedFile);
                     
                     AnnouncementFile::create([
                         'news_feed_id' => $announcement->id,
-                        'files' => $url,
+                        'files' => $base64,
                         'type' => 'announcement'
                     ]);
                 } catch (\Exception $e) {

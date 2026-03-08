@@ -64,12 +64,12 @@ const SystemLogs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 md:p-6">
       <div className="">
         {/* Main Table Container */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           {/* Table Header */}
-          <div className="bg-blue-600 text-white px-6 py-4">
+          <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <FileText size={20} />
               SYSTEM LOGS
@@ -77,7 +77,7 @@ const SystemLogs = () => {
           </div>
 
           {/* Controls */}
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+          <div className="px-3 sm:px-6 py-3 sm:py-4 bg-gray-50 border-b border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
             <div className="flex items-center gap-2">
               <span className="text-gray-700">Rows per page:</span>
               <select
@@ -180,7 +180,7 @@ const SystemLogs = () => {
 
           {/* Pagination Footer */}
           {logs.data && logs.data.length > 0 && (
-            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-between items-center">
+            <div className="px-3 sm:px-6 py-3 sm:py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
               <div className="text-sm text-gray-700">
                 Showing {logs.from} to {logs.to} of {logs.total} entries
               </div>

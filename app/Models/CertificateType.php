@@ -35,6 +35,10 @@ class CertificateType extends Model
     public function getGcashQrUrlAttribute()
     {
         if ($this->gcash_qr) {
+            // Base64 data URIs are already complete image sources
+            if (str_starts_with($this->gcash_qr, 'data:')) {
+                return $this->gcash_qr;
+            }
             return asset('images/qrcodes/' . $this->gcash_qr);
         }
         return null;

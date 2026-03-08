@@ -27,7 +27,7 @@ export default function SearchAdministratorUserSection() {
   
   return (
     <>
-      <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+      <div className="px-3 sm:px-6 py-3 sm:py-4 bg-gray-50 border-b border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div className="flex items-center gap-2">
           <span className="text-gray-700">Show</span>
           <select

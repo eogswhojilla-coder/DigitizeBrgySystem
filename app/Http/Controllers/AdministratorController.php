@@ -63,6 +63,11 @@ class AdministratorController extends Controller
     public function destroy(Request $request, $id)
     {
         $administrator = User::where('user_type', 'admin')->findOrFail($id);
+
+        if ($administrator->hasRole('Super Admin')) {
+            return response()->json(['message' => 'Super Admin account cannot be deleted.'], 403);
+        }
+
         $administrator->delete();
         return response()->json($administrator);
     }

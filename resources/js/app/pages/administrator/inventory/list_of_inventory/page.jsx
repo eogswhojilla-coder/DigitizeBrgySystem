@@ -16,11 +16,11 @@ export default function Page() {
 
     return (
         <Layout>
-            <div className="min-h-screen bg-gray-50 p-6">
+            <div className="min-h-screen bg-gray-50 p-3 sm:p-4 md:p-6">
                 {/* Add Button on Left */}
 
                 {/* Search and Filter */}
-                <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4 md:p-6 mb-4 sm:mb-6">
                     <SearchInventorySection />
                 </div>
                 <div className="justify-end">

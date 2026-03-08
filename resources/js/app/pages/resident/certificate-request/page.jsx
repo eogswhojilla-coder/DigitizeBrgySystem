@@ -144,13 +144,7 @@ export default function Page() {
                 formData.append("payment_receipt", receiptFile);
             }
 
-            const token = document.head.querySelector('meta[name="csrf-token"]');
-            await axios.post("/api/certificate-requests", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    'X-CSRF-TOKEN': token ? token.content : ''
-                },
-            });
+            await axios.post("/api/certificate-requests", formData);
 
             await Swal.fire({
                 icon: "success",
@@ -231,50 +225,50 @@ export default function Page() {
 
     return (
         <Layout>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
                 {/* Header */}
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                        <FileText className="w-8 h-8 text-blue-600" />
+                    <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2">
+                        <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                         Certificate Services
                     </h1>
-                    <p className="text-gray-600 mt-1">Request barangay certificates online</p>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1">Request barangay certificates online</p>
                 </div>
 
                 {/* Tab Navigation */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex border-b">
+                    <div className="flex overflow-x-auto border-b">
                         <button
                             onClick={() => setActiveTab("request")}
-                            className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
+                            className={`flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base whitespace-nowrap transition-colors ${
                                 activeTab === "request"
                                     ? "border-b-2 border-blue-600 text-blue-600"
                                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                             }`}
                         >
-                            <ClipboardList className="w-5 h-5" />
-                            New Request
+                            <ClipboardList className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="hidden sm:inline">New</span> Request
                         </button>
                         <button
                             onClick={() => setActiveTab("types")}
-                            className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
+                            className={`flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base whitespace-nowrap transition-colors ${
                                 activeTab === "types"
                                     ? "border-b-2 border-blue-600 text-blue-600"
                                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                             }`}
                         >
-                            <List className="w-5 h-5" />
-                            Available Certificates
+                            <List className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="hidden sm:inline">Available</span> Certificates
                         </button>
                         <button
                             onClick={() => setActiveTab("history")}
-                            className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
+                            className={`flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base whitespace-nowrap transition-colors ${
                                 activeTab === "history"
                                     ? "border-b-2 border-blue-600 text-blue-600"
                                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                             }`}
                         >
-                            <FileText className="w-5 h-5" />
+                            <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
                             My Requests ({myRequests.length})
                         </button>
                     </div>
@@ -282,7 +276,7 @@ export default function Page() {
 
                 {/* Request Form Tab */}
                 {activeTab === "request" && (
-                    <div className="bg-white rounded-lg shadow-lg p-6">
+                    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
                         <h2 className="text-xl font-bold text-gray-900 mb-4">New Certificate Request</h2>
                         
                         {/* Info Banner */}
@@ -486,7 +480,7 @@ export default function Page() {
 
                 {/* Certificate Types Tab */}
                 {activeTab === "types" && (
-                    <div className="bg-white rounded-lg shadow-lg p-6">
+                    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
                         <h2 className="text-xl font-bold text-gray-900 mb-4">Available Certificate Types</h2>
                         <p className="text-gray-600 mb-6">Browse available barangay certificates and their fees</p>
 
@@ -545,7 +539,7 @@ export default function Page() {
 
                 {/* My Requests Tab */}
                 {activeTab === "history" && (
-                    <div className="bg-white rounded-lg shadow-lg p-6">
+                    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
                         <h2 className="text-xl font-bold text-gray-900 mb-4">My Certificate Requests</h2>
                         {myRequests.length === 0 ? (
                             <div className="text-center py-12">
@@ -564,8 +558,8 @@ export default function Page() {
                                 </button>
                             </div>
                         ) : (
-                            <div className="overflow-x-auto">
-                                <table className="w-full">
+                            <div className="overflow-x-auto -mx-4 sm:mx-0">
+                                <table className="w-full min-w-[700px]">
                                     <thead className="bg-gray-50">
                                         <tr>
                                             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">

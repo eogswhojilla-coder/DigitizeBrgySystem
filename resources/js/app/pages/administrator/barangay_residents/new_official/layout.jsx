@@ -2,8 +2,19 @@ import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
 import React, { useState } from "react";
 
-export default function NewOfficialLayout({ children, register, errors }) {
+export default function NewOfficialLayout({ children, register, errors, onResetImage }) {
     const [imagePreview, setImagePreview] = useState(null);
+
+    // Expose reset function to parent via callback ref
+    React.useEffect(() => {
+        if (onResetImage) {
+            onResetImage.current = () => {
+                setImagePreview(null);
+                const input = document.getElementById('profileImage');
+                if (input) input.value = '';
+            };
+        }
+    }, [onResetImage]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -27,7 +38,7 @@ export default function NewOfficialLayout({ children, register, errors }) {
     return (
         <>
             <div className="lg:col-span-1 space-y-6">
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <div className="bg-white rounded-lg p-3 sm:p-4 md:p-6 shadow-sm border border-gray-200">
                     <div className="relative w-32 h-32 mx-auto mb-4">
                         {imagePreview ? (
                             <div className="relative w-full h-full">
@@ -69,9 +80,10 @@ export default function NewOfficialLayout({ children, register, errors }) {
                             id="profileImage"
                             type="file"
                             accept="image/*"
-                            onChange={handleImageChange}
                             className="hidden"
-                            {...register("profileImage")}
+                            {...register("profileImage", {
+                                onChange: handleImageChange
+                            })}
                         />
                     </div>
                     <p className="text-xs text-center text-gray-500">

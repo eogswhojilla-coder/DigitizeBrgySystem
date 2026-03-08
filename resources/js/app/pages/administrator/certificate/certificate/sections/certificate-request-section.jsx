@@ -5,6 +5,7 @@ import Table from '@/app/_components/table';
 import Button from '@/app/_components/button';
 import Badge from '@/app/_components/badge';
 import Swal from 'sweetalert2';
+import { Image } from 'antd';
 
 export default function CertificateRequestSection() {
     const [requests, setRequests] = useState([]);
@@ -227,26 +228,40 @@ export default function CertificateRequestSection() {
                             {/* Resident Information */}
                             <div className="bg-blue-50 rounded-lg p-4">
                                 <h4 className="font-semibold text-gray-900 mb-3">Resident Information</h4>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="text-sm font-medium text-gray-600">Full Name</label>
-                                        <p className="text-gray-900 font-medium">
-                                            {selectedRequest.user?.first_name 
-                                                ? `${selectedRequest.user.first_name} ${selectedRequest.user.middle_name || ''} ${selectedRequest.user.last_name || ''}`.trim()
-                                                : selectedRequest.user?.name || 'N/A'}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <label className="text-sm font-medium text-gray-600">Email</label>
-                                        <p className="text-gray-900">{selectedRequest.user?.email || 'N/A'}</p>
-                                    </div>
-                                    <div>
-                                        <label className="text-sm font-medium text-gray-600">Contact Number</label>
-                                        <p className="text-gray-900">{selectedRequest.user?.contact || 'N/A'}</p>
-                                    </div>
-                                    <div>
-                                        <label className="text-sm font-medium text-gray-600">Username</label>
-                                        <p className="text-gray-900">{selectedRequest.user?.username || 'N/A'}</p>
+                                <div className="flex items-start gap-4">
+                                    {selectedRequest.user?.resident?.profileImage && (
+                                        <div className="flex-shrink-0">
+                                            <Image
+                                                src={selectedRequest.user.resident.profileImage.startsWith('data:') 
+                                                    ? selectedRequest.user.resident.profileImage 
+                                                    : `/images/residents/${selectedRequest.user.resident.profileImage}`}
+                                                alt="Resident Photo"
+                                                className="!w-24 !h-24 object-cover rounded-lg"
+                                                style={{ objectFit: 'cover', width: '96px', height: '96px' }}
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="grid grid-cols-2 gap-4 flex-1">
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-600">Full Name</label>
+                                            <p className="text-gray-900 font-medium">
+                                                {selectedRequest.user?.first_name 
+                                                    ? `${selectedRequest.user.first_name} ${selectedRequest.user.middle_name || ''} ${selectedRequest.user.last_name || ''}`.trim()
+                                                    : selectedRequest.user?.name || 'N/A'}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-600">Email</label>
+                                            <p className="text-gray-900">{selectedRequest.user?.email || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-600">Contact Number</label>
+                                            <p className="text-gray-900">{selectedRequest.user?.contact || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium text-gray-600">Username</label>
+                                            <p className="text-gray-900">{selectedRequest.user?.username || 'N/A'}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -262,7 +277,13 @@ export default function CertificateRequestSection() {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-600 mb-2">Valid ID Submitted</label>
                                     <div className="border border-gray-300 rounded-lg p-2 bg-gray-50">
-                                        {selectedRequest.valid_id_path.endsWith('.pdf') ? (
+                                        {selectedRequest.valid_id_path.startsWith('data:') || !selectedRequest.valid_id_path.endsWith('.pdf') ? (
+                                            <img
+                                                src={selectedRequest.valid_id_path.startsWith('data:') ? selectedRequest.valid_id_path : `/storage/${selectedRequest.valid_id_path}`}
+                                                alt="Valid ID"
+                                                className="max-w-full h-auto rounded-lg cursor-pointer hover:opacity-90"
+                                            />
+                                        ) : (
                                             <a
                                                 href={`/storage/${selectedRequest.valid_id_path}`}
                                                 target="_blank"
@@ -275,13 +296,6 @@ export default function CertificateRequestSection() {
                                                 </svg>
                                                 View PDF Document
                                             </a>
-                                        ) : (
-                                            <img
-                                                src={`/storage/${selectedRequest.valid_id_path}`}
-                                                alt="Valid ID"
-                                                className="max-w-full h-auto rounded-lg cursor-pointer hover:opacity-90"
-                                                onClick={() => window.open(`/storage/${selectedRequest.valid_id_path}`, '_blank')}
-                                            />
                                         )}
                                     </div>
                                 </div>

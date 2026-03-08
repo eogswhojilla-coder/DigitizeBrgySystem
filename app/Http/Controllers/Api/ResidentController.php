@@ -12,10 +12,15 @@ use App\Enums\CertificateRequestStatus;
 use App\Enums\PaymentStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Helpers\FileHelper;
+use App\Models\User;
+use App\Notifications\NewCertificateRequestNotification;
+use App\Notifications\NewBorrowRequestNotification;
+use Illuminate\Support\Facades\Notification;
 
 class ResidentController extends Controller
 {
@@ -92,7 +97,7 @@ class ResidentController extends Controller
             // Store the valid ID
             $validIdPath = null;
             if ($request->hasFile('valid_id')) {
-                $validIdPath = $request->file('valid_id')->store('certificate_ids', 'public');
+                $validIdPath = FileHelper::toBase64($request->file('valid_id'));
             }
 
             // Handle payment receipt upload if certificate has fee
@@ -103,7 +108,7 @@ class ResidentController extends Controller
 
             if ($certificateType->has_fee && $certificateType->fee > 0) {
                 if ($request->hasFile('payment_receipt')) {
-                    $receiptPath = $request->file('payment_receipt')->store('receipts', 'public');
+                    $receiptPath = FileHelper::toBase64($request->file('payment_receipt'));
                     $paymentStatus = PaymentStatus::FOR_VERIFICATION;
                     $isPaid = true;
                     $amountPaid = $certificateType->fee;
@@ -133,6 +138,12 @@ class ResidentController extends Controller
                 'source' => 'ONLINE',
             ]);
 
+            // Notify admin users
+            $user = Auth::user();
+            $residentName = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? ''));
+            $admins = User::where('user_type', '!=', 'resident')->get();
+            Notification::send($admins, new NewCertificateRequestNotification($certificateRequest->load('certificateType'), $residentName));
+
             return response()->json([
                 'success' => true,
                 'message' => 'Certificate request submitted successfully',
@@ -155,10 +166,8 @@ class ResidentController extends Controller
             ->get()
             ->map(function ($item) {
                 $item->available = $item->quantity - ($item->borrowed ?? 0);
-                // Add GCash QR URL for payment
-                $item->gcash_qr_url = $item->gcash_qr 
-                    ? asset('storage/' . $item->gcash_qr) 
-                    : null;
+                // GCash QR is already a base64 data URI
+                $item->gcash_qr_url = $item->gcash_qr ?: null;
                 return $item;
             })
             ->filter(function ($item) {
@@ -188,7 +197,7 @@ class ResidentController extends Controller
             ->get()
             ->map(function ($request) {
                 $request->payment_receipt_url = $request->payment_receipt 
-                    ? asset('storage/' . $request->payment_receipt) 
+                    ? ($request->payment_receipt && str_starts_with($request->payment_receipt, 'data:') ? $request->payment_receipt : asset('storage/' . $request->payment_receipt))
                     : null;
                 return $request;
             });
@@ -261,12 +270,18 @@ class ResidentController extends Controller
 
             // Handle payment receipt upload if inventory has fee
             if ($inventory->has_fee && $request->hasFile('payment_receipt')) {
-                $receiptPath = $request->file('payment_receipt')->store('inventory/receipts', 'public');
+                $receiptPath = FileHelper::toBase64($request->file('payment_receipt'));
                 $data['payment_receipt'] = $receiptPath;
                 $data['payment_reference'] = $request->payment_reference;
             }
 
             $borrowRequest = BorrowRequest::create($data);
+
+            // Notify admin users
+            $user = Auth::user();
+            $residentName = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? ''));
+            $admins = User::where('user_type', '!=', 'resident')->get();
+            Notification::send($admins, new NewBorrowRequestNotification($borrowRequest->load('inventory'), $residentName));
 
             return response()->json([
                 'success' => true,
@@ -376,10 +391,14 @@ class ResidentController extends Controller
     public function getMyProfile()
     {
         $user = Auth::user();
+        $resident = $user->resident;
         
         return response()->json([
             'success' => true,
-            'data' => $user
+            'data' => [
+                'user' => $user,
+                'resident' => $resident,
+            ]
         ]);
     }
 
@@ -389,11 +408,16 @@ class ResidentController extends Controller
         $user = Auth::user();
         
         $validator = Validator::make($request->all(), [
-            'first_name' => 'sometimes|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'last_name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|unique:users,email,' . $user->id,
-            'contact' => 'sometimes|string|max:20',
+            'contact' => 'sometimes|nullable|string|max:20',
+            // Resident fields
+            'contactNumber' => 'sometimes|nullable|string|max:20',
+            'emailAddress' => 'sometimes|nullable|email|max:255',
+            'civilStatus' => 'sometimes|nullable|string|max:50',
+            'houseNumber' => 'sometimes|nullable|string|max:50',
+            'street' => 'sometimes|nullable|string|max:255',
+            'zone' => 'sometimes|nullable|string|max:255',
+            'permanentAddress' => 'sometimes|nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -405,12 +429,32 @@ class ResidentController extends Controller
         }
 
         try {
-            $user->update($request->only(['first_name', 'middle_name', 'last_name', 'email', 'contact']));
+            // Update user fields
+            if ($request->has('email')) {
+                $user->email = $request->email;
+            }
+            if ($request->has('contact')) {
+                $user->contact = $request->contact;
+            }
+            $user->save();
+
+            // Update resident fields
+            $resident = $user->resident;
+            if ($resident) {
+                $residentFields = $request->only([
+                    'contactNumber', 'emailAddress', 'civilStatus',
+                    'houseNumber', 'street', 'zone', 'permanentAddress',
+                ]);
+                $resident->update($residentFields);
+            }
 
             return response()->json([
                 'success' => true,
                 'message' => 'Profile updated successfully',
-                'data' => $user->fresh()
+                'data' => [
+                    'user' => $user->fresh(),
+                    'resident' => $resident ? $resident->fresh() : null,
+                ]
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -419,6 +463,41 @@ class ResidentController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    // Change Password
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => ['current_password' => ['Current password is incorrect']]
+            ], 422);
+        }
+
+        $user->password = $request->new_password;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password changed successfully'
+        ]);
     }
 
     private function getResidentName($residentId)

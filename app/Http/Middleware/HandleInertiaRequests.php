@@ -48,7 +48,7 @@ class HandleInertiaRequests extends Middleware
                 'roles' => $roles,
             ],
             'profile' => $user ? [
-                'profileImage' => $user->image ? asset('storage/' . $user->image) : null,
+                'profileImage' => $user->image ?: null,
                 'firstName' => $user->first_name,
                 'middleName' => $user->middle_name,
                 'lastName' => $user->last_name,

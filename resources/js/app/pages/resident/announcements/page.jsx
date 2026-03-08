@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { get_announcement_thunk, get_announcement_calendar_thunk } from "@/app/redux/announcement-thunk";
 import moment from "moment";
 import CalendarSection from "./sections/calendar-section";
+import { Image } from 'antd';
 
 export default function Page() {
     const dispatch = useDispatch();
@@ -37,15 +38,15 @@ export default function Page() {
 
     return (
         <Layout>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
                 {/* Header */}
-                <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between flex-wrap gap-3 sm:gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                            <Bell className="w-8 h-8 text-blue-600" />
+                        <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2">
+                            <Bell className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                             Barangay Announcements
                         </h1>
-                        <p className="text-gray-600 mt-1">Stay updated with the latest news and events</p>
+                        <p className="text-sm sm:text-base text-gray-600 mt-1">Stay updated with the latest news and events</p>
                     </div>
                     
                     {/* View Mode Toggle */}
@@ -92,7 +93,7 @@ export default function Page() {
                 {viewMode === "list" ? (
                     <>
                         {/* Search */}
-                        <div className="bg-white rounded-lg shadow-sm p-4">
+                        <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                                 <input
@@ -155,6 +156,25 @@ export default function Page() {
                                                     className="mt-4 text-gray-700 prose max-w-none"
                                                     dangerouslySetInnerHTML={{ __html: announcement.description }}
                                                 />
+
+                                                {/* Image Attachments */}
+                                                {announcement.files && announcement.files.length > 0 && (
+                                                    <div className="mt-4">
+                                                        <Image.PreviewGroup>
+                                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                                            {announcement.files.map((file, index) => (
+                                                                <Image
+                                                                    key={index}
+                                                                    src={file.files}
+                                                                    alt={`Attachment ${index + 1}`}
+                                                                    className="!w-full !h-40 object-cover rounded-lg"
+                                                                    style={{ objectFit: 'cover', height: '160px', width: '100%' }}
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    </Image.PreviewGroup>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

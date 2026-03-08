@@ -74,14 +74,14 @@ export default function Page() {
 
     return (
         <Layout>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
                 {/* Header */}
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                        <Shield className="w-8 h-8 text-red-600" />
+                    <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2">
+                        <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" />
                         Blotter Notifications
                     </h1>
-                    <p className="text-gray-600 mt-1">View blotter reports and notifications related to you</p>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1">View blotter reports and notifications related to you</p>
                 </div>
 
                 {/* Alert Banner */}
@@ -100,12 +100,12 @@ export default function Page() {
 
                 {/* Notifications List */}
                 {loading ? (
-                    <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+                    <div className="bg-white rounded-lg shadow-lg p-6 sm:p-12 text-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                         <p className="mt-4 text-gray-600">Loading notifications...</p>
                     </div>
                 ) : blotterNotifications.length === 0 ? (
-                    <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+                    <div className="bg-white rounded-lg shadow-lg p-6 sm:p-12 text-center">
                         <Shield className="mx-auto h-16 w-16 text-gray-400" />
                         <h3 className="mt-4 text-lg font-medium text-gray-900">
                             No blotter notifications
@@ -119,7 +119,7 @@ export default function Page() {
                         {blotterNotifications.map((blotter) => (
                             <div 
                                 key={blotter.id}
-                                className={`bg-white rounded-lg shadow-lg p-6 ${getSeverityColor(blotter.severity)}`}
+                                className={`bg-white rounded-lg shadow-lg p-4 sm:p-6 ${getSeverityColor(blotter.severity)}`}
                             >
                                 <div className="flex items-start justify-between mb-4">
                                     <div className="flex-1">

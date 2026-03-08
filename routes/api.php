@@ -185,6 +185,17 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     });
 
     // ============================================
+    // ADMIN NOTIFICATIONS
+    // ============================================
+    Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
+        Route::get('notifications', [NotificationController::class, 'index']);
+        Route::get('notifications/unread', [NotificationController::class, 'unread']);
+        Route::post('notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
+    });
+
+    // ============================================
     // RESIDENT PORTAL APIs (NO PERMISSION CHECKS)
     // ============================================
     Route::middleware(['auth:sanctum', 'role:resident'])->group(function () {
@@ -211,5 +222,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
         // Resident Profile
         Route::get('my-profile', [App\Http\Controllers\Api\ResidentController::class, 'getMyProfile']);
         Route::put('my-profile', [App\Http\Controllers\Api\ResidentController::class, 'updateMyProfile']);
+        Route::post('change-password', [App\Http\Controllers\Api\ResidentController::class, 'changePassword']);
     });
 });

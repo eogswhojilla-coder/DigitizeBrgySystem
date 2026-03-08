@@ -17,6 +17,7 @@ import Select from "@/app/_components/select";
 import Swal from "sweetalert2";
 import { create_family_members_service } from "@/app/services/family-member";
 import axios from "axios";
+import moment from "moment";
 
 export default function AddFamilyMemberSection() {
     const {
@@ -151,6 +152,18 @@ export default function AddFamilyMemberSection() {
         }));
 
         setValue(`family_members.${index}.residentId`, resident.id);
+
+        // Compute age from dateOfBirth
+        const age = resident.dateOfBirth
+            ? moment().diff(moment(resident.dateOfBirth), "years")
+            : null;
+        setMemberSearchStates((prev) => ({
+            ...prev,
+            [index]: {
+                ...prev[index],
+                selectedResident: { ...resident, age },
+            },
+        }));
     };
 
     const relationships = [
@@ -424,10 +437,11 @@ export default function AddFamilyMemberSection() {
                                                                     </p>
                                                                     <p className="text-sm text-gray-500 truncate">
                                                                         Age:{" "}
-                                                                        {resident.age ||
-                                                                            "N/A"}{" "}
+                                                                        {resident.dateOfBirth
+                                                                            ? moment().diff(moment(resident.dateOfBirth), "years")
+                                                                            : "N/A"}{" "}
                                                                         •{" "}
-                                                                        {resident.sex ||
+                                                                        {resident.gender || resident.sex ||
                                                                             "N/A"}
                                                                     </p>
                                                                 </div>
@@ -465,7 +479,7 @@ export default function AddFamilyMemberSection() {
                                                     searchState.selectedResident
                                                         .lastName
                                                 }
-                                                {searchState.selectedResident.age && (
+                                                {searchState.selectedResident.age != null && (
                                                     <span>
                                                         {" "}
                                                         • Age:{" "}

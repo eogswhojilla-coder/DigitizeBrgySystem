@@ -66,7 +66,7 @@ export default function Layout({ children }) {
             <div className="lg:pl-72">
                 <ResidentTopbarSection userNavigation={userNavigation} />
 
-                <main className="p-3">
+                <main className="p-2 sm:p-4 lg:p-6">
                     <div>{children}</div>
                 </main>
             </div>

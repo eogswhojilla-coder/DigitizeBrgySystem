@@ -45,9 +45,9 @@ export default function HeaderMenuSection({ userNavigation }) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
             >
-                <MenuItems className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+                <MenuItems className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white dark:bg-gray-800 py-2 shadow-lg ring-1 ring-gray-900/5 dark:ring-gray-700 focus:outline-none">
                     <MenuItem>
-                        <a className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
+                        <a className="block px-3 py-1 text-sm leading-6 text-gray-900 dark:text-gray-200 data-[focus]:bg-gray-50 dark:data-[focus]:bg-gray-700">
                             Settings
                         </a>
                     </MenuItem>
@@ -56,7 +56,7 @@ export default function HeaderMenuSection({ userNavigation }) {
                             method="post"
                             as="button"
                             href={route("logout")}
-                            className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
+                            className="block px-3 py-1 text-sm leading-6 text-gray-900 dark:text-gray-200 data-[focus]:bg-gray-50 dark:data-[focus]:bg-gray-700"
                         >
                             Logout
                         </Link>

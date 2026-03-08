@@ -39,7 +39,7 @@ const DataTable = () => {
     };
 
     return (
-        <div className="bg-white min-h-screen p-6">
+        <div className="bg-white min-h-screen p-3 sm:p-4 md:p-6">
             {/* Header */}
             <SearchSection />
             {/* Table */}

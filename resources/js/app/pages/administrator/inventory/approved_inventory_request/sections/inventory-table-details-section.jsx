@@ -181,7 +181,7 @@ export default function InventoryTableDetailsSection({ data, tab }) {
             }
 
             {
-                show && <div className="w-full mx-auto p-6 bg-white">
+                show && <div className="w-full mx-auto p-3 sm:p-4 md:p-6 bg-white">
                     {/* Header */}
                     <div className="flex items-center gap-4 mb-6">
                         <button
@@ -195,7 +195,7 @@ export default function InventoryTableDetailsSection({ data, tab }) {
 
                     {/* Request Details */}
                     <div className="bg-white border rounded-lg shadow-sm">
-                        <div className="flex items-center justify-between border-b px-6 py-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b px-3 sm:px-6 py-3 sm:py-4">
                             <div>
                                 <h2 className="text-xl font-semibold text-gray-900">Request Details</h2>
                                 {data.request_number && (
@@ -239,7 +239,7 @@ export default function InventoryTableDetailsSection({ data, tab }) {
                             </div>
                         </div>
 
-                        <div className="p-6 space-y-4">
+                        <div className="p-3 sm:p-4 md:p-6 space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <h3 className="font-medium text-gray-900 mb-3">Resident Information</h3>
@@ -267,6 +267,29 @@ export default function InventoryTableDetailsSection({ data, tab }) {
                                     <p className="text-gray-700"><span className="font-medium">Actual Return Date:</span> {data.actual_return_date}</p>
                                 )}
                             </div>
+
+                            {/* Payment Computation */}
+                            {data.has_fee && data.price_per_unit && (
+                                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                                    <h3 className="font-medium text-gray-900 mb-3">Payment Computation</h3>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-gray-700">
+                                            <span>Price per unit:</span>
+                                            <span className="font-medium">₱{parseFloat(data.price_per_unit).toFixed(2)}</span>
+                                        </div>
+                                        <div className="flex justify-between text-gray-700">
+                                            <span>Quantity borrowed:</span>
+                                            <span className="font-medium">x {data.quantity}</span>
+                                        </div>
+                                        <div className="border-t border-green-300 pt-2 mt-2">
+                                            <div className="flex justify-between text-lg font-bold text-green-800">
+                                                <span>Total Payment:</span>
+                                                <span>₱{parseFloat(data.total_payment).toFixed(2)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             {data.status === 'Returned' && (data.return_condition || data.return_notes) && (
                                 <div className="border-t pt-4">

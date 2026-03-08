@@ -2,6 +2,7 @@ import React from 'react';
 import Modal from '@/app/_components/modal';
 import dayjs from 'dayjs';
 import { Calendar, Clock, Tag } from 'lucide-react';
+import { Image } from 'antd';
 
 export default function ViewAnnouncementModal({ isOpen, onClose, announcement }) {
     if (!announcement) return null;
@@ -79,16 +80,19 @@ export default function ViewAnnouncementModal({ isOpen, onClose, announcement })
                         <label className="text-sm font-semibold text-gray-500 uppercase block mb-2">
                             Attachments ({announcement.files.length})
                         </label>
-                        <div className="grid grid-cols-3 gap-4">
-                            {announcement.files.map((file, index) => (
-                                <img
-                                    key={index}
-                                    src={file.files}
-                                    alt={`Attachment ${index + 1}`}
-                                    className="w-full h-32 object-cover rounded-lg border border-gray-200"
-                                />
-                            ))}
-                        </div>
+                        <Image.PreviewGroup>
+                            <div className="grid grid-cols-3 gap-4">
+                                {announcement.files.map((file, index) => (
+                                    <Image
+                                        key={index}
+                                        src={file.files}
+                                        alt={`Attachment ${index + 1}`}
+                                        className="!w-full !h-32 object-cover rounded-lg"
+                                        style={{ objectFit: 'cover', height: '128px', width: '100%' }}
+                                    />
+                                ))}
+                            </div>
+                        </Image.PreviewGroup>
                     </div>
                 )}
 

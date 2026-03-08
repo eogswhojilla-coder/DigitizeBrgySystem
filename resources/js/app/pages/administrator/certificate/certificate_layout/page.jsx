@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../layout";
-import { Plus, Printer, X, Download, Search } from "lucide-react";
+import { Plus, Printer, X, Download, Search, Pencil } from "lucide-react";
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -18,11 +18,14 @@ export default function Page() {
         (state) => state.certificateTypes,
     );
     const [showModal, setShowModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
     const [showPrintModal, setShowPrintModal] = useState(false);
     const [showPreviewModal, setShowPreviewModal] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
     const [selectedType, setSelectedType] = useState(null);
+    const [editingType, setEditingType] = useState(null);
     const [qrPreview, setQrPreview] = useState(null);
+    const [editQrPreview, setEditQrPreview] = useState(null);
 
     // Resident search
     const [residents, setResidents] = useState([]);
@@ -47,6 +50,17 @@ export default function Page() {
         },
     });
     const hasFee = watch("has_fee", false);
+
+    // Form for Edit Certificate Type modal
+    const {
+        register: editRegister,
+        handleSubmit: handleEditFormSubmit,
+        reset: editReset,
+        watch: editWatch,
+        setValue: editSetValue,
+        formState: { errors: editFormErrors },
+    } = useForm();
+    const editHasFee = editWatch("has_fee", false);
 
     const [printData, setPrintData] = useState({
         resident_name: "",
@@ -117,6 +131,75 @@ export default function Page() {
             reader.readAsDataURL(file);
         } else {
             setQrPreview(null);
+        }
+    };
+
+    const handleEditQrChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setEditQrPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setEditQrPreview(null);
+        }
+    };
+
+    const handleEditCertificateType = (type) => {
+        setEditingType(type);
+        editReset({
+            name: type.name || "",
+            description: type.description || "",
+            has_fee: !!type.has_fee,
+            fee: type.fee || "",
+            gcash_qr: null,
+        });
+        setEditQrPreview(type.gcash_qr ? (type.gcash_qr.startsWith('data:') ? type.gcash_qr : `/images/qrcodes/${type.gcash_qr}`) : null);
+        setShowEditModal(true);
+    };
+
+    const onEditSubmit = async (data) => {
+        try {
+            const formData = new FormData();
+            formData.append('_method', 'PUT');
+            formData.append('name', data.name);
+            if (data.description) formData.append('description', data.description);
+            formData.append('has_fee', data.has_fee ? '1' : '0');
+
+            if (data.has_fee) {
+                if (data.fee) formData.append('fee', data.fee);
+                if (data.gcash_qr && data.gcash_qr.length > 0) {
+                    formData.append('gcash_qr', data.gcash_qr[0]);
+                }
+            }
+
+            await axios.post(`/api/certificate-types/${editingType.id}`, formData);
+
+            await Swal.fire({
+                icon: "success",
+                title: "Success!",
+                text: "Certificate type has been updated.",
+                showConfirmButton: false,
+                timer: 1500
+            });
+
+            editReset();
+            setEditQrPreview(null);
+            setShowEditModal(false);
+            setEditingType(null);
+            dispatch(fetchCertificateTypes());
+        } catch (error) {
+            const errorMessage = error.response?.data?.errors
+                ? Object.values(error.response.data.errors).flat().join('\n')
+                : error.response?.data?.message || 'Failed to update certificate type.';
+
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: errorMessage
+            });
         }
     };
 
@@ -268,13 +351,7 @@ export default function Page() {
                 }
             }
 
-            const token = document.head.querySelector('meta[name="csrf-token"]');
-            await axios.post("/api/certificate-types", formData, {
-                headers: { 
-                    'Content-Type': 'multipart/form-data',
-                    'X-CSRF-TOKEN': token ? token.content : ''
-                }
-            });
+            await axios.post("/api/certificate-types", formData);
 
             await Swal.fire({
                 icon: "success",
@@ -334,22 +411,32 @@ export default function Page() {
             header: "Actions",
             accessor: "actions",
             cell: (row) => (
-                <button
-                    onClick={() => handlePrintCertificate(row)}
-                    className="flex items-center gap-2 text-blue-600 hover:text-blue-900"
-                >
-                    <Printer className="w-4 h-4" />
-                    Print Certificate
-                </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => handleEditCertificateType(row)}
+                        className="flex items-center gap-1 text-amber-600 hover:text-amber-900"
+                        title="Edit"
+                    >
+                        <Pencil className="w-4 h-4" />
+                        Edit
+                    </button>
+                    <button
+                        onClick={() => handlePrintCertificate(row)}
+                        className="flex items-center gap-1 text-blue-600 hover:text-blue-900"
+                    >
+                        <Printer className="w-4 h-4" />
+                        Print
+                    </button>
+                </div>
             ),
         },
     ];
 
     return (
         <Layout>
-            <div className="p-4">
-                <div className="mb-6 flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-gray-900">
+            <div className="p-3 sm:p-4">
+                <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                         Certificate Types
                     </h1>
                     <button
@@ -520,6 +607,149 @@ export default function Page() {
                                 className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                             >
                                 Save
+                            </button>
+                        </div>
+                    </form>
+                </Modal>
+
+                {/* Edit Certificate Type Modal */}
+                <Modal
+                    isOpen={showEditModal}
+                    onClose={() => {
+                        setShowEditModal(false);
+                        editReset();
+                        setEditQrPreview(null);
+                        setEditingType(null);
+                    }}
+                    title="Edit Certificate Type"
+                    width="max-w-md"
+                >
+                    <form onSubmit={handleEditFormSubmit(onEditSubmit)} className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium mb-1">
+                                Name *
+                            </label>
+                            <input
+                                type="text"
+                                {...editRegister("name", { required: "Name is required" })}
+                                className={`w-full p-2 border rounded-lg ${
+                                    editFormErrors.name
+                                        ? "border-red-500"
+                                        : "border-gray-300"
+                                }`}
+                            />
+                            {editFormErrors.name && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {editFormErrors.name.message}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium mb-1">
+                                Description
+                            </label>
+                            <textarea
+                                {...editRegister("description")}
+                                rows="3"
+                                className="w-full p-2 border border-gray-300 rounded-lg"
+                            />
+                        </div>
+
+                        {/* Has Fee Toggle */}
+                        <div className="border-t pt-4">
+                            <label className="flex items-center gap-3 cursor-pointer">
+                                <span className="text-sm font-medium text-gray-700">This certificate requires a fee</span>
+                                <div className="relative">
+                                    <input
+                                        type="checkbox"
+                                        {...editRegister("has_fee")}
+                                        className="sr-only peer"
+                                    />
+                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </div>
+                            </label>
+                        </div>
+
+                        {editHasFee && (
+                            <div className="space-y-4 animate-fadeIn border border-blue-100 rounded-lg p-4 bg-blue-50">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Fee Amount (₱) *
+                                    </label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        placeholder="0.00"
+                                        {...editRegister("fee", {
+                                            required: editHasFee ? "Fee is required" : false,
+                                            min: { value: 0, message: "Fee must be 0 or greater" },
+                                        })}
+                                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                            editFormErrors.fee ? "border-red-500" : "border-gray-300"
+                                        }`}
+                                    />
+                                    {editFormErrors.fee && (
+                                        <p className="text-red-500 text-sm mt-1">
+                                            {editFormErrors.fee.message}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        GCash QR Code {!editingType?.gcash_qr && "*"}
+                                    </label>
+                                    <input
+                                        type="file"
+                                        accept="image/jpeg,image/jpg,image/png"
+                                        {...editRegister("gcash_qr")}
+                                        onChange={handleEditQrChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        {editingType?.gcash_qr
+                                            ? "Leave empty to keep the current QR code"
+                                            : "Accepted formats: JPG, JPEG, PNG (Max 2MB)"}
+                                    </p>
+                                </div>
+
+                                {editQrPreview && (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            QR Code Preview
+                                        </label>
+                                        <div className="border rounded-lg p-4 bg-white">
+                                            <img
+                                                src={editQrPreview}
+                                                alt="QR Code Preview"
+                                                className="w-48 h-48 object-contain mx-auto"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setShowEditModal(false);
+                                    editReset();
+                                    setEditQrPreview(null);
+                                    setEditingType(null);
+                                }}
+                                className="px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                            >
+                                Update
                             </button>
                         </div>
                     </form>

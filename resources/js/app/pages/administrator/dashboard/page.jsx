@@ -36,14 +36,14 @@ export default function Page() {
     
     return (
         <Layout>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
                 {/* Page Header */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">
+                        <h1 className="text-xl sm:text-3xl font-bold text-gray-900">
                             Dashboard
                         </h1>
-                        <p className="text-gray-600 mt-1">
+                        <p className="text-sm sm:text-base text-gray-600 mt-1">
                             Welcome back! Here's what's happening in your
                             barangay.
                         </p>
@@ -59,7 +59,7 @@ export default function Page() {
                 </div>
 
                 {/* Stats Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
                     <StatCardSection
                         icon={<Users className="w-6 h-6" />}
                         title="Total Residents"
@@ -113,20 +113,20 @@ export default function Page() {
                 </div>
 
                 {/* Charts Grid - Row 1 */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     <MonthlyActivityChartSection data={monthlyActivityData} />
                     <GenderPieChartSection data={genderData} />
                 </div>
 
                 {/* Charts Grid - Row 2 */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                     <AgeGroupBarChartSection data={ageGroupData} />
                     <BlotterStatusDonutSection data={blotterStatusData} />
                     <FamilyStackedBarChartSection data={familyDistributionData} />
                 </div>
 
                 {/* Bottom Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                     <InventoryProgressSection data={inventoryData} />
                     <RecentTransactionsTableSection data={recentTransactions} />
                     <ActivityFeedSection data={activityFeed} />

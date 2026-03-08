@@ -216,8 +216,8 @@ export default function TableInventorySection() {
     return (
         <div>
             <div className="bg-white rounded-lg shadow-sm">
-                <div className="p-6 border-b border-gray-200">
-                    <div className="flex items-center justify-between">
+                <div className="p-3 sm:p-4 md:p-6 border-b border-gray-200">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div>
                             <h2 className="text-xl font-semibold text-gray-900">
                                 Inventory Items

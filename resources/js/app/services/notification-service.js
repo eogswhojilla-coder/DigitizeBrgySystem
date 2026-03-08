@@ -1,6 +1,14 @@
 import axios from 'axios';
 
 /**
+ * Get the notification API base path depending on whether user is admin or resident
+ */
+const getBasePath = () => {
+    const isAdmin = window.location.pathname.startsWith('/administrator');
+    return isAdmin ? '/api/admin/notifications' : '/api/notifications';
+};
+
+/**
  * Notification service for managing user notifications
  */
 const notificationService = {
@@ -9,7 +17,7 @@ const notificationService = {
      */
     getAllNotifications: async (page = 1) => {
         try {
-            const response = await axios.get(`/api/notifications?page=${page}`);
+            const response = await axios.get(`${getBasePath()}?page=${page}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching notifications:', error);
@@ -22,7 +30,7 @@ const notificationService = {
      */
     getUnreadNotifications: async () => {
         try {
-            const response = await axios.get('/api/notifications/unread');
+            const response = await axios.get(`${getBasePath()}/unread`);
             return response.data;
         } catch (error) {
             console.error('Error fetching unread notifications:', error);
@@ -36,7 +44,7 @@ const notificationService = {
      */
     markAsRead: async (notificationId) => {
         try {
-            const response = await axios.post(`/api/notifications/${notificationId}/read`);
+            const response = await axios.post(`${getBasePath()}/${notificationId}/read`);
             return response.data;
         } catch (error) {
             console.error('Error marking notification as read:', error);
@@ -49,7 +57,7 @@ const notificationService = {
      */
     markAllAsRead: async () => {
         try {
-            const response = await axios.post('/api/notifications/mark-all-read');
+            const response = await axios.post(`${getBasePath()}/mark-all-read`);
             return response.data;
         } catch (error) {
             console.error('Error marking all notifications as read:', error);
@@ -63,7 +71,7 @@ const notificationService = {
      */
     deleteNotification: async (notificationId) => {
         try {
-            const response = await axios.delete(`/api/notifications/${notificationId}`);
+            const response = await axios.delete(`${getBasePath()}/${notificationId}`);
             return response.data;
         } catch (error) {
             console.error('Error deleting notification:', error);

@@ -62,12 +62,7 @@ const AddCertificateTypeModal = ({ isOpen, onClose }) => {
                 }
             }
 
-            await axios.post("/api/certificate-types", formData, {
-                headers: { 
-                    'Content-Type': 'multipart/form-data',
-                    'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]')?.content || ''
-                }
-            });
+            await axios.post("/api/certificate-types", formData);
 
             await Swal.fire({
                 icon: 'success',

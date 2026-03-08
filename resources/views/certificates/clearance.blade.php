@@ -110,6 +110,19 @@
             margin: 12px 0;
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
         .signatures {
             margin-top: 50px;
             display: table;
@@ -136,6 +149,7 @@
             margin-bottom: 5px;
             min-height: 40px;
         }
+
 
         .details-container {
             display: table;
@@ -209,11 +223,15 @@
 
     <!-- Photo Box -->
     <div class="photo-box">
+        @if(isset($residentImage) && $residentImage)
+        <img src="data:image/png;base64,{{ $residentImage }}" alt="Resident Photo" style="width: 100%; height: 100%; object-fit: cover;">
+        @else
         3X3 PIC
+        @endif
     </div>
 
     <!-- Content -->
-    <div class="content">
+    <div class="content" style="padding-right: 0; margin-top: 120px;">
         <p><strong>To Whom it May Concern:</strong></p>
 
         <p style="text-indent: 40px;">
@@ -237,13 +255,11 @@
     <!-- Signatures -->
     <div class="signatures">
         <div class="signature-left">
-
             <strong>{{ strtoupper($residentName ?? 'ROMANO, JANVEE MARTISANO') }}</strong><br>
             <div class="signature-line"></div>
             <span style="font-size: 9pt;">SPECIMEN SIGNATURE</span>
         </div>
         <div class="signature-right">
-
             <strong>{{ strtoupper($punongBarangay ?? 'HON. FRANCIS R. EUSEBIO') }}</strong><br>
             <div class="signature-line"></div>
             <span style="font-size: 9pt;">PUNONG BARANGAY</span>
@@ -256,16 +272,16 @@
             <p><strong>Purpose:</strong> {{ strtoupper($purpose ?? 'OJT') }}</p>
             <p><strong>Certificate No.:</strong> {{ $barangayId ?? 'CODE' }}</p>
             <p><strong>Date Issued:</strong> {{ $ctcDateIssued ?? now()->format('Y-m-d') }}</p>
-            <p><strong>Amount Paid:</strong> ₱{{ $ctcAmountPaid ?? '0.00' }}</p>
+            <p><strong>Amount Paid: ₱</strong> {{ $ctcAmountPaid ?? '0.00' }}</p>
             <p><strong>Issued at:</strong> {{ $ctcIssuedAt ?? 'BRGY. II' }}</p>
         </div>
         <div class="qr-box">
             @if(isset($qrCodeImage))
-                <img src="data:image/png;base64,{{ $qrCodeImage }}" alt="Certificate QR Code" style="width: 100px; height: 100px;">
+            <img src="data:image/png;base64,{{ $qrCodeImage }}" alt="Certificate QR Code" style="width: 100px; height: 100px;">
             @else
-                <div class="qr-placeholder">
-                    QR CODE
-                </div>
+            <div class="qr-placeholder">
+                QR CODE
+            </div>
             @endif
         </div>
     </div>

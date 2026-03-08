@@ -37,12 +37,12 @@ export default function ResidentHeaderMenuSection({ userNavigation }) {
 
             <MenuItems
                 transition
-                className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none transition ease-out duration-100 data-[closed]:scale-95 data-[closed]:opacity-0"
+                className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white dark:bg-gray-800 py-2 shadow-lg ring-1 ring-gray-900/5 dark:ring-gray-700 focus:outline-none transition ease-out duration-100 data-[closed]:scale-95 data-[closed]:opacity-0"
             >
                 <MenuItem>
                     <Link
                         href="/resident/profile"
-                        className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
+                        className="block px-3 py-1 text-sm leading-6 text-gray-900 dark:text-gray-200 data-[focus]:bg-gray-50 dark:data-[focus]:bg-gray-700"
                     >
                         Settings
                     </Link>
@@ -52,7 +52,7 @@ export default function ResidentHeaderMenuSection({ userNavigation }) {
                         method="post"
                         as="button"
                         href={route("logout")}
-                        className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
+                        className="block px-3 py-1 text-sm leading-6 text-gray-900 dark:text-gray-200 data-[focus]:bg-gray-50 dark:data-[focus]:bg-gray-700"
                     >
                         Logout
                     </Link>

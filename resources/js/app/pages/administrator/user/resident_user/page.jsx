@@ -136,7 +136,7 @@ const UserManagementTable = () => {
   );
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-3 sm:p-4 md:p-6 bg-gray-50 min-h-screen">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         {/* Header */}
         <SearchResidentUserSection />

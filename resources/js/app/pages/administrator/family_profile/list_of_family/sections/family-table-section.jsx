@@ -54,10 +54,10 @@ export default function FamilyTableSection({
 
     return (
         <div className="from-blue-50 to-white">
-            <div className="p-6">
+            <div className="p-3 sm:p-4 md:p-6">
                 <div className=" mb-8 overflow-hidden">
-                    <div className=" p-2 mb-6">
-                        <h1 className="text-3xl font-bold">
+                    <div className=" p-2 mb-4 sm:mb-6">
+                        <h1 className="text-xl sm:text-3xl font-bold">
                             Family Management System
                         </h1>
                         <p className=" mt-2">
@@ -67,14 +67,14 @@ export default function FamilyTableSection({
                     </div>
 
                     <div className="">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="bg-gray-100 rounded-xl p-6 border-l-4 border-blue-500 shadow-sm">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                            <div className="bg-gray-100 rounded-xl p-4 sm:p-6 border-l-4 border-blue-500 shadow-sm">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-blue-600 font-semibold">
                                             Total Families
                                         </p>
-                                        <p className="text-3xl font-bold text-blue-800">
+                                        <p className="text-2xl sm:text-3xl font-bold text-blue-800">
                                             {families.length}
                                         </p>
                                     </div>
@@ -83,13 +83,13 @@ export default function FamilyTableSection({
                                     </div>
                                 </div>
                             </div>
-                            <div className="bg-gray-100 rounded-xl p-6 border-l-4 border-green-500 shadow-sm">
+                            <div className="bg-gray-100 rounded-xl p-4 sm:p-6 border-l-4 border-green-500 shadow-sm">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-green-600 font-semibold">
                                             Total Members
                                         </p>
-                                        <p className="text-3xl font-bold text-green-800">
+                                        <p className="text-2xl sm:text-3xl font-bold text-green-800">
                                             {families.reduce(
                                                 (total, family) =>
                                                     total +
@@ -104,13 +104,13 @@ export default function FamilyTableSection({
                                     </div>
                                 </div>
                             </div>
-                            <div className="bg-gray-100 rounded-xl p-6 border-l-4 border-purple-500 shadow-sm">
+                            <div className="bg-gray-100 rounded-xl p-4 sm:p-6 border-l-4 border-purple-500 shadow-sm">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-purple-600 font-semibold">
                                             Average Family Size
                                         </p>
-                                        <p className="text-3xl font-bold text-purple-800">
+                                        <p className="text-2xl sm:text-3xl font-bold text-purple-800">
                                             {families.length > 0
                                                 ? Math.round(
                                                       (families.reduce(
@@ -137,7 +137,7 @@ export default function FamilyTableSection({
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                    <div className="bg-blue-50 border-b border-blue-200 p-6">
+                    <div className="bg-blue-50 border-b border-blue-200 p-3 sm:p-4 md:p-6">
                         <h2 className="text-xl font-bold text-blue-800 flex items-center">
                             <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
                             Family Records

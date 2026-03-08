@@ -25,7 +25,7 @@ export default function TableSection({ onViewDetails }) {
     const data = Array.isArray(officials?.data)
         ? officials.data.map(official => ({
             id: official.id,
-            image: official.profileImage ? `/images/residents/${official.profileImage}` : "/api/placeholder/40/40",
+            image: official.profileImage ? (official.profileImage.startsWith('data:') ? official.profileImage : `/images/residents/${official.profileImage}`) : "/api/placeholder/40/40",
             position: official.position || 'N/A',
             positionColor: getPositionColor(official.position),
             officialNumber: official.residentId || 'N/A',

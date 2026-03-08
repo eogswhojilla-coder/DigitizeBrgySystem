@@ -25,8 +25,8 @@ export default function InventoryTableSection({ tab, requests }) {
             ) : (
                 filteredRequests.map((request) => (
                     <div key={request.id} className="bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow">
-                        <div className="p-6">
-                            <div className="flex items-start justify-between">
+                        <div className="p-3 sm:p-4 md:p-6">
+                            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
 
                                 <InventoryTableDetailsSection
                                     tab={tab}

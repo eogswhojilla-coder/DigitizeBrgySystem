@@ -104,13 +104,7 @@ export default function Page() {
                 }
             }
 
-            const token = document.head.querySelector('meta[name="csrf-token"]');
-            await axios.post("/api/borrow-requests", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'X-CSRF-TOKEN': token ? token.content : ''
-                },
-            });
+            await axios.post("/api/borrow-requests", formData);
 
             await Swal.fire({
                 icon: "success",
@@ -178,21 +172,21 @@ export default function Page() {
 
     return (
         <Layout>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
                 {/* Header */}
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                        <Package className="w-8 h-8 text-green-600" />
+                    <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2">
+                        <Package className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
                         Inventory Borrow Request
                     </h1>
-                    <p className="text-gray-600 mt-1">Request to borrow barangay equipment and supplies</p>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1">Request to borrow barangay equipment and supplies</p>
                 </div>
 
                 {!selectedItem ? (
                     <>
                         {/* Available Items Grid */}
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">Available Items</h2>
+                        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+                            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Available Items</h2>
                             {availableItems.length === 0 ? (
                                 <div className="text-center py-12">
                                     <Package className="mx-auto h-16 w-16 text-gray-400" />
@@ -204,7 +198,7 @@ export default function Page() {
                                     </p>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {availableItems.map((item) => {
                                         const available = item.quantity - (item.borrowed || 0) - (item.damaged || 0);
                                         return (
@@ -261,7 +255,7 @@ export default function Page() {
                     </>
                 ) : (
                     /* Borrow Request Form */
-                    <div className="bg-white rounded-lg shadow-lg p-6">
+                    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
                         <button
                             onClick={() => setSelectedItem(null)}
                             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
@@ -284,7 +278,13 @@ export default function Page() {
                                 {selectedItem.has_fee && (
                                     <>
                                         <span>•</span>
-                                        <span className="font-semibold text-green-700">Fee: ₱{Number(selectedItem.price).toFixed(2)}</span>
+                                        <span className="font-semibold text-green-700">Fee: ₱{Number(selectedItem.price).toFixed(2)} / item</span>
+                                        {watch("quantity") > 0 && (
+                                            <>
+                                                <span>•</span>
+                                                <span className="font-bold text-red-600">Total: ₱{(Number(selectedItem.price) * Number(watch("quantity"))).toFixed(2)}</span>
+                                            </>
+                                        )}
                                     </>
                                 )}
                             </div>
@@ -408,9 +408,17 @@ export default function Page() {
                                             <CreditCard className="w-5 h-5 text-yellow-700" />
                                             <h3 className="font-semibold text-yellow-900">Payment Required</h3>
                                         </div>
-                                        <p className="text-sm text-yellow-800 mb-3">
-                                            This item requires a borrowing fee of <span className="font-bold">₱{Number(selectedItem.price).toFixed(2)}</span>
+                                        <p className="text-sm text-yellow-800 mb-2">
+                                            This item requires a borrowing fee of <span className="font-bold">₱{Number(selectedItem.price).toFixed(2)}</span> per item.
                                         </p>
+                                        <div className="bg-white rounded-md px-4 py-3 border border-yellow-300">
+                                            <div className="flex items-center justify-between text-sm text-gray-700">
+                                                <span>₱{Number(selectedItem.price).toFixed(2)} × {watch("quantity") || 0} item(s)</span>
+                                                <span className="text-lg font-bold text-green-700">
+                                                    Total: ₱{(Number(selectedItem.price) * Number(watch("quantity") || 0)).toFixed(2)}
+                                                </span>
+                                            </div>
+                                        </div>
                                         
                                         {/* QR Code Display */}
                                         {selectedItem.gcash_qr_url && (
@@ -513,15 +521,15 @@ export default function Page() {
                 )}
 
                 {/* My Borrow Requests */}
-                <div className="bg-white rounded-lg shadow-lg p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4">My Borrow Requests</h2>
+                <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">My Borrow Requests</h2>
                     {myBorrowRequests.length === 0 ? (
                         <div className="text-center py-8 text-gray-500">
                             No borrow requests yet
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
+                        <div className="overflow-x-auto -mx-4 sm:mx-0">
+                            <table className="w-full min-w-[600px]">
                                 <thead className="bg-gray-50">
                                     <tr>
                                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
@@ -743,6 +751,22 @@ export default function Page() {
                                                 <span className="text-gray-600">Payment Reference:</span>
                                                 <span className="font-medium text-gray-900">{viewingRequest.payment_reference}</span>
                                             </div>
+                                            {viewingRequest.inventory?.has_fee && (
+                                                <>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-gray-600">Fee per Item:</span>
+                                                        <span className="font-medium text-gray-900">₱{Number(viewingRequest.inventory.price).toFixed(2)}</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-gray-600">Quantity:</span>
+                                                        <span className="font-medium text-gray-900">{viewingRequest.quantity}</span>
+                                                    </div>
+                                                    <div className="flex justify-between items-center pt-2 border-t border-dashed">
+                                                        <span className="text-gray-900 font-semibold">Total Paid:</span>
+                                                        <span className="text-lg font-bold text-green-700">₱{(Number(viewingRequest.inventory.price) * Number(viewingRequest.quantity)).toFixed(2)}</span>
+                                                    </div>
+                                                </>
+                                            )}
                                             {viewingRequest.payment_receipt_url && (
                                                 <div className="mt-3">
                                                     <p className="text-sm text-gray-600 mb-2">Payment Receipt:</p>

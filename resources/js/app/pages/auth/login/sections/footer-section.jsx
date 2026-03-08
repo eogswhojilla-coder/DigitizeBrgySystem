@@ -19,7 +19,7 @@ export default function FooterSection() {
     ];
 
     return (
-        <footer className="bg-[#0f1a2e] border-t border-white/10 pt-14 pb-8 px-6 md:px-10 text-white">
+        <footer className="bg-slate-100 dark:bg-[#0f1a2e] border-t border-slate-200 dark:border-white/10 pt-14 pb-8 px-6 md:px-10 text-slate-800 dark:text-white">
             <div className="max-w-7xl mx-auto">
                 {/* TOP GRID */}
                 <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-12 md:gap-16 mb-12">
@@ -36,13 +36,13 @@ export default function FooterSection() {
                                 <div className="font-serif font-bold text-lg">
                                     Barangay II
                                 </div>
-                                <div className="font-mono text-[10px] tracking-widest text-white/50">
+                                <div className="font-mono text-[10px] tracking-widest text-slate-400 dark:text-white/50">
                                     San Carlos City , Negros Occidental
                                 </div>
                             </div>
                         </div>
 
-                        <p className="text-white/50 text-sm leading-relaxed max-w-sm">
+                        <p className="text-slate-500 dark:text-white/50 text-sm leading-relaxed max-w-sm">
                             The official digital management system of Barangay
                             San Isidro. Committed to transparent, accessible,
                             and modern public service delivery.
@@ -60,7 +60,7 @@ export default function FooterSection() {
                                 <li key={link.name}>
                                     <a
                                         href={link.href}
-                                        className="text-white/60 text-sm transition-colors hover:text-yellow-500"
+                                        className="text-slate-500 dark:text-white/60 text-sm transition-colors hover:text-yellow-500"
                                     >
                                         {link.name}
                                     </a>
@@ -80,7 +80,7 @@ export default function FooterSection() {
                                 <li key={link.name}>
                                     <a
                                         href={link.href}
-                                        className="text-white/60 text-sm transition-colors hover:text-yellow-500"
+                                        className="text-slate-500 dark:text-white/60 text-sm transition-colors hover:text-yellow-500"
                                     >
                                         {link.name}
                                     </a>
@@ -91,18 +91,18 @@ export default function FooterSection() {
                 </div>
 
                 {/* BOTTOM BAR */}
-                <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="text-white/40 text-xs text-center md:text-left">
+                <div className="border-t border-slate-200 dark:border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="text-slate-400 dark:text-white/40 text-xs text-center md:text-left">
                         © {currentYear} Barangay II Management System.
                         All rights reserved.
                     </div>
 
                     <div className="flex flex-col md:flex-row items-center gap-3 md:gap-6 text-center md:text-right">
-                        <span className="font-mono text-xs text-white/40 tracking-wider">
+                        <span className="font-mono text-xs text-slate-400 dark:text-white/40 tracking-wider">
                             v2.1.0
                         </span>
 
-                        <span className="text-white/40 text-xs">
+                        <span className="text-slate-400 dark:text-white/40 text-xs">
                             Developed by{" "}
                             <span className="text-yellow-500 font-medium">
                                 BSIT 4 - Solutions

@@ -18,6 +18,7 @@
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
+        <script>if(localStorage.getItem('darkMode')==='true')document.documentElement.classList.add('dark');</script>
         @inertia
     </body>
 </html>

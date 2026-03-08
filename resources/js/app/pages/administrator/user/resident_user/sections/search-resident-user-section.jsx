@@ -32,13 +32,13 @@ export default function SearchResidentUserSection() {
     };
 
     return (
-        <div className="text-black p-6">
-            <h2 className="text-xl font-semibold mb-6">
+        <div className="text-black p-3 sm:p-4 md:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">
                 NUMBER OF USERS RESIDENT
             </h2>
 
             {/* Search Form */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
                 <div className="flex flex-col space-y-1">
                     <label className="text-sm font-medium">FIRST NAME</label>
                     <Input

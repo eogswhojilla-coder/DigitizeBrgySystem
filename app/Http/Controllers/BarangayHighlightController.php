@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\BarangayHighlight;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use App\Helpers\FileHelper;
 
 class BarangayHighlightController extends Controller
 {
@@ -47,8 +47,7 @@ class BarangayHighlightController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('highlights', 'public');
-            $validated['image'] = '/storage/' . $path;
+            $validated['image'] = FileHelper::toBase64($request->file('image'));
         }
 
         $highlight = BarangayHighlight::create($validated);
@@ -83,14 +82,7 @@ class BarangayHighlightController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($highlight->image) {
-                $oldPath = str_replace('/storage/', '', $highlight->image);
-                Storage::disk('public')->delete($oldPath);
-            }
-
-            $path = $request->file('image')->store('highlights', 'public');
-            $validated['image'] = '/storage/' . $path;
+            $validated['image'] = FileHelper::toBase64($request->file('image'));
         }
 
         $highlight->update($validated);
@@ -104,12 +96,6 @@ class BarangayHighlightController extends Controller
      */
     public function destroy(BarangayHighlight $highlight)
     {
-        // Delete image if exists
-        if ($highlight->image) {
-            $path = str_replace('/storage/', '', $highlight->image);
-            Storage::disk('public')->delete($path);
-        }
-
         $highlight->delete();
 
         return redirect()->route('admin.highlights.index')

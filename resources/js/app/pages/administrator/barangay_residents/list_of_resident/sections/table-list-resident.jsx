@@ -103,7 +103,7 @@ export default function TableListResident() {
             const dob = resident.dateOfBirth;
             const age = moment().diff(moment(dob, "YYYY-MM-DD"), "years");
             const imageUrl = resident.profileImage 
-                ? `/images/residents/${resident.profileImage}` 
+                ? (resident.profileImage.startsWith('data:') ? resident.profileImage : `/images/residents/${resident.profileImage}`) 
                 : null;
 
             return {

@@ -21,15 +21,7 @@ export async function register_resident_service(data) {
             }
         });
 
-        // Get CSRF token from meta tag
-        const token = document.head.querySelector('meta[name="csrf-token"]');
-        
-        const result = await axios.post("/api/register-resident", formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'X-CSRF-TOKEN': token ? token.content : ''
-            }
-        });
+        const result = await axios.post("/api/register-resident", formData);
         return result;
     } catch (error) {
         throw error;
