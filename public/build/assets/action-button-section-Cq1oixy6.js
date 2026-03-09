@@ -1,0 +1,1 @@
+import{j as t}from"./app-MkSx1GSX.js";import{B as e}from"./button-CR5caDVE.js";import"./index-Bo3Rb2Fi.js";function s(){return t.jsx("div",{children:t.jsxs("div",{className:"flex gap-3 justify-end",children:[t.jsx(e,{children:"Search"}),t.jsx(e,{variant:"danger",children:"Reset"})]})})}export{s as default};
