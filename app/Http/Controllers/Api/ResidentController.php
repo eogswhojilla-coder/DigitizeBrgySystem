@@ -287,7 +287,7 @@ class ResidentController extends Controller
                 'success' => true,
                 'message' => 'Borrow request submitted successfully',
                 'data' => $borrowRequest->load('inventory')
-            ], 201);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

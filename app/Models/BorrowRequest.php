@@ -80,7 +80,7 @@ class BorrowRequest extends Model
             ->latest()
             ->first();
 
-        $sequence = $latest ? intval(substr($latest->request_number, -5)) + 1 : 1;
+        $sequence = $latest ? intval(substr($latest->request_number, -5)) + 1 +rand(10,100) : 1 + rand(10,100);
         
         return sprintf('BRW-%s%s%s-%05d', $year, $month, $day, $sequence);
     }
