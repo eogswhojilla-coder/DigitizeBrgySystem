@@ -182,9 +182,7 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                             </div>
                             <div className="space-y-2 mt-6">
                                 <Input
-                                    register={register("houseNumber", {
-                                        required: "House number is required",
-                                    })}
+                                    register={register("houseNumber")}
                                     error={errors?.houseNumber?.message}
                                     label="House No."
                                     type="text"

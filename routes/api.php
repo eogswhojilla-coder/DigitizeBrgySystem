@@ -58,10 +58,11 @@ Route::middleware(['auth:sanctum', 'permission:residents.view'])->group(function
 Route::middleware(['auth:sanctum', 'permission:residents.update'])->group(function () {
     Route::put('barangay_residents/{id}/assign-position', [BarangayResidentController::class, 'assignPosition']);
     Route::post('check-expired-officials', [App\Http\Controllers\BarangayOfficialEndTermController::class, 'checkAndMoveExpiredOfficials']);
-    
     // Archive operations
     Route::post('archived_residents', [App\Http\Controllers\ArchivedResidentController::class, 'store']);
     Route::post('archived_residents/{id}/restore', [App\Http\Controllers\ArchivedResidentController::class, 'restore']);
+    // Remove position (revert to resident)
+    Route::put('barangay_officials/{id}/remove-position', [BarangayResidentController::class, 'removePosition']);
 });
 
 Route::middleware(['auth:sanctum', 'permission:residents.delete'])->group(function () {

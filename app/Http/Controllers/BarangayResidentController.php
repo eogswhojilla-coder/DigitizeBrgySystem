@@ -259,6 +259,39 @@ class BarangayResidentController extends Controller
     }
 
     /**
+     * Remove position and revert to regular resident
+     */
+    public function removePosition(Request $request, $id)
+    {
+        try {
+            $resident = BarangayResident::find($id);
+            if (!$resident) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Resident not found'
+                ], 404);
+            }
+            $resident->update([
+                'isOfficial' => false,
+                'position' => null,
+                'startDate' => null,
+                'endDate' => null,
+            ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Position removed. Resident reverted to regular.',
+                'data' => $resident
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error removing position',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Private method to check and move expired officials
      * Called automatically when loading officials list
      */

@@ -2,7 +2,12 @@ import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
 import React, { useState, useEffect } from "react";
 
-export default function OtherInfoSection({ register, errors, watch, setValue }) {
+export default function OtherInfoSection({
+    register,
+    errors,
+    watch,
+    setValue,
+}) {
     const residencyStatus = watch ? watch("residencyStatus") : "";
     const dateStartedLiving = watch ? watch("dateStartedLiving") : "";
     const selectedZone = watch ? watch("zone") : "";
@@ -95,7 +100,9 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
     };
 
     const zones = Object.keys(zoneStreets);
-    const availableStreets = selectedZone ? zoneStreets[selectedZone] || [] : [];
+    const availableStreets = selectedZone
+        ? zoneStreets[selectedZone] || []
+        : [];
 
     // Reset street when zone changes
     useEffect(() => {
@@ -107,16 +114,19 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
     // Calculate resident type based on duration
     const calculateResidentType = (dateStarted) => {
         if (!dateStarted) return "";
-        
+
         const startDate = new Date(dateStarted);
         const today = new Date();
-        const monthsDiff = (today.getFullYear() - startDate.getFullYear()) * 12 + 
-                          (today.getMonth() - startDate.getMonth());
-        
+        const monthsDiff =
+            (today.getFullYear() - startDate.getFullYear()) * 12 +
+            (today.getMonth() - startDate.getMonth());
+
         return monthsDiff >= 6 ? "official" : "temporary";
     };
 
-    const showPermanentAddress = ["renter", "boarder", "temporary"].includes(residencyStatus);
+    const showPermanentAddress = ["renter", "boarder", "temporary"].includes(
+        residencyStatus,
+    );
 
     return (
         <>
@@ -128,8 +138,10 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                 <div className="space-y-6">
                     {/* Current Address Section */}
                     <div className="bg-gray-50 p-4 rounded-lg">
-                        <h3 className="text-sm font-semibold text-gray-700 mb-4">Current Address</h3>
-                        
+                        <h3 className="text-sm font-semibold text-gray-700 mb-4">
+                            Current Address
+                        </h3>
+
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-2">
                                 <label className="block text-sm font-medium text-gray-700">
@@ -140,7 +152,9 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                                         required: "Zone is required",
                                     })}
                                     className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                        errors?.zone ? 'border-red-500' : 'border-gray-300'
+                                        errors?.zone
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                     }`}
                                 >
                                     <option value="">Select Zone</option>
@@ -151,12 +165,15 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                                     ))}
                                 </select>
                                 {errors?.zone && (
-                                    <p className="text-red-500 text-xs mt-1">{errors.zone.message}</p>
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {errors.zone.message}
+                                    </p>
                                 )}
                             </div>
                             <div className="space-y-2">
                                 <label className="block text-sm font-medium text-gray-700">
-                                    Street <span className="text-red-500">*</span>
+                                    Street{" "}
+                                    <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     {...register("street", {
@@ -164,11 +181,15 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                                     })}
                                     disabled={!selectedZone}
                                     className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed ${
-                                        errors?.street ? 'border-red-500' : 'border-gray-300'
+                                        errors?.street
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                     }`}
                                 >
                                     <option value="">
-                                        {selectedZone ? "Select Street" : "Select Zone First"}
+                                        {selectedZone
+                                            ? "Select Street"
+                                            : "Select Zone First"}
                                     </option>
                                     {availableStreets.map((street) => (
                                         <option key={street} value={street}>
@@ -177,19 +198,28 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                                     ))}
                                 </select>
                                 {errors?.street && (
-                                    <p className="text-red-500 text-xs mt-1">{errors.street.message}</p>
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {errors.street.message}
+                                    </p>
                                 )}
                             </div>
-                            <div className="space-y-2 mt-6">
+                            {/* <div className="space-y-2 mt-6">
                                 <Input
-                                    register={register("houseNumber", {
-                                        required: "House number is required",
-                                    })}
+                                    register={register("houseNumber")}
                                     error={errors?.houseNumber?.message}
                                     label="House No."
                                     type="text"
                                     name="houseNumber"
                                     placeholder="e.g., 123"
+                                />
+                            </div> */}
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("houseNumber")}
+                                    error={errors?.houseNumber?.message}
+                                    label="House No."
+                                    type="text"
+                                    name="houseNumber"
                                 />
                             </div>
                         </div>
@@ -251,24 +281,36 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
 
                     {/* Residency Information */}
                     <div className="bg-gray-50 p-4 rounded-lg">
-                        <h3 className="text-sm font-semibold text-gray-700 mb-4">Residency Information</h3>
-                        
+                        <h3 className="text-sm font-semibold text-gray-700 mb-4">
+                            Residency Information
+                        </h3>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Select
                                     register={register("residencyStatus", {
-                                        required: "Residency status is required",
+                                        required:
+                                            "Residency status is required",
                                     })}
                                     error={errors?.residencyStatus?.message}
                                     name="residencyStatus"
                                     label="Residency Status"
                                     options={[
                                         { value: "", label: "Select Status" },
-                                        { value: "homeowner", label: "Homeowner" },
+                                        {
+                                            value: "homeowner",
+                                            label: "Homeowner",
+                                        },
                                         { value: "renter", label: "Renter" },
                                         { value: "boarder", label: "Boarder" },
-                                        { value: "living_with_relatives", label: "Living with Relatives" },
-                                        { value: "temporary", label: "Temporary Resident" },
+                                        {
+                                            value: "living_with_relatives",
+                                            label: "Living with Relatives",
+                                        },
+                                        {
+                                            value: "temporary",
+                                            label: "Temporary Resident",
+                                        },
                                         { value: "others", label: "Others" },
                                     ]}
                                 />
@@ -276,15 +318,21 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                             <div className="space-y-2">
                                 <Input
                                     register={register("dateStartedLiving", {
-                                        required: "Date started living is required",
+                                        required:
+                                            "Date started living is required",
                                         validate: {
                                             notFuture: (value) => {
-                                                const selectedDate = new Date(value);
+                                                const selectedDate = new Date(
+                                                    value,
+                                                );
                                                 const today = new Date();
                                                 today.setHours(0, 0, 0, 0);
-                                                return selectedDate <= today || "Date cannot be in the future";
-                                            }
-                                        }
+                                                return (
+                                                    selectedDate <= today ||
+                                                    "Date cannot be in the future"
+                                                );
+                                            },
+                                        },
                                     })}
                                     error={errors?.dateStartedLiving?.message}
                                     label="Date Started Living in Barangay"
@@ -293,9 +341,12 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                                 />
                                 {dateStartedLiving && (
                                     <p className="text-xs text-gray-600 mt-1">
-                                        Resident Type: <span className="font-semibold">
-                                            {calculateResidentType(dateStartedLiving) === "official" 
-                                                ? "Official Resident (6+ months)" 
+                                        Resident Type:{" "}
+                                        <span className="font-semibold">
+                                            {calculateResidentType(
+                                                dateStartedLiving,
+                                            ) === "official"
+                                                ? "Official Resident (6+ months)"
                                                 : "Temporary Resident (< 6 months)"}
                                         </span>
                                     </p>
@@ -307,10 +358,17 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                             <div className="grid grid-cols-1 gap-4 mt-4">
                                 <div className="space-y-2">
                                     <Input
-                                        register={register("residencyStatusOther", {
-                                            required: "Please specify residency status",
-                                        })}
-                                        error={errors?.residencyStatusOther?.message}
+                                        register={register(
+                                            "residencyStatusOther",
+                                            {
+                                                required:
+                                                    "Please specify residency status",
+                                            },
+                                        )}
+                                        error={
+                                            errors?.residencyStatusOther
+                                                ?.message
+                                        }
                                         label="Please Specify"
                                         type="text"
                                         name="residencyStatusOther"
@@ -325,29 +383,41 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                     {showPermanentAddress && (
                         <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
                             <h3 className="text-sm font-semibold text-amber-800 mb-4">
-                                Permanent Address <span className="text-red-500">*</span>
+                                Permanent Address{" "}
+                                <span className="text-red-500">*</span>
                             </h3>
                             <p className="text-xs text-amber-700 mb-4">
-                                Since you are a {residencyStatus === "renter" ? "renter" : residencyStatus === "boarder" ? "boarder" : "temporary resident"}, 
-                                please provide your permanent address.
+                                Since you are a{" "}
+                                {residencyStatus === "renter"
+                                    ? "renter"
+                                    : residencyStatus === "boarder"
+                                      ? "boarder"
+                                      : "temporary resident"}
+                                , please provide your permanent address.
                             </p>
-                            
+
                             <div className="space-y-2">
                                 <label className="block text-sm font-medium text-gray-700">
                                     Complete Permanent Address
                                 </label>
                                 <textarea
                                     {...register("permanentAddress", {
-                                        required: showPermanentAddress ? "Permanent address is required" : false,
+                                        required: showPermanentAddress
+                                            ? "Permanent address is required"
+                                            : false,
                                     })}
                                     rows="3"
                                     className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                        errors?.permanentAddress ? 'border-red-500' : 'border-gray-300'
+                                        errors?.permanentAddress
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                     }`}
                                     placeholder="Complete address including House No., Street, Barangay, City/Municipality, Province, Zip Code"
                                 />
                                 {errors?.permanentAddress && (
-                                    <p className="text-red-500 text-xs mt-1">{errors.permanentAddress.message}</p>
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {errors.permanentAddress.message}
+                                    </p>
                                 )}
                             </div>
                         </div>
@@ -355,8 +425,10 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
 
                     {/* Contact Information */}
                     <div className="bg-gray-50 p-4 rounded-lg">
-                        <h3 className="text-sm font-semibold text-gray-700 mb-4">Contact Information</h3>
-                        
+                        <h3 className="text-sm font-semibold text-gray-700 mb-4">
+                            Contact Information
+                        </h3>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Input
@@ -364,8 +436,9 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                                         required: "Contact number is required",
                                         pattern: {
                                             value: /^[0-9]{10,13}$/,
-                                            message: "Please enter a valid contact number (10-13 digits)"
-                                        }
+                                            message:
+                                                "Please enter a valid contact number (10-13 digits)",
+                                        },
                                     })}
                                     error={errors?.contactNumber?.message}
                                     label="Contact Number"
@@ -380,8 +453,9 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                                         required: "Email address is required",
                                         pattern: {
                                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                            message: "Please enter a valid email address"
-                                        }
+                                            message:
+                                                "Please enter a valid email address",
+                                        },
                                     })}
                                     error={errors?.emailAddress?.message}
                                     label="Email Address"
