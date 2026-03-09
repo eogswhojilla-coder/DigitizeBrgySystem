@@ -2,6 +2,8 @@ import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Transition } from "@headlessui/react"; // Import Transition component
 import { useState } from "react";
 import { Link } from "@inertiajs/react";
+import { useDispatch } from "react-redux";
+import { setSidebarOpen } from "../redux/app-slice";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
@@ -14,6 +16,7 @@ export default function DisclosureComponent({
     setOpenIndex,
 }) {
     const isOpen = openIndex === i;
+    const dispatch = useDispatch();
 
     return (
         <div>
@@ -60,6 +63,7 @@ export default function DisclosureComponent({
                                         : "hover:bg-gray-50 dark:hover:bg-gray-700",
                                     "block rounded-md py-2 pr-2 pl-4 text-sm/6 text-gray-700 dark:text-gray-300"
                                 )}
+                                onClick={() => dispatch(setSidebarOpen(false))}
                             >
                                 <div className="flex gap-3">
                                     {subItem.icon}

@@ -1,14 +1,12 @@
 import React from "react";
 import DisclosureComponent from "../_components/disclosure";
-import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { FcServices } from "react-icons/fc";
 import { Link } from "@inertiajs/react";
+import { useDispatch } from "react-redux";
+import { setSidebarOpen } from "../redux/app-slice";
 
-export default function SidebarMobileSection({
-    navigation,
-    setOpenIndex,
-    openIndex,
-}) {
+export default function SidebarMobileSection({ navigation, setOpenIndex, openIndex }) {
+    const dispatch = useDispatch();
     function classNames(...classes) {
         return classes.filter(Boolean).join(" ");
     }
@@ -24,7 +22,6 @@ export default function SidebarMobileSection({
                             className="h-full w-full object-contain p-1"
                         />
                     </div>
-
                     {/* Text Container */}
                     <div className="flex flex-col leading-tight">
                         <span className="text-base font-bold text-gray-900 dark:text-white tracking-tight">
@@ -50,16 +47,8 @@ export default function SidebarMobileSection({
                                                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-red-500",
                                                     "group flex gap-x-3 rounded-md p-2 py-3 text-sm/6 font-semibold",
                                                 )}
+                                                onClick={() => dispatch(setSidebarOpen(false))}
                                             >
-                                                {/* <item.icon
-                                                    aria-hidden="true"
-                                                    className={classNames(
-                                                        item.current
-                                                            ? "text-white"
-                                                            : "text-gray-700 group-hover:text-red-500",
-                                                        "size-6 shrink-0"
-                                                    )}
-                                                /> */}
                                                 {item.icon}
                                                 {item.name}
                                             </Link>
@@ -73,7 +62,7 @@ export default function SidebarMobileSection({
                                                 i={i}
                                             />
                                         </li>
-                                    ),
+                                    )
                                 )}
                             </ul>
                         </li>
