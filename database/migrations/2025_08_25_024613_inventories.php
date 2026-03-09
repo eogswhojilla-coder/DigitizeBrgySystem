@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('borrowed')->default(0);       // ✅ Add this
             $table->integer('damaged')->default(0);        // ✅ Add this
             $table->integer('minimum_quantity')->default(5); // ✅ Add this
+            $table->longText('image')->nullable();
             $table->timestamps();
         });
     }

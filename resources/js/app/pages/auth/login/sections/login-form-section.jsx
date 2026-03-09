@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { useForm, Link } from "@inertiajs/react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";

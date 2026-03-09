@@ -65,8 +65,8 @@ class CertificateRequestApprovedNotification extends Notification
             'purpose' => $this->certificateRequest->purpose,
             'status' => 'approved',
             'message' => 'Your certificate request has been approved and is being prepared for release.',
-            'url' => '/resident/certificates',
-            'type' => 'certificate',
+            'url' => '/resident/certificate-request?tab=history',
+            'type' => 'certificate_request',
         ];
     }
 }

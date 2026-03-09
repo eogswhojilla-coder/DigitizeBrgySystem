@@ -1,1 +1,0 @@
-import{g as e}from"./accouncement-service-BjRsBhAv.js";import{d as a}from"./app-Xia9h4g6.js";function r(){return async function(n,c){const t=await e();n(a.actions.setAnnouncements(t.data))}}function u(){return async function(n,c){const t=await e();n(a.actions.setCalendars(t.data))}}export{u as a,r as g};

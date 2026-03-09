@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../layout";
 import {
     FileText,
@@ -11,25 +11,43 @@ import {
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { get_announcement_thunk } from "@/app/redux/announcement-thunk";
-import { get_inventories_thunk } from "@/app/redux/inventories-thunk";
 import Card from "@/app/_components/card";
 import moment from "moment";
+import axios from "axios";
 
 export default function Page() {
     const dispatch = useDispatch();
 
     const { announcements = [] } = useSelector((state) => state.announcements);
-    const { inventories = [] } = useSelector((state) => state.inventories);
+    const [availableItems, setAvailableItems] = useState([]);
+    const [borrowRequests, setBorrowRequests] = useState([]);
+    const [certificateRequests, setCertificateRequests] = useState([]);
+
+    const fetchResidentData = async () => {
+        try {
+            const [inventoryRes, borrowRes, certRes] = await Promise.all([
+                axios.get('/api/inventories/available'),
+                axios.get('/api/my-borrow-requests'),
+                axios.get('/api/my-certificate-requests'),
+            ]);
+            const items = inventoryRes.data.data || inventoryRes.data || [];
+            setAvailableItems(Array.isArray(items) ? items : []);
+            setBorrowRequests(borrowRes.data.data || []);
+            setCertificateRequests(certRes.data.data || []);
+        } catch (error) {
+            console.error('Error fetching resident data:', error);
+        }
+    };
 
     useEffect(() => {
         // Initial load
         dispatch(get_announcement_thunk());
-        dispatch(get_inventories_thunk());
+        fetchResidentData();
         
         // Auto-refresh every 30 seconds for real-time updates
         const interval = setInterval(() => {
             dispatch(get_announcement_thunk());
-            dispatch(get_inventories_thunk());
+            fetchResidentData();
         }, 30000); // 30 seconds
         
         return () => clearInterval(interval);
@@ -38,11 +56,14 @@ export default function Page() {
     const announcementData = announcements?.data || announcements;
     const recentAnnouncements = announcementData.slice(0, 3);
 
-    const inventoryData = inventories?.data || inventories;
-    const availableItems = inventoryData.filter(
-        (item) =>
-            item.status === "Active" && item.quantity > (item.borrowed || 0),
-    );
+    // Compute real counts
+    const pendingBorrow = borrowRequests.filter(r => r.status === 'pending').length;
+    const pendingCert = certificateRequests.filter(r => r.status === 'pending_verification' || r.status === 'verified' || r.status === 'for_release').length;
+    const totalPending = pendingBorrow + pendingCert;
+
+    const completedBorrow = borrowRequests.filter(r => r.status === 'returned').length;
+    const completedCert = certificateRequests.filter(r => r.status === 'released').length;
+    const totalCompleted = completedBorrow + completedCert;
 
     return (
         <Layout>
@@ -75,7 +96,7 @@ export default function Page() {
                     <Card
                         icon={<Clock className="w-8 h-8 text-orange-600" />}
                         label="Pending Requests"
-                        value={0}
+                        value={totalPending}
                         color="warning"
                     />
                     <Card
@@ -83,7 +104,7 @@ export default function Page() {
                             <CheckCircle className="w-8 h-8 text-purple-600" />
                         }
                         label="Completed"
-                        value={0}
+                        value={totalCompleted}
                         color="info"
                     />
                 </div>
@@ -164,7 +185,7 @@ export default function Page() {
                             </div>
 
                             <span className="text-3xl font-bold text-blue-600">
-                                0
+                                {certificateRequests.length}
                             </span>
                         </div>
                     </a>
@@ -186,7 +207,7 @@ export default function Page() {
                             </div>
 
                             <span className="text-3xl font-bold text-green-600">
-                                0
+                                {borrowRequests.length}
                             </span>
                         </div>
                     </a>
@@ -208,7 +229,7 @@ export default function Page() {
                             </div>
 
                             <span className="text-3xl font-bold text-red-600">
-                                0
+                                
                             </span>
                         </div>
                     </a>

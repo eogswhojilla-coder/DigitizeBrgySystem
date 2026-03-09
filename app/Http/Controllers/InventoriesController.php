@@ -18,6 +18,7 @@ class InventoriesController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'has_fee' => 'nullable|in:0,1,true,false',
             'price' => 'required_if:has_fee,1,true|nullable|numeric|min:0',
             'gcash_qr' => 'nullable|image|mimes:jpeg,jpg,png|max:2048|required_if:has_fee,1,true',
@@ -46,6 +47,11 @@ class InventoriesController extends Controller
             }
         }
 
+        // Handle item image upload
+        if ($request->hasFile('image')) {
+            $data['image'] = FileHelper::toBase64($request->file('image'));
+        }
+
         Inventories::create($data);
         return response()->json(['message' => 'New Item created successfully'], 200);
     }
@@ -69,6 +75,7 @@ class InventoriesController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'has_fee' => 'nullable|in:0,1,true,false',
             'price' => 'required_if:has_fee,1,true|nullable|numeric|min:0',
             'gcash_qr' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
@@ -97,6 +104,11 @@ class InventoriesController extends Controller
             if ($request->hasFile('gcash_qr')) {
                 $data['gcash_qr'] = FileHelper::toBase64($request->file('gcash_qr'));
             }
+        }
+
+        // Handle item image upload
+        if ($request->hasFile('image')) {
+            $data['image'] = FileHelper::toBase64($request->file('image'));
         }
 
         $inventory->update($data);

@@ -234,7 +234,7 @@
             <p><strong>Purpose:</strong> {{ strtoupper($purpose ?? 'General Purpose') }}</p>
             <p><strong>Certificate No.:</strong> {{ $barangayId ?? 'CODE' }}</p>
             <p><strong>Date Issued:</strong> {{ $ctcDateIssued ?? now()->format('Y-m-d') }}</p>
-            <p><strong>Amount Paid:</strong> ₱{{ $ctcAmountPaid ?? '0.00' }}</p>
+            <p><strong>Amount Paid:</strong> <span style="font-family: DejaVu Sans;">&#8369;</span>{{ $ctcAmountPaid ?? '0.00' }}</p>
             <p><strong>Issued at:</strong> {{ $ctcIssuedAt ?? 'BRGY. II' }}</p>
         </div>
         <div class="qr-box">

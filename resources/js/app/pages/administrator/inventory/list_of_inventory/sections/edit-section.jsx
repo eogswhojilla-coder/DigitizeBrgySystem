@@ -9,6 +9,7 @@ import { get_inventories_thunk } from "@/app/redux/inventories-thunk";
 
 export default function EditSection({ item, onClose }) {
     const [qrPreview, setQrPreview] = useState(item?.gcash_qr_url || null);
+    const [imagePreview, setImagePreview] = useState(item?.image || null);
     
     const {
         register,
@@ -46,6 +47,17 @@ export default function EditSection({ item, onClose }) {
         }
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const categories = [
         "Furniture",
         "Equipment",
@@ -77,6 +89,11 @@ export default function EditSection({ item, onClose }) {
                     formData.append(field, data[field]);
                 }
             });
+            
+            // Handle item image upload
+            if (data.image && data.image.length > 0) {
+                formData.append('image', data.image[0]);
+            }
             
             // Handle has_fee conversion
             formData.append('has_fee', data.has_fee ? '1' : '0');
@@ -317,6 +334,33 @@ export default function EditSection({ item, onClose }) {
                                     })}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                 />
+                            </div>
+                        </div>
+
+                        {/* Borrowing Fee Section */}
+                        <div className="border-t pt-4 mt-4">
+                            {/* Item Image Upload */}
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Item Image
+                                </label>
+                                {imagePreview && (
+                                    <div className="mb-2">
+                                        <img
+                                            src={imagePreview}
+                                            alt="Item"
+                                            className="max-w-xs max-h-48 rounded-lg shadow-sm border"
+                                        />
+                                    </div>
+                                )}
+                                <input
+                                    type="file"
+                                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                                    {...register("image")}
+                                    onChange={handleImageChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                />
+                                <p className="text-xs text-gray-500 mt-1">Upload a new photo to replace (max 5MB)</p>
                             </div>
                         </div>
 

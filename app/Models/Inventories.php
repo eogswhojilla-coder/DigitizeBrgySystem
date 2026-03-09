@@ -8,18 +8,19 @@ class Inventories extends Model
 {
     protected $fillable = [
         'name',
-        'category',           // ✅ Add this
+        'category',
         'description',
         'quantity',
         'condition',
         'location',
         'status',
-        'borrowed',           // ✅ Add this
-        'damaged',            // ✅ Add this
-        'minimum_quantity',   // ✅ Add this
+        'borrowed',
+        'damaged',
+        'minimum_quantity',
         'has_fee',
         'price',
         'gcash_qr',
+        'image',
     ];
 
     /**

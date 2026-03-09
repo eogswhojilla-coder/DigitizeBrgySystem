@@ -66,6 +66,23 @@ export default function TableInventorySection() {
 
     const columns = [
         {
+            header: "Image",
+            accessor: "image",
+            cell: (item) => (
+                <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                    {item.image ? (
+                        <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        <span className="text-gray-400 text-xs text-center">No Image</span>
+                    )}
+                </div>
+            ),
+        },
+        {
             header: "Item Name",
             accessor: "name",
             cell: (item) => (

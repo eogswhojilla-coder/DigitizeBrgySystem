@@ -21,7 +21,11 @@ export default function Page() {
     const [myRequests, setMyRequests] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [receiptFile, setReceiptFile] = useState(null);
-    const [activeTab, setActiveTab] = useState("request"); // "request", "types", "history"
+    // Read tab from URL query param (e.g. from notification redirect)
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialTab = urlParams.get('tab') || 'request';
+
+    const [activeTab, setActiveTab] = useState(initialTab); // "request", "types", "history"
     const [selectedCertificateType, setSelectedCertificateType] = useState(null);
 
     const watchedCertificateTypeId = watch("certificate_type_id");

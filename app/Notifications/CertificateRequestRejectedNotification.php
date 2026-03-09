@@ -66,8 +66,8 @@ class CertificateRequestRejectedNotification extends Notification
             'status' => 'rejected',
             'remarks' => $this->certificateRequest->remarks,
             'message' => 'Your certificate request has been rejected.',
-            'url' => '/resident/certificates',
-            'type' => 'certificate',
+            'url' => '/resident/certificate-request?tab=history',
+            'type' => 'certificate_request',
         ];
     }
 }

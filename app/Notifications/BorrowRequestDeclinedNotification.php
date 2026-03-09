@@ -76,6 +76,8 @@ class BorrowRequestDeclinedNotification extends Notification
             'status' => 'declined',
             'message' => 'Your borrow request has been declined.',
             'remarks' => $this->remarks,
+            'url' => '/resident/inventory-borrow',
+            'type' => 'borrow_request',
         ];
     }
 }

@@ -3,17 +3,21 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../layout";
 import { Package, Calendar, User, CheckCircle, Clock, XCircle, ArrowLeft, CreditCard, Eye, MapPin, X } from 'lucide-react';
+import { Image as AntImage } from 'antd';
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import axios from "axios";
 import moment from "moment";
 
 export default function Page() {
+        const [showReceipt, setShowReceipt] = useState(false);
+        const [receiptModalOpen, setReceiptModalOpen] = useState(false);
     const [myBorrowRequests, setMyBorrowRequests] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
     const [receiptPreview, setReceiptPreview] = useState(null);
     const [viewingRequest, setViewingRequest] = useState(null);
     const [availableInventories, setAvailableInventories] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
     const {
         register,
@@ -61,6 +65,10 @@ export default function Page() {
     };
 
     const availableItems = availableInventories;
+    // Filter items by search term
+    const filteredItems = availableItems.filter(item =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     const fetchMyBorrowRequests = async () => {
         try {
@@ -187,25 +195,50 @@ export default function Page() {
                         {/* Available Items Grid */}
                         <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
                             <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Available Items</h2>
-                            {availableItems.length === 0 ? (
+                            <div className="mb-4">
+                                <input
+                                    type="text"
+                                    value={searchTerm}
+                                    onChange={e => setSearchTerm(e.target.value)}
+                                    placeholder="Search item name..."
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                                />
+                            </div>
+                            {filteredItems.length === 0 ? (
                                 <div className="text-center py-12">
                                     <Package className="mx-auto h-16 w-16 text-gray-400" />
                                     <h3 className="mt-4 text-lg font-medium text-gray-900">
-                                        No items available
+                                        No items found
                                     </h3>
                                     <p className="mt-2 text-sm text-gray-500">
-                                        Check back later for available items to borrow
+                                        Try searching for another item name
                                     </p>
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {availableItems.map((item) => {
+                                    {filteredItems.map((item) => {
                                         const available = item.quantity - (item.borrowed || 0) - (item.damaged || 0);
                                         return (
                                             <div
                                                 key={item.id}
-                                                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                                                className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
                                             >
+                                                {/* Item Image */}
+                                                <div className="w-full h-40 bg-gray-100 flex items-center justify-center">
+                                                    {item.image ? (
+                                                        <img
+                                                            src={item.image}
+                                                            alt={item.name}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        <div className="text-center text-gray-400">
+                                                            <Package className="mx-auto h-12 w-12 mb-1" />
+                                                            <span className="text-xs">No Image</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="p-4">
                                                 <div className="flex items-start justify-between mb-3">
                                                     <h3 className="text-lg font-semibold text-gray-900">
                                                         {item.name}
@@ -246,6 +279,7 @@ export default function Page() {
                                                 >
                                                     {available > 0 ? "Request to Borrow" : "Not Available"}
                                                 </button>
+                                                </div>
                                             </div>
                                         );
                                     })}
@@ -268,6 +302,28 @@ export default function Page() {
                         
                         {/* Selected Item Info */}
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                {/* Item Image */}
+                                {selectedItem.image ? (
+                                    <div className="flex-shrink-0">
+                                        <AntImage
+                                            src={selectedItem.image}
+                                            alt={selectedItem.name}
+                                            width={160}
+                                            height={160}
+                                            className="rounded-lg object-cover"
+                                            style={{ objectFit: 'cover' }}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="flex-shrink-0 w-40 h-40 bg-white rounded-lg flex items-center justify-center border border-blue-200">
+                                        <div className="text-center text-gray-400">
+                                            <Package className="mx-auto h-12 w-12 mb-1" />
+                                            <span className="text-xs">No Image</span>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="flex-1">
                             <h3 className="font-semibold text-blue-900 mb-2">Selected Item:</h3>
                             <p className="text-blue-800 text-lg font-bold">{selectedItem.name}</p>
                             <p className="text-sm text-blue-700 mt-1">{selectedItem.description}</p>
@@ -287,6 +343,8 @@ export default function Page() {
                                         )}
                                     </>
                                 )}
+                            </div>
+                                </div>
                             </div>
                         </div>
 
@@ -627,7 +685,7 @@ export default function Page() {
                                     <div className="bg-green-50 border-2 border-green-500 rounded-lg p-4">
                                         <div className="flex items-start gap-3">
                                             <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
-                                            <div>
+                                            <div className="flex-1">
                                                 <h4 className="text-green-900 font-bold text-lg mb-1">
                                                     ✅ Request Approved - Ready to Pick Up!
                                                 </h4>
@@ -635,6 +693,79 @@ export default function Page() {
                                                     Your borrow request has been approved. You can now pick up the equipment from the location below.
                                                 </p>
                                             </div>
+                                            <div className="ml-auto">
+                                                <button
+                                                    className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 font-medium"
+                                                    onClick={() => setReceiptModalOpen(true)}
+                                                >
+                                                    View Receipt
+                                                </button>
+                                            </div>
+                                                                        {receiptModalOpen && (
+                                                                            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                                                                <div className="bg-white rounded-lg shadow-xl p-4 w-full max-w-xs sm:max-w-sm md:max-w-md relative mx-2" style={{maxWidth:'400px'}}>
+                                                                                    <button
+                                                                                        className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                                                                                        onClick={() => setReceiptModalOpen(false)}
+                                                                                    >
+                                                                                        <span style={{fontSize:'20px',fontWeight:'bold'}}>×</span>
+                                                                                    </button>
+                                                                                    <div className="flex flex-col items-center">
+                                                                                        <div className="receipt w-full" style={{padding:'0',border:'none',borderRadius:'8px',background:'#fff'}}>
+                                                                                            <div className="header" style={{textAlign:'center',marginBottom:'8px'}}>
+                                                                                             <div style={{display:'flex',justifyContent:'center',alignItems:'center',marginBottom:'8px'}}>
+                                                                                              <img src="/images/brgy-ll-logo.png" style={{width:'48px',height:'48px'}} alt="Barangay Logo" />
+                                                                                             </div>
+                                                                                             <div style={{fontSize:'16px',fontWeight:'bold'}}>Barangay Name</div>
+                                                                                             <div style={{fontSize:'13px',color:'#555'}}>Item Claim Receipt</div>
+                                                                                            </div>
+                                                                                            <div className="divider" style={{borderTop:'1px dashed #bbb',margin:'8px 0'}}></div>
+                                                                                            <div className="row flex justify-between mb-1 text-xs"><span className="label text-gray-500">Request ID:</span><span className="value font-bold">{viewingRequest.request_number || viewingRequest.id}</span></div>
+                                                                                            <div className="row flex justify-between mb-1 text-xs"><span className="label text-gray-500">Resident:</span><span className="value font-bold">{
+                                                                                             viewingRequest.user?.full_name ||
+                                                                                             [viewingRequest.user?.first_name, viewingRequest.user?.middle_name, viewingRequest.user?.last_name].filter(Boolean).join(' ') ||
+                                                                                             viewingRequest.user?.email || 'No Name'
+                                                                                         }</span></div>
+                                                                                            <div className="row flex justify-between mb-1 text-xs"><span className="label text-gray-500">Item:</span><span className="value font-bold">{viewingRequest.inventory?.name || ''}</span></div>
+                                                                                            <div className="row flex justify-between mb-1 text-xs"><span className="label text-gray-500">Quantity:</span><span className="value font-bold">{viewingRequest.quantity}</span></div>
+                                                                                            <div className="row flex justify-between mb-1 text-xs"><span className="label text-gray-500">Request Date:</span><span className="value font-bold">{moment(viewingRequest.created_at).format('MMM DD, YYYY')}</span></div>
+                                                                                            <div className="row flex justify-between mb-1 text-xs"><span className="label text-gray-500">Approval Date:</span><span className="value font-bold">{moment(viewingRequest.updated_at).format('MMM DD, YYYY')}</span></div>
+                                                                                            <div className="row flex justify-between mb-1 text-xs"><span className="label text-gray-500">Return Date:</span><span className="value font-bold">{viewingRequest.return_date ? moment(viewingRequest.return_date).format('MMM DD, YYYY') : '-'}</span></div>
+                                                                                            <div className="row flex justify-between mb-1 text-xs"><span className="label text-gray-500">Approved By:</span><span className="value font-bold">{
+                                                                                             (() => {
+                                                                                              const approver = viewingRequest.approvedBy;
+                                                                                              if (approver && typeof approver === 'object') {
+                                                                                               return approver.full_name || [approver.first_name, approver.middle_name, approver.last_name].filter(Boolean).join(' ') || approver.email || 'Barangay Staff';
+                                                                                              }
+                                                                                              return viewingRequest.approved_by || 'Barangay Staff';
+                                                                                           })()
+                                                                                         }</span></div>
+                                                                                            <div className="row flex justify-between mb-1 text-xs"><span className="label text-gray-500">Amount Paid:</span><span className="value font-bold">{
+                                                                                             viewingRequest.inventory?.has_fee
+                                                                                               ? `₱${(Number(viewingRequest.inventory.price) * Number(viewingRequest.quantity)).toFixed(2)}`
+                                                                                               : 'N/A'
+                                                                                         }</span></div>
+                                                                                            <div className="divider" style={{borderTop:'1px dashed #bbb',margin:'8px 0'}}></div>
+                                                                                            <div className="signature mt-4">
+                                                                                                <span className="label text-gray-500">Staff Signature:</span><br/>
+                                                                                                <span className="signature-line" style={{borderBottom:'1px solid #888',width:'120px',display:'inline-block',marginTop:'8px'}}></span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <button
+                                                                                            className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-medium text-sm"
+                                                                                            onClick={() => {
+                                                                                                const printContents = document.querySelector('.receipt').innerHTML;
+                                                                                                const printWindow = window.open('', 'PRINT', 'width=400,height=600');
+                                                                                                printWindow.document.write(`<html><head><title>Print Receipt</title><style>body{font-family:Arial,sans-serif;margin:0;padding:0;} .header{text-align:center;margin-bottom:8px;} .row{display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;} .label{color:#555;} .value{font-weight:bold;} .divider{border-top:1px dashed #bbb;margin:8px 0;} .signature{margin-top:16px;} .signature-line{border-bottom:1px solid #888;width:120px;display:inline-block;margin-top:8px;} .receipt{width:320px;margin:0 auto;padding:16px;border:1px solid #ccc;border-radius:8px;} </style></head><body><div class='receipt'>${printContents}</div><script>window.print();setTimeout(()=>window.close(),500);</script></body></html>`);
+                                                                                                printWindow.document.close();
+                                                                                            }}
+                                                                                        >
+                                                                                            Print
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
                                         </div>
                                     </div>
                                 )}

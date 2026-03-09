@@ -18,6 +18,7 @@ export default function AddInventorySection() {
 
     const [showForm, setShowForm] = useState(false);
     const [qrPreview, setQrPreview] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
     
     const hasFee = watch("has_fee", false);
 
@@ -49,23 +50,43 @@ export default function AddInventorySection() {
         }
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setImagePreview(null);
+        }
+    };
+
     const onSubmit = async (data) => {
         try {
             const formData = new FormData();
             
             // Append all text fields except special ones
             Object.keys(data).forEach(key => {
-                if (key !== 'gcash_qr' && key !== 'has_fee' && data[key] !== undefined && data[key] !== null) {
+                if (key !== 'gcash_qr' && key !== 'has_fee' && key !== 'image' && data[key] !== undefined && data[key] !== null) {
                     formData.append(key, data[key]);
                 }
             });
+
+            // Handle item image upload
+            if (data.image && data.image[0]) {
+                formData.append('image', data.image[0]);
+            }
             
             // Convert has_fee to proper boolean value (1 or 0)
             formData.append('has_fee', data.has_fee ? '1' : '0');
             
-            // Only append price if has_fee is true
+            // Only append price and gcash_qr if has_fee is true
             if (data.has_fee) {
-                // Append file if provided
+                if (typeof data.price !== 'undefined') {
+                    formData.append('price', data.price);
+                }
                 if (data.gcash_qr && data.gcash_qr[0]) {
                     formData.append('gcash_qr', data.gcash_qr[0]);
                 }
@@ -83,6 +104,7 @@ export default function AddInventorySection() {
             reset();
             setShowForm(false);
             setQrPreview(null);
+            setImagePreview(null);
         } catch (error) {
             console.error("Error saving item:", error);
             Swal.fire({
@@ -354,6 +376,33 @@ export default function AddInventorySection() {
                                             })}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                         />
+                                    </div>
+                                </div>
+
+                                {/* Borrowing Fee Section */}
+                                <div className="border-t pt-4 space-y-4">
+                                    {/* Item Image Upload */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Item Image
+                                        </label>
+                                        <input
+                                            type="file"
+                                            accept="image/jpeg,image/jpg,image/png,image/webp"
+                                            {...register("image")}
+                                            onChange={handleImageChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        />
+                                        <p className="text-xs text-gray-500 mt-1">Upload a photo of the item (max 5MB)</p>
+                                        {imagePreview && (
+                                            <div className="mt-2">
+                                                <img
+                                                    src={imagePreview}
+                                                    alt="Item Preview"
+                                                    className="max-w-xs max-h-48 rounded-lg shadow-sm border"
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 

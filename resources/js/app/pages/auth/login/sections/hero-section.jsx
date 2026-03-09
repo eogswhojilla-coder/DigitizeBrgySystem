@@ -65,7 +65,7 @@ const ctaButtons = [
 ];
 
 const stats = [
-    { value: "12K+", label: "Residents Served" },
+    { value: "7016+", label: "Residents Served" },
     { value: "98%", label: "Satisfaction Rate" },
     { value: "24/7", label: "Digital Access" },
 ];

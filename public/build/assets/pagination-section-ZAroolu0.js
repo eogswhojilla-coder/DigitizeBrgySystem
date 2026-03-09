@@ -1,1 +1,0 @@
-import{a as e,j as t}from"./app-Xia9h4g6.js";import{P as s}from"./pagination-KV478nMo.js";import"./search-lib-DkgW8ww6.js";function l(){const{blotters:o}=e(r=>r.blotters);return console.log("blotters",o),t.jsx(t.Fragment,{children:t.jsx(s,{data:o})})}export{l as default};

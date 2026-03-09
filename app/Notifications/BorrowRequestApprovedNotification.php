@@ -91,6 +91,8 @@ class BorrowRequestApprovedNotification extends Notification
             'status' => 'approved',
             'message' => 'Your borrow request has been approved. Item is ready to pick up.',
             'remarks' => $this->remarks,
+            'url' => '/resident/inventory-borrow',
+            'type' => 'borrow_request',
         ];
     }
 }
