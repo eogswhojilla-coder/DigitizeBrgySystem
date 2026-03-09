@@ -11,7 +11,7 @@ const appName = import.meta.env.VITE_APP_NAME || "Barangay Residence Management 
 window.global = window;
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
+    title: (title) => `${title} ${appName}`,
     resolve: (name) =>
         resolvePageComponent(
             `./app/pages/${name}.jsx`,
