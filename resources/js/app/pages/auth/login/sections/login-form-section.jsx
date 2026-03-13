@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useForm, Link } from "@inertiajs/react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Button from "@/app/_components/button";
-import Input from "@/app/_components/input";
 
 export default function LoginFormSection() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -510,7 +508,6 @@ export default function LoginFormSection() {
                     }
                 }
             `}</style>
-
             <div className="login-root">
                 <div className="login-bg" />
                 <div className="grid-overlay" />
@@ -519,25 +516,37 @@ export default function LoginFormSection() {
 
                 <div className="login-panel">
                     <div className="glass-card">
-
                         {/* Logo + Title */}
-                        <div className="logo-wrap">
-                            <div className="logo-ring">
-                                <img src="/images/brgy-ll-logo.png" alt="Barangay Logo" />
+                        <a href="/">
+                            <div className="logo-wrap">
+                                <div className="logo-ring">
+                                    <img
+                                        src="/images/brgy-ll-logo.png"
+                                        alt="Barangay Logo"
+                                    />
+                                </div>
+                                <div>
+                                    <h2 className="login-title">
+                                        Welcome Back
+                                    </h2>
+                                    <p className="login-subtitle">
+                                        Barangay Portal
+                                    </p>
+                                    <div className="title-divider" />
+                                </div>
                             </div>
-                            <div>
-                                <h2 className="login-title">Welcome Back</h2>
-                                <p className="login-subtitle">Barangay Portal</p>
-                                <div className="title-divider" />
-                            </div>
-                        </div>
-
+                        </a>
                         {/* Form */}
                         <form onSubmit={submit}>
                             <div className="field-group">
                                 {/* Email */}
                                 <div>
-                                    <label className="field-label" htmlFor="email">Email Address</label>
+                                    <label
+                                        className="field-label"
+                                        htmlFor="email"
+                                    >
+                                        Email Address
+                                    </label>
                                     <div className="field-input-wrap">
                                         <input
                                             id="email"
@@ -545,13 +554,28 @@ export default function LoginFormSection() {
                                             type="email"
                                             placeholder="you@example.com"
                                             value={data.email}
-                                            onChange={(e) => setData("email", e.target.value)}
+                                            onChange={(e) =>
+                                                setData("email", e.target.value)
+                                            }
                                             autoComplete="email"
-                                            style={errors.email ? { borderColor: 'rgba(239,68,68,0.7)' } : {}}
+                                            style={
+                                                errors.email
+                                                    ? {
+                                                          borderColor:
+                                                              "rgba(239,68,68,0.7)",
+                                                      }
+                                                    : {}
+                                            }
                                         />
                                     </div>
                                     {errors.email && (
-                                        <p style={{ color: '#f87171', fontSize: '0.82rem', marginTop: '6px' }}>
+                                        <p
+                                            style={{
+                                                color: "#f87171",
+                                                fontSize: "0.82rem",
+                                                marginTop: "6px",
+                                            }}
+                                        >
                                             {errors.email}
                                         </p>
                                     )}
@@ -559,28 +583,60 @@ export default function LoginFormSection() {
 
                                 {/* Password */}
                                 <div>
-                                    <label className="field-label" htmlFor="password">Password</label>
+                                    <label
+                                        className="field-label"
+                                        htmlFor="password"
+                                    >
+                                        Password
+                                    </label>
                                     <div className="field-input-wrap">
                                         <input
                                             id="password"
                                             name="password"
-                                            type={showPassword ? "text" : "password"}
+                                            type={
+                                                showPassword
+                                                    ? "text"
+                                                    : "password"
+                                            }
                                             placeholder="••••••••"
                                             value={data.password}
-                                            onChange={(e) => setData("password", e.target.value)}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "password",
+                                                    e.target.value,
+                                                )
+                                            }
                                             autoComplete="current-password"
-                                            style={{ paddingRight: "44px", ...(errors.password ? { borderColor: 'rgba(239,68,68,0.7)' } : {}) }}
+                                            style={{
+                                                paddingRight: "44px",
+                                                ...(errors.password
+                                                    ? {
+                                                          borderColor:
+                                                              "rgba(239,68,68,0.7)",
+                                                      }
+                                                    : {}),
+                                            }}
                                         />
                                         <button
                                             type="button"
                                             onClick={togglePassword}
                                             className="pw-toggle"
                                         >
-                                            {showPassword ? <FaEyeSlash size={15} /> : <FaEye size={15} />}
+                                            {showPassword ? (
+                                                <FaEyeSlash size={15} />
+                                            ) : (
+                                                <FaEye size={15} />
+                                            )}
                                         </button>
                                     </div>
                                     {errors.password && (
-                                        <p style={{ color: '#f87171', fontSize: '0.82rem', marginTop: '6px' }}>
+                                        <p
+                                            style={{
+                                                color: "#f87171",
+                                                fontSize: "0.82rem",
+                                                marginTop: "6px",
+                                            }}
+                                        >
                                             {errors.password}
                                         </p>
                                     )}
@@ -593,11 +649,18 @@ export default function LoginFormSection() {
                                     <input
                                         type="checkbox"
                                         checked={data.remember}
-                                        onChange={(e) => setData("remember", e.target.checked)}
+                                        onChange={(e) =>
+                                            setData(
+                                                "remember",
+                                                e.target.checked,
+                                            )
+                                        }
                                     />
                                     <span>Remember me</span>
                                 </label>
-                                <a href="#" className="forgot-link">Forgot password?</a>
+                                <a href="#" className="forgot-link">
+                                    Forgot password?
+                                </a>
                             </div>
 
                             {/* Sign In */}
@@ -613,21 +676,34 @@ export default function LoginFormSection() {
                         {/* Separator */}
                         <div className="sep">
                             <div className="sep-line" />
-                            <span className="sep-text">Don't have an account?</span>
+                            <span className="sep-text">
+                                Don't have an account?
+                            </span>
                             <div className="sep-line" />
                         </div>
 
                         {/* Register */}
                         <Link href="/auth/register" className="btn-register">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M12.0003 4.75C13.7703 4.75 15.3553 5.36002 16.6053 6.54998L20.0303 3.125C17.9502 1.19 15.2353 0 12.0003 0C7.31028 0 3.25527 2.69 1.28027 6.60998L5.27028 9.70498C6.21525 6.86002 8.87028 4.75 12.0003 4.75Z" fill="#EA4335" />
-                                <path d="M23.49 12.275C23.49 11.49 23.415 10.73 23.3 10H12V14.51H18.47C18.18 15.99 17.34 17.25 16.08 18.1L19.945 21.1C22.2 19.01 23.49 15.92 23.49 12.275Z" fill="#4285F4" />
-                                <path d="M5.26498 14.2949C5.02498 13.5699 4.88501 12.7999 4.88501 11.9999C4.88501 11.1999 5.01998 10.4299 5.26498 9.7049L1.275 6.60986C0.46 8.22986 0 10.0599 0 11.9999C0 13.9399 0.46 15.7699 1.28 17.3899L5.26498 14.2949Z" fill="#FBBC05" />
-                                <path d="M12.0004 24.0001C15.2404 24.0001 17.9654 22.935 19.9454 21.095L16.0804 18.095C15.0054 18.82 13.6204 19.245 12.0004 19.245C8.8704 19.245 6.21537 17.135 5.2654 14.29L1.27539 17.385C3.25539 21.31 7.3104 24.0001 12.0004 24.0001Z" fill="#34A853" />
+                                <path
+                                    d="M12.0003 4.75C13.7703 4.75 15.3553 5.36002 16.6053 6.54998L20.0303 3.125C17.9502 1.19 15.2353 0 12.0003 0C7.31028 0 3.25527 2.69 1.28027 6.60998L5.27028 9.70498C6.21525 6.86002 8.87028 4.75 12.0003 4.75Z"
+                                    fill="#EA4335"
+                                />
+                                <path
+                                    d="M23.49 12.275C23.49 11.49 23.415 10.73 23.3 10H12V14.51H18.47C18.18 15.99 17.34 17.25 16.08 18.1L19.945 21.1C22.2 19.01 23.49 15.92 23.49 12.275Z"
+                                    fill="#4285F4"
+                                />
+                                <path
+                                    d="M5.26498 14.2949C5.02498 13.5699 4.88501 12.7999 4.88501 11.9999C4.88501 11.1999 5.01998 10.4299 5.26498 9.7049L1.275 6.60986C0.46 8.22986 0 10.0599 0 11.9999C0 13.9399 0.46 15.7699 1.28 17.3899L5.26498 14.2949Z"
+                                    fill="#FBBC05"
+                                />
+                                <path
+                                    d="M12.0004 24.0001C15.2404 24.0001 17.9654 22.935 19.9454 21.095L16.0804 18.095C15.0054 18.82 13.6204 19.245 12.0004 19.245C8.8704 19.245 6.21537 17.135 5.2654 14.29L1.27539 17.385C3.25539 21.31 7.3104 24.0001 12.0004 24.0001Z"
+                                    fill="#34A853"
+                                />
                             </svg>
                             Create an Account
                         </Link>
-
                     </div>
                 </div>
             </div>

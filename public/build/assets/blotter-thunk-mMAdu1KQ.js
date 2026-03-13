@@ -1,0 +1,1 @@
+import{b as e,l as o}from"./app-CqHqVwvg.js";function n(t){try{return e.post("/api/blotters",t)}catch{}}async function c(){try{return e.get("/api/blotters"+window.location.search)}catch{}}function i(){return async function(t,r){const s=await c();t(o.actions.setBlotters(s.data))}}export{n as c,i as g};

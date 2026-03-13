@@ -11,9 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('inventories', function (Blueprint $table) {
-            $table->longText('image')->nullable()->after('minimum_quantity');
-        });
+        // Image column already exists in inventories table, do not add again
     }
 
     /**

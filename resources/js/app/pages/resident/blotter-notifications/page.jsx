@@ -2,7 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import Layout from "../layout";
-import { Shield, AlertTriangle, Info, CheckCircle, Clock, XCircle } from 'lucide-react';
+import {
+    Shield,
+    AlertTriangle,
+    Info,
+    CheckCircle,
+    Clock,
+    XCircle,
+} from "lucide-react";
 import axios from "axios";
 import moment from "moment";
 
@@ -81,7 +88,9 @@ export default function Page() {
                         <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" />
                         Blotter Notifications
                     </h1>
-                    <p className="text-sm sm:text-base text-gray-600 mt-1">View blotter reports and notifications related to you</p>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1">
+                        View blotter reports and notifications related to you
+                    </p>
                 </div>
 
                 {/* Alert Banner */}
@@ -89,10 +98,14 @@ export default function Page() {
                     <div className="flex items-start gap-3">
                         <AlertTriangle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
                         <div>
-                            <h3 className="font-semibold text-yellow-900">Important Notice</h3>
+                            <h3 className="font-semibold text-yellow-900">
+                                Important Notice
+                            </h3>
                             <p className="text-sm text-yellow-800 mt-1">
-                                You will be notified here if you are involved in any blotter reports filed in the barangay.
-                                Please cooperate with the barangay officials regarding any pending cases.
+                                You will be notified here if you are involved in
+                                any blotter reports filed in the barangay.
+                                Please cooperate with the barangay officials
+                                regarding any pending cases.
                             </p>
                         </div>
                     </div>
@@ -102,7 +115,9 @@ export default function Page() {
                 {loading ? (
                     <div className="bg-white rounded-lg shadow-lg p-6 sm:p-12 text-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                        <p className="mt-4 text-gray-600">Loading notifications...</p>
+                        <p className="mt-4 text-gray-600">
+                            Loading notifications...
+                        </p>
                     </div>
                 ) : blotterNotifications.length === 0 ? (
                     <div className="bg-white rounded-lg shadow-lg p-6 sm:p-12 text-center">
@@ -117,7 +132,7 @@ export default function Page() {
                 ) : (
                     <div className="space-y-4">
                         {blotterNotifications.map((blotter) => (
-                            <div 
+                            <div
                                 key={blotter.id}
                                 className={`bg-white rounded-lg shadow-lg p-4 sm:p-6 ${getSeverityColor(blotter.severity)}`}
                             >
@@ -125,12 +140,17 @@ export default function Page() {
                                     <div className="flex-1">
                                         <div className="flex items-center gap-3 mb-2">
                                             <h2 className="text-xl font-bold text-gray-900">
-                                                Blotter Report #{blotter.case_number || blotter.id}
+                                                Blotter Report #
+                                                {blotter.case_number ||
+                                                    blotter.id}
                                             </h2>
                                             {getStatusBadge(blotter.status)}
                                         </div>
                                         <p className="text-sm text-gray-600">
-                                            Filed on: {moment(blotter.created_at).format("MMMM DD, YYYY hh:mm A")}
+                                            Filed on:{" "}
+                                            {moment(blotter.created_at).format(
+                                                "MMMM DD, YYYY hh:mm A",
+                                            )}
                                         </p>
                                     </div>
                                 </div>
@@ -149,7 +169,13 @@ export default function Page() {
                                             Respondent (You)
                                         </label>
                                         <p className="text-sm text-gray-900 font-medium mt-1">
-                                            {blotter.respondent_name || "N/A"}
+                                            {blotter.respondent_name
+                                                ? blotter.respondent_name
+                                                : blotter.respondent
+                                                  ? blotter.respondent
+                                                  : blotter.respondentResident
+                                                    ? `${blotter.respondentResident.firstName} ${blotter.respondentResident.middleName || ""} ${blotter.respondentResident.lastName}`.trim()
+                                                    : "N/A"}
                                         </p>
                                     </div>
                                     <div>
@@ -165,8 +191,10 @@ export default function Page() {
                                             Incident Date
                                         </label>
                                         <p className="text-sm text-gray-900 font-medium mt-1">
-                                            {blotter.incident_date 
-                                                ? moment(blotter.incident_date).format("MMM DD, YYYY") 
+                                            {blotter.incident_date
+                                                ? moment(
+                                                      blotter.incident_date,
+                                                  ).format("MMM DD, YYYY")
                                                 : "N/A"}
                                         </p>
                                     </div>
@@ -177,7 +205,9 @@ export default function Page() {
                                         Description
                                     </label>
                                     <p className="text-sm text-gray-700 mt-1">
-                                        {blotter.description || blotter.incident_details || "No description provided"}
+                                        {blotter.description ||
+                                            blotter.incident_details ||
+                                            "No description provided"}
                                     </p>
                                 </div>
 
@@ -217,7 +247,10 @@ export default function Page() {
 
                                 <div className="mt-4 pt-4 border-t border-gray-200">
                                     <p className="text-xs text-gray-500">
-                                        Last updated: {moment(blotter.updated_at).format("MMMM DD, YYYY hh:mm A")}
+                                        Last updated:{" "}
+                                        {moment(blotter.updated_at).format(
+                                            "MMMM DD, YYYY hh:mm A",
+                                        )}
                                     </p>
                                 </div>
                             </div>

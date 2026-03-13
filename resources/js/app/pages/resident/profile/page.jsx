@@ -46,6 +46,8 @@ export default function Page() {
     const [showCurrentPw, setShowCurrentPw] = useState(false);
     const [showNewPw, setShowNewPw] = useState(false);
     const [showConfirmPw, setShowConfirmPw] = useState(false);
+    const [profileImageFile, setProfileImageFile] = useState(null);
+    const [profileImagePreview, setProfileImagePreview] = useState(null);
 
     const {
         register,
@@ -145,6 +147,31 @@ export default function Page() {
         }
     };
 
+    const handleProfileImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setProfileImageFile(file);
+            setProfileImagePreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleProfileImageUpload = async () => {
+        if (!profileImageFile) return;
+        const formData = new FormData();
+        formData.append('profile_image', profileImageFile);
+        try {
+            await axios.post('/api/my-profile-image', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            await fetchProfile();
+            setProfileImageFile(null);
+            setProfileImagePreview(null);
+            Swal.fire({ icon: 'success', title: 'Profile Image Updated', showConfirmButton: false, timer: 1500 });
+        } catch (error) {
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update profile image.' });
+        }
+    };
+
     if (loading) {
         return (
             <Layout>
@@ -211,10 +238,29 @@ export default function Page() {
                     <div className="bg-gradient-to-r from-blue-600 to-blue-800 px-4 sm:px-6 py-6 sm:py-8">
                         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                             <img
-                                src={profileImageUrl}
+                                src={profileImagePreview || profileImageUrl}
                                 alt="Profile"
                                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white object-cover shadow-lg"
                             />
+                            {isEditing && (
+                                <div className="flex flex-col items-center gap-2">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleProfileImageChange}
+                                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700 file:rounded-full file:cursor-pointer"
+                                    />
+                                    {profileImageFile && (
+                                        <button
+                                            type="button"
+                                            onClick={handleProfileImageUpload}
+                                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                                        >
+                                            Upload Image
+                                        </button>
+                                    )}
+                                </div>
+                            )}
                             <div className="text-white text-center sm:text-left">
                                 <h2 className="text-lg sm:text-2xl font-bold">
                                     {residentData?.firstName} {residentData?.middleName} {residentData?.lastName} {residentData?.suffix || ""}

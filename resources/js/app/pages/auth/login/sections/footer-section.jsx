@@ -1,4 +1,3 @@
-
 export default function FooterSection() {
     const currentYear = new Date().getFullYear();
 
@@ -44,8 +43,8 @@ export default function FooterSection() {
 
                         <p className="text-slate-500 dark:text-white/50 text-sm leading-relaxed max-w-sm">
                             The official digital management system of Barangay
-                            San Isidro. Committed to transparent, accessible,
-                            and modern public service delivery.
+                            II. Committed to transparent, accessible, and modern
+                            public service delivery.
                         </p>
                     </div>
 
@@ -93,8 +92,8 @@ export default function FooterSection() {
                 {/* BOTTOM BAR */}
                 <div className="border-t border-slate-200 dark:border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
                     <div className="text-slate-400 dark:text-white/40 text-xs text-center md:text-left">
-                        © {currentYear} Barangay II Management System.
-                        All rights reserved.
+                        © {currentYear} Barangay II Management System. All
+                        rights reserved.
                     </div>
 
                     <div className="flex flex-col md:flex-row items-center gap-3 md:gap-6 text-center md:text-right">
@@ -105,7 +104,7 @@ export default function FooterSection() {
                         <span className="text-slate-400 dark:text-white/40 text-xs">
                             Developed by{" "}
                             <span className="text-yellow-500 font-medium">
-                                BSIT 4 - Solutions
+                                BSIT 4 - Group 1 Solutions
                             </span>
                         </span>
                     </div>

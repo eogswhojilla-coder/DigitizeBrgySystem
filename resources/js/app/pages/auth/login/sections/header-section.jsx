@@ -31,7 +31,7 @@ export default function HeaderSection() {
                             className="h-8 sm:h-10 w-auto object-contain"
                         />
                         <p className="text-sm sm:text-md font-bold text-slate-900 dark:text-white tracking-tight">
-                            BARANGAY PORTAL
+                            BARANGAY II PORTAL
                         </p>
                     </a>
                 </div>

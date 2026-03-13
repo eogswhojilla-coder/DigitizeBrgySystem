@@ -16,6 +16,17 @@ function useCountUp(target, duration = 2000, start = false) {
     }, [target, duration, start]);
     return count;
 }
+// const {
+//     statsData,
+//     genderData,
+//     ageGroupData,
+//     monthlyActivityData,
+//     blotterStatusData,
+//     familyDistributionData,
+//     inventoryData,
+//     recentTransactions,
+//     activityFeed,
+// } = usePage().props;
 
 function AnimatedCounter({ target, label, suffix = "", icon }) {
     const ref = useRef(null);
@@ -94,14 +105,17 @@ export default function StatsSection() {
                         </span>
                     </h2>
                     <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
-                        A snapshot of our community's growth, engagement, and impact through the years.
+                        A snapshot of our community's growth, engagement, and
+                        impact through the years.
                     </p>
                 </div>
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     <AnimatedCounter
-                        target={12847}
+                        // value={statsData.totalResidents.value}
+                        // change={statsData.totalResidents.change}
+                        target={7084}
                         label="Registered Residents"
                         icon="👥"
                     />
@@ -112,7 +126,7 @@ export default function StatsSection() {
                         icon="📋"
                     />
                     <AnimatedCounter
-                        target={48}
+                        target={48} 
                         label="Active Announcements"
                         icon="📢"
                     />

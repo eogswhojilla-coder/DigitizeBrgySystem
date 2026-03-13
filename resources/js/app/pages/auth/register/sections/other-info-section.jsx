@@ -213,7 +213,7 @@ export default function OtherInfoSection({
                                     placeholder="e.g., 123"
                                 />
                             </div> */}
-                            <div className="space-y-2">
+                            <div className="space-y-2 mt-6">
                                 <Input
                                     register={register("houseNumber")}
                                     error={errors?.houseNumber?.message}

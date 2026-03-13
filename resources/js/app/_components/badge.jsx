@@ -1,16 +1,76 @@
-export default function Badge({ children, color = 'gray' }) {
-    const colors = {
-        gray: 'bg-gray-100 text-gray-800',
-        red: 'bg-red-100 text-red-800',
-        yellow: 'bg-yellow-100 text-yellow-800',
-        green: 'bg-green-100 text-green-800',
-        blue: 'bg-blue-100 text-blue-800',
-        purple: 'bg-purple-100 text-purple-800'
+export default function Badge({
+    label = "Badge",
+    variant = "primary", // primary | secondary | success | warning | danger
+    outlined = false,
+    showDot = true,
+    className = "",
+}) {
+    const base =
+        "inline-flex items-center gap-x-1.5 rounded-x px-2 py-1 text-xs font-medium";
+
+    const variants = {
+        primary: {
+            solid: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+            outline:
+                "text-blue-600  inset-ring  inset-ring-blue-300 dark:text-blue-300 dark:inset-ring-blue-700",
+            dot: "fill-blue-500 dark:fill-blue-400",
+        },
+        secondary: {
+            solid: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
+            outline:
+                "text-gray-600 inset-ring  inset-ring-gray-300 dark:text-gray-300 dark:inset-ring-gray-700",
+            dot: "fill-gray-500 dark:fill-gray-400",
+        },
+        success: {
+            solid: "bg-green-600 text-white dark:bg-green-900/30 dark:text-green-300",
+            outline:
+                "text-green-600 inset-ring  inset-ring-green-300 dark:text-green-300 dark:inset-ring-green-700",
+            dot: "fill-green-500 dark:fill-green-400",
+        },
+        warning: {
+            solid: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+            outline:
+                "text-yellow-600  inset-ring inset-ring-yellow-300 dark:text-yellow-300 dark:inset-ring-yellow-700",
+            dot: "fill-yellow-500 dark:fill-yellow-400",
+        },
+        danger: {
+            solid: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+            outline:
+                "text-red-600 inset-ring inset-ring-red-300 dark:text-red-300 dark:inset-ring-red-700",
+            dot: "fill-red-500 dark:fill-red-400",
+        },
+        info: {
+            solid: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+            outline:
+                "text-orange-600  inset-ring  inset-ring-orange-300 dark:text-orange-300 dark:inset-ring-orange-700",
+            dot: "fill-orange-500 dark:fill-orange-400",
+        },
+        purple: {
+            solid: "bg-purple-200 text-purple dark:bg-purple-900/30 dark:text-purple-300",
+            outline:
+                "text-purple-600  inset-ring inset-ring-purple-300 dark:text-purple-300 dark:inset-ring-purple-700",
+            dot: "fill-purple-500 dark:fill-purple-400",
+        },
     };
 
+    const style = variants[variant] ?? variants.primary;
+
     return (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[color]}`}>
-            {children}
+        <span
+            className={`capitalize ${base} ${
+                outlined ? style.outline : style.solid
+            } ${className}`}
+        >
+            {showDot && (
+                <svg
+                    viewBox="0 0 6 6"
+                    aria-hidden="true"
+                    className={`size-1.5 ${style.dot}`}
+                >
+                    <circle r={3} cx={3} cy={3} />
+                </svg>
+            )}
+            {label}
         </span>
     );
 }

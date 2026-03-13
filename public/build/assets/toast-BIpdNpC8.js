@@ -1,1 +1,0 @@
-import{j as e}from"./app-BrqORBkw.js";import{L as s}from"./index-Bbfc_gJ2.js";function t(){return e.jsx(s,{position:"top-right",autoClose:5e3,hideProgressBar:!1,newestOnTop:!1,closeOnClick:!1,rtl:!1,pauseOnFocusLoss:!0,draggable:!0,pauseOnHover:!0,theme:"light"})}export{t as T};

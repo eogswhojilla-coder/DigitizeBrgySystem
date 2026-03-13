@@ -3,7 +3,6 @@ export default function ContactSection() {
         address:
             "Don Juan Subd., Pres. Quirino St., Brgy. II, Barangay Hall, San Carlos City, Negros Occidental, Philippines",
         phone1: "   729-8353 ",
-        phone2: "+63 917 123 4567",
         email: "barangay_two@yahoo.com",
         officeHours: [
             "Monday – Friday: 8:00 AM – 5:00 PM",
@@ -75,7 +74,7 @@ export default function ContactSection() {
                                 </div>
                                 <div>
                                     <div className="font-mono text-xs tracking-widest text-yellow-600 dark:text-yellow-500 mb-2 uppercase">
-                                        Phone
+                                        Telephone
                                     </div>
                                     <div className="text-slate-600 dark:text-slate-300 text-sm space-y-1">
                                         <a

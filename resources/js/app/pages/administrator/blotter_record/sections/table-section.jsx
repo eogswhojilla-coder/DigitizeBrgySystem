@@ -3,6 +3,8 @@ import { Edit, Eye } from "lucide-react";
 import { useSelector } from "react-redux";
 import Table from "@/app/_components/table";
 import ViewBlotterModal from "./view-blotter-modal";
+import moment from "moment";
+import Badge from "@/app/_components/badge";
 
 export default function TableSection() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -46,20 +48,20 @@ export default function TableSection() {
 
     // Define table columns
     const columns = [
-        {
-            header: (
-                <input
-                    type="checkbox"
-                    checked={
-                        selectedItems.length === filteredBlotters.length &&
-                        filteredBlotters.length > 0
-                    }
-                    onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-            ),
-            accessor: "checkbox",
-        },
+        // {
+        //     header: (
+        //         <input
+        //             type="checkbox"
+        //             checked={
+        //                 selectedItems.length === filteredBlotters.length &&
+        //                 filteredBlotters.length > 0
+        //             }
+        //             onChange={(e) => handleSelectAll(e.target.checked)}
+        //             className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+        //         />
+        //     ),
+        //     accessor: "checkbox",
+        // },
         {
             header: "Blotter No.",
             accessor: "blotterNumber",
@@ -96,33 +98,69 @@ export default function TableSection() {
 
     // Transform blotters data for the table
     const tableData = filteredBlotters.map((blotter) => ({
-        checkbox: (
-            <input
-                type="checkbox"
-                checked={selectedItems.includes(blotter.id)}
-                onChange={(e) => handleSelectItem(blotter.id, e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            />
-        ),
+        // checkbox: (
+        //     <input
+        //         type="checkbox"
+        //         checked={selectedItems.includes(blotter.id)}
+        //         onChange={(e) => handleSelectItem(blotter.id, e.target.checked)}
+        //         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+        //     />
+        // ),
         blotterNumber: (
             <span className="font-medium text-blue-600">
-                {blotter.blotterNumber || "N/A"}
+                {
+                    blotter.case_number
+                        ? `BLT-${String(blotter.case_number).padStart(6, '0')}`
+                        : blotter.id
+                            ? `BLT-${String(blotter.id).padStart(6, '0')}`
+                            : 'N/A'
+                }
             </span>
         ),
-        status: (
-            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                {blotter.status}
-            </span>
-        ),
+        status: (() => {
+            const status = (blotter.status || "").toLowerCase();
+            let variant = "primary";
+            switch (status) {
+                case "pending":
+                    variant = "warning";
+                    break;
+                case "under investigation":
+                    variant = "info";
+                    break;
+                case "resolved":
+                    variant = "success";
+                    break;
+                case "dismissed":
+                    variant = "secondary";
+                    break;
+                default:
+                    variant = "primary";
+            }
+            return (
+                <Badge 
+                outlined
+                label={blotter.status || "Unknown"} variant={variant} />
+            );
+        })(),
         remarks: (
-            <span className="px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">
-                {blotter.remarks}
+            <span title={blotter.remarks}>
+                {blotter.remarks && blotter.remarks.length > 30
+                    ? blotter.remarks.slice(0, 30) + '...'
+                    : blotter.remarks || 'N/A'}
             </span>
         ),
-        incident: blotter.incident,
-        location: blotter.location_of_incident,
-        dateIncident: blotter.date_of_incident,
-        dateReported: blotter.date_reported,
+        incident: blotter.incident && blotter.incident.length > 30
+            ? blotter.incident.slice(0, 30) + '...'
+            : blotter.incident || 'N/A',
+        location: blotter.location_of_incident && blotter.location_of_incident.length > 30
+            ? blotter.location_of_incident.slice(0, 30) + '...'
+            : blotter.location_of_incident || 'N/A',
+        dateIncident: blotter.date_of_incident
+            ? moment(blotter.date_of_incident).format("MMM DD, YYYY")
+            : 'N/A',
+        dateReported: blotter.date_reported
+            ? moment(blotter.date_reported).format("MMM DD, YYYY ")
+            : 'N/A',
         action: (
             <div className="flex gap-2">
                 <button 
@@ -151,7 +189,6 @@ export default function TableSection() {
                 blotterId={selectedBlotterId}
             />
 
-            {/* Controls Section */}
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white">
                 <div className="flex items-center gap-2">
                     <span className="text-gray-600">Show</span>
@@ -182,7 +219,6 @@ export default function TableSection() {
                 </div>
             </div>
 
-            {/* Table Section */}
             {filteredBlotters.length > 0 ? (
                 <Table columns={columns} data={tableData} />
             ) : (
