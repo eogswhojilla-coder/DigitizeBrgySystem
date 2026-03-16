@@ -219,9 +219,13 @@ export default function TableSection({ onViewDetails }) {
     // ✅ Safe filtering by search and position
     const filteredOfficials = data.filter((o) => {
         const matchesSearch =
-            o.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            o.position.toLowerCase().includes(searchTerm.toLowerCase());
-
+            (o.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (o.position || "")
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+            (o.officialNumber || "")
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
         const matchesPosition =
             positionFilter === "ALL POSITION" || o.position === positionFilter;
 
@@ -295,10 +299,18 @@ export default function TableSection({ onViewDetails }) {
                     className="bg-white/40 border border-gray-600 rounded px-2 py-1 text-xs"
                 >
                     <option>ALL POSITION</option>
-                    <option>KAGAWAD</option>
-                    <option>CHAIRMAN</option>
-                    <option>SECRETARY</option>
-                    <option>SK KAGAWAD</option>
+                    <option>Punong Barangay (Barangay Captain)</option>
+                    <option>Barangay Kagawad (Barangay Councilor)</option>
+
+                    <option>Barangay Record Keeper</option>
+                    <option>Barangay Nutrition Scholar</option>
+                    <option>
+                        Lupong Tagapamayapa (Barangay Justice Committee)
+                    </option>
+                    <option>Barangay Tanod (Barangay Watchman) </option>
+                    <option>Barangay Health Worker / Health Officer</option>
+                    <option>Barangay Treasurer</option>
+                    <option>Barangay Secretary</option>
                 </select>
             ),
             accessor: "position",
