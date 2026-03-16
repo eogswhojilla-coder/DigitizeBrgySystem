@@ -98,7 +98,7 @@ export default function GuardianSection({ register, errors }) {
                             })}
                             error={errors?.contact?.message}
                             label="Contact"
-                            type="tel"
+                            type="number"
                             name="contact"
                             className="w-full px-3 py-2"
                         />

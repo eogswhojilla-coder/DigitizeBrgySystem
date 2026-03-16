@@ -185,7 +185,7 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                                     register={register("houseNumber")}
                                     error={errors?.houseNumber?.message}
                                     label="House No."
-                                    type="text"
+                                    type="number"
                                     name="houseNumber"
                                     placeholder="e.g., 123"
                                 />
@@ -367,7 +367,7 @@ export default function OtherInfoSection({ register, errors, watch, setValue }) 
                                     })}
                                     error={errors?.contactNumber?.message}
                                     label="Contact Number"
-                                    type="text"
+                                    type="number"
                                     name="contactNumber"
                                     placeholder="e.g., 09123456789"
                                 />

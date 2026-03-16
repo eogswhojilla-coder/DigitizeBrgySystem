@@ -218,13 +218,13 @@ export default function OtherInfoSection({
                                     register={register("houseNumber")}
                                     error={errors?.houseNumber?.message}
                                     label="House No."
-                                    type="text"
+                                    type="number"
                                     name="houseNumber"
                                 />
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                             <div className="space-y-2">
                                 <Input
                                     register={register("barangay")}
@@ -263,20 +263,20 @@ export default function OtherInfoSection({
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mt-4">
-                            <div className="space-y-2">
-                                <Input
-                                    register={register("zip", {
-                                        required: "Zip code is required",
-                                    })}
-                                    error={errors?.zip?.message}
-                                    label="Zip Code"
-                                    type="text"
-                                    name="zip"
-                                    placeholder="e.g., 6127"
-                                />
+                            <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mt-6">
+                                <div className="space-y-2">
+                                    <Input
+                                        register={register("zip", {
+                                            required: "Zip code is required",
+                                        })}
+                                        error={errors?.zip?.message}
+                                        label="Zip Code"
+                                        type="number"
+                                        name="zip"
+                                        placeholder="e.g., 6127"
+                                    />
+                                </div>
                             </div>
-                        </div>
                     </div>
 
                     {/* Residency Information */}
@@ -442,7 +442,7 @@ export default function OtherInfoSection({
                                     })}
                                     error={errors?.contactNumber?.message}
                                     label="Contact Number"
-                                    type="text"
+                                    type="number"
                                     name="contactNumber"
                                     placeholder="e.g., 09123456789"
                                 />

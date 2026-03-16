@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import Table from "@/app/_components/table";
 import DeleteSection from "./delete-section";
 import EditSection from "./edit-section";
+import Badge from "@/app/_components/badge";
 
 export default function TableInventorySection() {
     const { inventories } = useSelector((store) => store.inventories);
@@ -98,13 +99,25 @@ export default function TableInventorySection() {
             header: "Category",
             accessor: "category",
             cell: (item) => (
-                <span
-                    className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full ${getCategoryBadge(
-                        item.category
-                    )}`}
-                >
-                    {item.category || "Uncategorized"}
-                </span>
+                <Badge
+               
+                    label={item.category || "Uncategorized"}
+                    variant={(() => {
+                        switch (item.category) {
+                            case "Furniture": return "purple";
+                            case "Equipment": return "primary";
+                            case "Event Supplies": return "info";
+                            case "Sports Equipment": return "success";
+                            case "Office Supplies": return "warning";
+                            case "Medical Supplies": return "danger";
+                            case "Tools": return "secondary";
+                            case "Electronics": return "purple";
+                            default: return "secondary";
+                        }
+                    })()}
+                    outlined
+                    
+                />
             ),
         },
         {

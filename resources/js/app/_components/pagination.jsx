@@ -9,6 +9,7 @@ export default function Pagination({ data }) {
     const currentPage = data?.current_page;
     const lastPage = data?.last_page;
     const maxVisiblePages = 5; // Maximum number of pages to show
+    const onPageChange = data?.onPageChange;
 
     const getPageNumbers = () => {
         const pages = [];
@@ -42,15 +43,15 @@ export default function Pagination({ data }) {
             }
         }
 
-        return pages;
+        return pages;   
     };
 
     return (
         <nav className="flex items-center justify-between   px-4 sm:px-0 w-full">
             <div className="-mt-px flex w-0 flex-1">
                 {currentPage > 1 && (
-                    <Link
-                        href={`?page=${currentPage - 1}&search=${search}`}
+                    <button
+                        onClick={() => onPageChange && onPageChange(currentPage - 1)}
                         className="inline-flex items-center  border-transparent bg-blue-500 p-2 text-white rounded-md text-sm font-medium"
                     >
                         <ArrowLongLeftIcon
@@ -58,32 +59,32 @@ export default function Pagination({ data }) {
                             className="mr-3 h-5 w-5 text-white"
                         />
                         Previous
-                    </Link>
+                    </button>
                 )}
             </div>
             <div className="hidden md:-mt-px md:flex  gap-3">
                 {getPageNumbers().map((page, index) => (
-                    <Link
-                        key={index}
-                        href={
-                            typeof page === "number"
-                                ? `?page=${page}&search=${search}`
-                                : "#"
-                        }
-                        className={`inline-flex items-center  rounded-md text-center px-4 p-2 text-sm font-medium ${
-                            currentPage === page
-                                ? "text-blue-600 border-blue-600 border-2 text-blue"
-                                : "bg-blue-500  hover:bg-blue-500  text-white "
-                        }`}
-                    >
-                        {page}
-                    </Link>
+                    typeof page === "number" ? (
+                        <button
+                            key={index}
+                            onClick={() => onPageChange && onPageChange(page)}
+                            className={`inline-flex items-center  rounded-md text-center px-4 p-2 text-sm font-medium ${
+                                currentPage === page
+                                    ? "text-blue-600 border-blue-600 border-2 text-blue"
+                                    : "bg-blue-500  hover:bg-blue-500  text-white "
+                            }`}
+                        >
+                            {page}
+                        </button>
+                    ) : (
+                        <span key={index} className="inline-flex items-center px-4 p-2 text-sm font-medium text-gray-400">{page}</span>
+                    )
                 ))}
             </div>
             <div className="-mt-px flex  flex-1 justify-end w-full">
                 {currentPage < lastPage && (
-                    <Link
-                        href={`?page=${currentPage + 1}&search=${search}`}
+                    <button
+                        onClick={() => onPageChange && onPageChange(currentPage + 1)}
                         className="inline-flex items-center  border-transparent bg-blue-500 p-2 text-white rounded-md text-sm font-medium  "
                     >
                         Next
@@ -91,7 +92,7 @@ export default function Pagination({ data }) {
                             aria-hidden="true"
                             className="ml-3 h-5 w-5 text-white"
                         />
-                    </Link>
+                    </button>
                 )}
             </div>
         </nav>

@@ -14,6 +14,10 @@ export default function TableSection1() {
       accessor: "position",
     },
     {
+      header: "Description",
+      accessor: "description",
+    },
+    {
       header: "Limit",
       accessor: "limit",
     },
@@ -25,7 +29,7 @@ export default function TableSection1() {
 
   // Transform positions data for the table
   const tableData = positions?.map((position) => ({
-    position: <span className="font-medium">{position.position}</span>,
+    position: <span className="font-medium">{position.position}</span>, description: position.description,
     limit: position.limit,
     action: (
       <div className="flex space-x-2">
