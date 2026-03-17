@@ -110,6 +110,40 @@ export default function AccountSection({ register, errors }) {
                             <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>
                         )}
                     </div>
+                      <div className="bg-blue-100 dark:bg-gray-800 p-4 rounded-md border border-blue-300 dark:border-gray-700">
+                        <h3 className="font-semibold text-blue-800 dark:text-blue-400 mb-2">
+                            Password Requirements:
+                        </h3>
+                        <ul className="list-disc list-inside text-blue-700 dark:text-blue-300 space-y-1">
+                            <li>
+                                <strong>Length:</strong> At least 8 characters
+                                long.
+                            </li>
+                            <li>
+                                <strong>Uppercase Letter:</strong> Include at
+                                least one capital letter (A-Z).
+                            </li>
+                            <li>
+                                <strong>Lowercase Letter:</strong> Include at
+                                least one lowercase letter (a-z).
+                            </li>
+                            <li>
+                                <strong>Number:</strong> Include at least one
+                                number (0-9).
+                            </li>
+                            <li>
+                                <strong>Symbol:</strong> Include at least one
+                                special character (e.g., ! @ # $ % ^ & *).
+                            </li>
+                            <li>
+                                <strong>No Spaces:</strong> Passwords should not
+                                contain spaces.
+                            </li>
+                        </ul>
+                        <p className="mt-2 text-blue-800 dark:text-blue-400">
+                            <strong>Example:</strong> Secure@123
+                        </p>
+                    </div>
                 </div>
             </div>
         </>

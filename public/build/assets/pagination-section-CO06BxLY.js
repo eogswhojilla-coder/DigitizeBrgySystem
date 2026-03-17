@@ -1,1 +1,0 @@
-import{a as e,j as n}from"./app-DcSn7Fpm.js";import{P as i}from"./pagination-P5ImcMZ6.js";import"./search-lib-CTV8JQIM.js";function m(){const{inventories:o}=e(t=>t.inventories);return console.log("inventories",o),n.jsx(n.Fragment,{children:n.jsx(i,{data:o})})}export{m as default};
