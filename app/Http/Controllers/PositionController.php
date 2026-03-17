@@ -17,7 +17,14 @@ class PositionController extends Controller
         $positions = Position::orderBy('id','desc')->paginate(10);
         return response()->json($positions, 200);
     }
-      public function destroy(Request $request,$id)
+    public function update(Request $request, $id)
+    {
+        $position = Position::findOrFail($id);
+        $position->update($request->all());
+        return response()->json($position);
+    }
+
+    public function destroy(Request $request,$id)
     {
         $positions = Position::find($id);
         $positions->delete();

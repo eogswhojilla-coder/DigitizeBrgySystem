@@ -16,13 +16,13 @@ export default function ActionSection() {
     };
     return (
         <div className="flex space-x-2">
-            <Button
+            {/* <Button
                 onClick={() => handleEdit(pos.id)}
                 className="inline-flex items-center gap-1 text-blue-600 border border-blue-300 hover:bg-blue-50 px-3 py-1.5 text-sm"
             >
                 <Pencil size={14} />
             </Button>
-           
+            */}
         </div>
     )
 }

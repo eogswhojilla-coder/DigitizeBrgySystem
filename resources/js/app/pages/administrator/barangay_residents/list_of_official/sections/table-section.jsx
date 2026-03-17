@@ -311,6 +311,7 @@ export default function TableSection({ onViewDetails }) {
                     <option>Barangay Health Worker / Health Officer</option>
                     <option>Barangay Treasurer</option>
                     <option>Barangay Secretary</option>
+                    <option>Sangguniang Kabataan (SK) Chairperson</option>
                 </select>
             ),
             accessor: "position",
