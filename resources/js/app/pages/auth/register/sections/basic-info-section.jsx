@@ -89,6 +89,7 @@ export default function BasicInfoSection({ register, errors }) {
                                         { value: "", label: "Select Status" },
                                         { value: "Single", label: "Single" },
                                         { value: "Married", label: "Married" },
+                                         { value: "Separated", label: "Separated" },
                                         {
                                             value: "Divorced",
                                             label: "Divorced",

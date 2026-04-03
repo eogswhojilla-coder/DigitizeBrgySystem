@@ -320,7 +320,7 @@ export default function TableSection({ onViewDetails }) {
         { header: "Name", accessor: "name" },
         { header: "PWD", accessor: "pwd" },
         { header: "Single Parent", accessor: "singleParent" },
-        { header: "Voters", accessor: "voters" },
+        // { header: "Voters", accessor: "voters" },
         { header: "Status", accessor: "status" },
         { header: "Action", accessor: "action" },
     ];

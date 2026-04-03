@@ -656,9 +656,9 @@ export default function LoginFormSection() {
                                     />
                                     <span>Remember me</span>
                                 </label>
-                                <a href="#" className="forgot-link">
+                                {/* <a href="#" className="forgot-link">
                                     Forgot password?
-                                </a>
+                                </a> */}
                             </div>
 
                             {/* Sign In */}

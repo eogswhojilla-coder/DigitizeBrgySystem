@@ -219,7 +219,7 @@ export default function AccountSection({ register, errors }) {
                             >
                                 Close
                             </button>
-                        </div>
+                        </div>  
                     </div>
                 </div>
             )}
