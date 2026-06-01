@@ -18,27 +18,36 @@ export default function ContactSection() {
             id="contact"
             aria-labelledby="contact-heading"
             className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200"
+            style={{
+                backgroundImage: "url('/images/contact (2).png')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+            }}
         >
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-white/70 dark:bg-slate-950/70" />
+
             {/* Background Decor */}
             <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-yellow-500/5 rounded-full blur-[100px] -z-10" />
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-0 dark:opacity-20 -z-10" />
 
-            <div className="max-w-7xl mx-auto px-6 md:px-10">
+            <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10">
                 {/* Section Header */}
                 <div className="max-w-3xl mb-16">
-                    <span className="inline-block py-1 px-3 rounded-full bg-yellow-500/10 text-yellow-500 text-xs font-bold tracking-widest uppercase mb-4 border border-yellow-500/20">
+                    <span className="inline-block py-1 px-3 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-500 text-xs font-bold tracking-widest uppercase mb-4 border border-yellow-500/20">
                         Reach Out
                     </span>
                     <h2
                         id="contact-heading"
-                        className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 dark:text-white mb-6"
+                        className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 dark:text-white mb-6 drop-shadow-sm"
                     >
                         Contact the <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700 dark:from-yellow-400 dark:to-amber-600">
                             Barangay Hall
                         </span>
                     </h2>
-                    <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed max-w-2xl">
+                    <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed max-w-2xl drop-shadow-sm">
                         Have questions or need assistance? Visit us at the
                         barangay hall or reach out through any of the channels
                         below. We're here to serve you.
@@ -181,13 +190,13 @@ export default function ContactSection() {
                 {/* Emergency Contacts Section */}
                 <div className="mt-16 pt-16 border-t border-slate-200 dark:border-white/10">
                     <div className="mb-10">
-                        <span className="inline-block py-1 px-3 rounded-full bg-red-500/10 text-red-500 text-xs font-bold tracking-widest uppercase mb-4 border border-red-500/20">
+                        <span className="inline-block py-1 px-3 rounded-full bg-red-500/10 text-red-600 dark:text-red-500 text-xs font-bold tracking-widest uppercase mb-4 border border-red-500/20">
                             Emergency
                         </span>
-                        <h3 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">
+                        <h3 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-4 drop-shadow-sm">
                             Emergency Hotlines
                         </h3>
-                        <p className="text-slate-500 dark:text-slate-400 leading-relaxed max-w-2xl">
+                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed max-w-2xl drop-shadow-sm">
                             For urgent matters and emergencies, contact these
                             emergency response services available 24/7.
                         </p>

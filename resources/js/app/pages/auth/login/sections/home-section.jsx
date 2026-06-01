@@ -161,8 +161,9 @@ export default function BarangayLanding({ announcements, highlights }) {
       `}</style>
 
             <HeroSection highlights={highlights} />
-            <ServicesSection />
             <AboutSection />
+            <ServicesSection />
+
             <AnnouncementsSection announcements={announcements} />
             <StatsSection />
             <ContactSection />

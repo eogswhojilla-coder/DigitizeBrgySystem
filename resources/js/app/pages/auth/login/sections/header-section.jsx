@@ -4,6 +4,8 @@ import { Link } from "@inertiajs/react";
 import DarkModeToggle from "@/app/_components/dark-mode-toggle";
 
 const navigation = [
+    
+    { name: "Home", id: "hero" },
     { name: "About", id: "about" },
     { name: "Services", id: "services" },
     { name: "Announcements", id: "announcements" },

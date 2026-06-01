@@ -1,1 +1,0 @@
-import{a as r,j as t}from"./app-CPD7DUzJ.js";import{P as i}from"./pagination-DRfqTqxh.js";import"./search-lib-CTV8JQIM.js";function m(){const{administrators:a}=r(o=>o.administrators);return console.log("administrators",a),t.jsx(t.Fragment,{children:t.jsx(i,{data:a})})}export{m as default};

@@ -59,25 +59,37 @@ export default function ServicesSection() {
     return (
         <section
             id="services"
-            className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-gray-50 dark:bg-slate-950 text-slate-700 dark:text-slate-200"
+            className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200"
+            style={{
+                backgroundImage: "url('/images/meeting.png')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+            }}
         >
-            {/* Background Effects */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-yellow-500/5 rounded-full blur-[120px] -z-10" />
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-0 dark:opacity-20 -z-10" />
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-white/70 dark:bg-slate-950/70" />
 
-            <div className="max-w-7xl mx-auto px-6 md:px-10">
+            {/* Background Effects */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-amber-500/10 dark:bg-amber-500/5 rounded-full blur-[120px] -z-10" />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-20 -z-10" />
+
+            <div className="relative z-10 px-6 md:px-12 lg:px-16 xl:px-20">
                 {/* Section Header */}
                 <div className="text-center max-w-3xl mx-auto mb-16">
-                    <span className="inline-block py-1 px-3 rounded-full bg-yellow-500/10 text-yellow-500 text-xs font-bold tracking-widest uppercase mb-4 border border-yellow-500/20">
-                        Quick Services
-                    </span>
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
+                    <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-sm mb-6
+                        bg-transparent border-l-2 border-amber-600 dark:border-amber-500">
+                        <span className="text-[10px] font-black tracking-[0.2em] text-amber-800 dark:text-amber-400 uppercase">
+                            Quick Services
+                        </span>
+                    </div>
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white mb-6 drop-shadow-sm">
                         What Can We Help <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">
+                        <span className="text-amber-700 dark:text-amber-400">
                             You With?
                         </span>
                     </h2>
-                    <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
+                    <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed drop-shadow-sm">
                         Access a wide range of barangay services digitally. From
                         requesting certificates to filing complaints, we've got
                         you covered.
@@ -89,7 +101,7 @@ export default function ServicesSection() {
                     {services.map((s, index) => (
                         <div
                             key={index}
-                            className={`group relative p-6 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 ${s.hoverColor} transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/20`}
+                            className={`group relative p-6 rounded-2xl bg-white/60 dark:bg-slate-800/40 backdrop-blur-sm border border-slate-300 dark:border-slate-700/50 ${s.hoverColor} transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-slate-400 dark:hover:border-slate-600/50`}
                         >
                             {/* Card Glow Effect */}
                             <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -108,16 +120,16 @@ export default function ServicesSection() {
                                         {s.icon}
                                     </div>
                                     {/* Decorative dot */}
-                                    <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                    <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                 </div>
 
                                 {/* Title */}
-                                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-yellow-500 dark:group-hover:text-yellow-400 transition-colors">
+                                <h3 className="text-xl font-black text-slate-900 dark:text-white mb-3 group-hover:text-amber-600 dark:group-hover:text-amber-500 transition-colors">
                                     {s.title}
                                 </h3>
 
                                 {/* Description */}
-                                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
+                                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                                     {s.desc}
                                 </p>
 

@@ -16,35 +16,40 @@ export default function AboutSection() {
         <section
             id="about"
             aria-labelledby="about-heading"
-            className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200"
+            className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100"
         >
             {/* Background Effects */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-0 dark:opacity-20 -z-10" />
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-[100px] -z-10" />
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[80px] -z-10" />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-20 -z-10" />
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-amber-400/15 dark:bg-amber-500/5 rounded-full blur-[100px] -z-10" />
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-400/15 dark:bg-blue-500/5 rounded-full blur-[80px] -z-10" />
 
-            <div className="max-w-7xl mx-auto px-6 md:px-10 grid md:grid-cols-2 gap-12 lg:gap-20 items-center w-full">
+            <div className="px-6 md:px-12 lg:px-16 xl:px-20 grid md:grid-cols-2 gap-12 lg:gap-16 items-center w-full">
                 {/* Left Content */}
                 <div className="space-y-8">
                     {/* Header */}
                     <div>
-                        <span className="inline-block py-1 px-3 rounded-full bg-yellow-500/10 text-yellow-500 text-xs font-bold tracking-widest uppercase mb-4 border border-yellow-500/20">
-                            About Us
-                        </span>
+                        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-sm mb-6
+                            bg-transparent border-l-2 border-amber-600 dark:border-amber-500">
+                            <span className="text-[10px] font-black tracking-[0.2em] text-amber-700 dark:text-amber-500 uppercase">
+                                About Us
+                            </span>
+                        </div>
                         <h2
                             id="about-heading"
-                            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-white mb-6"
+                            className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white mb-6 leading-tight"
                         >
-                            Serving the Community <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">
-                                Since 1965
+                            Serving the{" "}
+                            <span className="text-amber-600 dark:text-amber-500">
+                                Community
                             </span>
+                            <br />
+                            Since 1965
                         </h2>
-                        <div className="w-20 h-1 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-full" />
+                        <div className="w-20 h-1 bg-gradient-to-r from-amber-600 to-amber-500 dark:from-amber-500 dark:to-amber-400 rounded-full" />
                     </div>
 
                     {/* Description */}
-                    <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
+                    <p className="text-base leading-relaxed text-slate-600 dark:text-slate-400">
                         Barangay 2 has been at the heart of our local community,
                         delivering responsive and compassionate governance. Our
                         barangay management system modernizes access to public
@@ -54,7 +59,7 @@ export default function AboutSection() {
                     </p>
 
                     {/* Info Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
                         {[
                             {
                                 label: "Barangay Captain",
@@ -80,12 +85,12 @@ export default function AboutSection() {
                         ].map(({ label, value, span = "" }) => (
                             <div
                                 key={label}
-                                className={`p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-yellow-500/30 hover:bg-slate-100 dark:hover:bg-white/10 transition-all duration-300 ${span}`}
+                                className={`p-4 rounded-lg bg-white/60 dark:bg-slate-800/40 backdrop-blur-sm border border-slate-300 dark:border-slate-700/50 hover:bg-white/80 dark:hover:bg-slate-800/60 hover:border-slate-400 dark:hover:border-slate-600/50 transition-all duration-200 ${span}`}
                             >
-                                <div className="font-mono text-xs tracking-wider text-yellow-500 mb-1 uppercase">
+                                <div className="text-[10px] font-semibold tracking-[0.1em] uppercase text-amber-600 dark:text-amber-500 mb-1.5">
                                     {label}
                                 </div>
-                                <div className="text-sm text-slate-600 dark:text-slate-300 break-words">
+                                <div className="text-sm text-slate-700 dark:text-slate-300 break-words font-medium">
                                     {value}
                                 </div>
                             </div>
@@ -96,14 +101,14 @@ export default function AboutSection() {
                 {/* Right Content - Info Card */}
                 <div className="relative">
                     {/* Card Glow Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-blue-500/20 rounded-3xl blur-2xl -z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 to-blue-400/20 dark:from-amber-500/10 dark:to-blue-500/10 rounded-3xl blur-2xl -z-10" />
 
-                    <div className="relative bg-white dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 md:p-10 border border-slate-200 dark:border-white/10 shadow-2xl">
+                    <div className="relative bg-white/80 dark:bg-slate-800/60 backdrop-blur-xl rounded-2xl p-8 md:p-10 border border-slate-300 dark:border-slate-700/50 shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
                         {/* Logo Section */}
                         <div className="text-center mb-8">
                             {!imgError && (
                                 <div className="relative inline-block mb-6">
-                                    <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-yellow-500/20 to-amber-600/20 border-2 border-yellow-500/30 flex items-center justify-center p-4">
+                                    <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-500/20 dark:to-amber-600/20 border-2 border-amber-400 dark:border-amber-500/30 flex items-center justify-center p-4 shadow-lg">
                                         <img
                                             src="/images/brgy-ll-logo.png"
                                             alt="Official logo of Barangay II"
@@ -111,7 +116,7 @@ export default function AboutSection() {
                                             onError={() => setImgError(true)}
                                         />
                                     </div>
-                                    <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center border-4 border-white dark:border-slate-900">
+                                    <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center border-4 border-white dark:border-slate-800 shadow-lg">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="16"
@@ -122,7 +127,7 @@ export default function AboutSection() {
                                             strokeWidth="3"
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
-                                            className="text-slate-900"
+                                            className="text-white"
                                         >
                                             <polyline points="20 6 9 17 4 12" />
                                         </svg>
@@ -130,40 +135,40 @@ export default function AboutSection() {
                                 </div>
                             )}
 
-                            <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2">
+                            <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-2">
                                 Barangay II
                             </h3>
-                            <p className="text-sm font-mono text-yellow-500 uppercase tracking-widest">
+                            <p className="text-[10px] font-bold text-amber-600 dark:text-amber-500 uppercase tracking-[0.2em]">
                                 San Carlos City, Negros Occidental
                             </p>
                         </div>
 
                         {/* Divider */}
-                        <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent mb-8" />
+                        <div className="w-full h-px bg-gradient-to-r from-transparent via-amber-500/50 dark:via-amber-500/30 to-transparent mb-8" />
 
                         {/* Mission Statement */}
                         <div className="text-center mb-8">
-                            <div className="text-4xl mb-4">"</div>
-                            <p className="text-slate-500 dark:text-slate-300 italic leading-relaxed">
+                            <div className="text-4xl mb-4 text-amber-500/30">"</div>
+                            <p className="text-slate-600 dark:text-slate-300 italic leading-relaxed">
                                 A community united in progress, rooted in
                                 integrity, and committed to uplifting every
                                 resident's quality of life.
                             </p>
-                            <div className="text-4xl mt-4 text-slate-300 dark:text-slate-600">
+                            <div className="text-4xl mt-4 text-amber-500/30">
                                 "
                             </div>
                         </div>
 
                         {/* Population Stats */}
-                        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-yellow-500/10 to-amber-600/10 border border-yellow-500/20 p-6 text-center">
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 to-amber-600" />
-                            <div className="font-mono text-xs tracking-widest text-yellow-500 mb-2 uppercase">
+                        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-500/10 dark:to-amber-600/10 border-2 border-amber-300 dark:border-amber-500/30 p-6 text-center shadow-lg">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-600 to-amber-500 dark:from-amber-500 dark:to-amber-400" />
+                            <div className="text-[10px] font-semibold tracking-[0.15em] uppercase text-amber-700 dark:text-amber-500 mb-2">
                                 Population
                             </div>
-                            <div className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-1">
+                            <div className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-1 tabular-nums">
                                 {barangayData.population}
                             </div>
-                            <div className="text-sm text-slate-400">
+                            <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">
                                 Registered Residents
                             </div>
                         </div>
