@@ -145,7 +145,7 @@ export default function NotificationSection() {
     };
 
     const panelContent = (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full overflow-auto">
 
             {/* HEADER */}
 
