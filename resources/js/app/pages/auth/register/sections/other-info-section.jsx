@@ -130,12 +130,12 @@ export default function OtherInfoSection({
 
     return (
         <>
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">
+            <div className="bg-white rounded-lg p-4 md:p-5 shadow-sm border border-gray-200">
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4 text-center">
                     Address Information
                 </h2>
 
-                <div className="space-y-6">
+                <div className="space-y-4">
                     {/* Current Address Section */}
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <h3 className="text-sm font-semibold text-gray-700 mb-4">

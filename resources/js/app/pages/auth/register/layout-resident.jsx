@@ -38,9 +38,9 @@ export default function NewResidentLayout({ children, register, errors, onResetI
 
     return (
         <>
-            <div className="lg:col-span-1 space-y-6  ">
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                    <div className="relative w-32 h-32 mx-auto mb-4">
+            <div className="lg:col-span-1 space-y-4 bg-white rounded-lg p-4 md:p-5 shadow-sm border border-gray-200">
+                <div className="bg-white rounded-lg p-4 md:p-5 shadow-sm border border-gray-200">
+                    <div className="relative w-28 h-28 md:w-32 md:h-32 mx-auto mb-4">
                         {imagePreview ? (
                             <div className="relative w-full h-full">
                                 <img

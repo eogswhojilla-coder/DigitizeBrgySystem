@@ -9,12 +9,12 @@ export default function AccountSection({ register, errors }) {
     const [hasViewedTerms, setHasViewedTerms] = useState(false);
 
     return (
-        <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-800 text-center mb-8 tracking-wide">
+        <div className="bg-white rounded-lg p-4 md:p-6 shadow-lg border border-gray-200">
+            <h2 className="text-lg md:text-xl font-bold text-gray-800 text-center mb-6 tracking-wide">
                 Create Account
             </h2>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
 
                 {/* USERNAME */}
                 <div>

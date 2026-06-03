@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm, Link } from "@inertiajs/react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { ArrowLeftIcon } from "lucide-react";
 
 export default function LoginFormSection() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -683,6 +684,14 @@ export default function LoginFormSection() {
                         {/* Register */}
                         <Link href="/auth/register" className="btn-register">
                             Create an Account
+                        </Link>
+                        
+                        {/* Return to Homepage */}
+                        <Link 
+                            href="/" 
+                            className="flex items-center justify-center gap-2 mt-5 text-xs font-medium text-white/50 hover:text-white/90 transition-all duration-300 group underline underline-offset-4"
+                        >
+                           <ArrowLeftIcon className="w-3 h-3 text-white/70 group-hover:text-white/90 transition-colors" />                              <span className="tracking-wider">RETURN TO HOMEPAGE</span>
                         </Link>
                     </div>
                 </div>

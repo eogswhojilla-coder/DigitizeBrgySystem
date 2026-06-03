@@ -86,7 +86,7 @@ function AnimatedCounter({ target, label, suffix = "", icon }) {
 
 export default function StatsSection() {
     return (
-        <section className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200">
+        <section className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-green-100 dark:bg-slate-900 text-slate-700 dark:text-slate-200">
             {/* Background Effects */}
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-20 -z-10" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-amber-500/10 dark:bg-amber-500/5 rounded-full blur-[120px] -z-10" />

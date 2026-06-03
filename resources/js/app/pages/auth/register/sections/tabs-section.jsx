@@ -28,14 +28,15 @@ export default function TabsSection() {
     } = useForm();
 
     const tabs = [
-        { id: "basic", label: "Basic Info" },
-        { id: "other", label: "Other Info" },
-        { id: "guardian", label: "Guardian" },
-        { id: "account", label: "Account" },
+        { id: "basic", label: "Basic Info", icon: "1" },
+        { id: "other", label: "Other Info", icon: "2" },
+        { id: "guardian", label: "Guardian", icon: "3" },
+        { id: "account", label: "Account", icon: "4" },
     ];
 
     const getStepIndex = (tabId) => tabs.findIndex((tab) => tab.id === tabId);
     const currentStepIndex = getStepIndex(activeTab);
+    const progressPercentage = Math.round(((currentStepIndex + 1) / tabs.length) * 100);
 
     const handleTabChange = async (tabId) => {
         const targetIndex = getStepIndex(tabId);
@@ -140,63 +141,114 @@ export default function TabsSection() {
     };
 
     return (
-        <div className="min-h-screen p-6 bg-gray-50">
+        <div className="min-h-screen px-4 py-4 md:px-6 md:py-6 bg-gray-50">
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="max-w-7xl mx-auto"
+                className="max-w-[95%] xl:max-w-[1600px] mx-auto"
             >
-                {/* Step Progress Bar */}
-                <div className="mb-8">
-                    <div className="flex items-center justify-between">
-                        {tabs.map((tab, index) => (
-                            <React.Fragment key={tab.id}>
-                                <div className="flex flex-col items-center flex-1">
-                                    <button
-                                        type="button"
-                                        onClick={() => handleTabChange(tab.id)}
-                                        disabled={!isStepAccessible(tab.id)}
-                                        className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-200 ${
-                                            index <= currentStepIndex
-                                                ? "bg-blue-600 text-white"
-                                                : isStepAccessible(tab.id)
-                                                ? "bg-gray-300 text-gray-600 hover:bg-gray-400"
-                                                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                                        } ${
-                                            isStepAccessible(tab.id) &&
-                                            "hover:scale-110"
-                                        }`}
-                                    >
-                                        {index + 1}
-                                    </button>
-                                    <span
-                                        className={`mt-2 text-sm font-medium ${
-                                            index <= currentStepIndex
-                                                ? "text-blue-600"
-                                                : isStepAccessible(tab.id)
-                                                ? "text-gray-500"
-                                                : "text-gray-400"
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </span>
-                                </div>
-                                {index < tabs.length - 1 && (
-                                    <div className="flex-1 h-1 mx-4 -mt-8">
-                                        <div
-                                            className={`h-full transition-all duration-300 ${
-                                                index < currentStepIndex
-                                                    ? "bg-blue-600"
-                                                    : "bg-gray-300"
-                                            }`}
-                                        />
+                {/* Back to Login Button */}
+                <div className="mb-4">
+                    <button
+                        type="button"
+                        onClick={handleBackToLogin}
+                        className="flex items-center gap-2 text-gray-600 hover:text-purple-600 transition-colors font-medium group"
+                    >
+                        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                        <span>Back to Login</span>
+                    </button>
+                </div>
+
+                {/* Modern Stepper Progress */}
+                <div className="mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6">
+                    {/* Progress Percentage */}
+                    <div className="flex justify-end mb-4">
+                        <div className="text-xl md:text-2xl font-bold text-purple-600">
+                            {progressPercentage}%
+                        </div>
+                    </div>
+
+                    {/* Stepper */}
+                    <div className="relative">
+                        {/* Progress Line */}
+                        <div className="absolute top-6 left-0 right-0 h-0.5 bg-gray-200" 
+                             style={{ 
+                                 left: '2.5rem', 
+                                 right: '2.5rem' 
+                             }}>
+                            <div 
+                                className="h-full bg-purple-600 transition-all duration-500 ease-in-out"
+                                style={{ 
+                                    width: `${(currentStepIndex / (tabs.length - 1)) * 100}%` 
+                                }}
+                            />
+                        </div>
+
+                        {/* Steps */}
+                        <div className="relative flex justify-between">
+                            {tabs.map((tab, index) => {
+                                const isActive = index === currentStepIndex;
+                                const isCompleted = index < currentStepIndex;
+                                const isAccessible = isStepAccessible(tab.id);
+                                
+                                return (
+                                    <div key={tab.id} className="flex flex-col items-center" style={{ width: '100px' }}>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleTabChange(tab.id)}
+                                            disabled={!isAccessible}
+                                            className={`
+                                                relative z-10 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center 
+                                                font-semibold text-sm md:text-base transition-all duration-300 
+                                                ${isActive 
+                                                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-300 scale-110' 
+                                                    : isCompleted
+                                                    ? 'bg-purple-600 text-white'
+                                                    : isAccessible
+                                                    ? 'bg-gray-200 text-gray-500 hover:bg-gray-300'
+                                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                }
+                                                ${isAccessible && !isActive && 'hover:scale-105'}
+                                            `}
+                                        >
+                                            {isCompleted ? (
+                                                <svg 
+                                                    className="w-5 h-5 md:w-6 md:h-6" 
+                                                    fill="currentColor" 
+                                                    viewBox="0 0 20 20"
+                                                >
+                                                    <path 
+                                                        fillRule="evenodd" 
+                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
+                                                        clipRule="evenodd" 
+                                                    />
+                                                </svg>
+                                            ) : (
+                                                <span>{index + 1}</span>
+                                            )}
+                                        </button>
+                                        <div className="mt-2 text-center">
+                                            <p className={`
+                                                text-xs md:text-sm font-medium transition-colors duration-300
+                                                ${isActive 
+                                                    ? 'text-purple-600' 
+                                                    : isCompleted
+                                                    ? 'text-purple-500'
+                                                    : isAccessible
+                                                    ? 'text-gray-600'
+                                                    : 'text-gray-400'
+                                                }
+                                            `}>
+                                                {tab.label}
+                                            </p>
+                                        </div>
                                     </div>
-                                )}
-                            </React.Fragment>
-                        ))}
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                     <NewResidentLayout errors={errors} register={register} onResetImage={resetImageRef}>
                         {activeTab === "basic" && (
                             <BasicInfoSection
@@ -225,33 +277,27 @@ export default function TabsSection() {
                             />
                         )}
                     </NewResidentLayout>
-                    {/* Back to Login Button */}
-                    <div className="mb-6">
-                        <button
-                            type="button"
-                            onClick={handleBackToLogin}
-                            className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors font-medium"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                            Back to Login
-                        </button>
-                    </div>
                 </div>
 
                 {/* Navigation Buttons */}
-                <div className="py-6 flex items-center justify-between">
-                    <div className="flex gap-2">
+                <div className="mt-6 flex items-center justify-between bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6">
+                    <div className="flex gap-3">
                         {currentStepIndex > 0 && (
                             <Button
                                 type="button"
                                 onClick={handlePrevious}
                                 variant="secondary"
+                                className="px-6 py-2.5 rounded-lg font-medium transition-all hover:shadow-md"
                             >
                                 Previous
                             </Button>
                         )}
                         {currentStepIndex < tabs.length - 1 && (
-                            <Button type="button" onClick={handleNext}>
+                            <Button 
+                                type="button" 
+                                onClick={handleNext}
+                                className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all hover:shadow-md"
+                            >
                                 Next
                             </Button>
                         )}
@@ -261,9 +307,10 @@ export default function TabsSection() {
                             disabled={isSubmitting}
                             type="submit"
                             variant="success"
+                            className="px-6 py-2.5 rounded-lg font-medium transition-all hover:shadow-md flex items-center gap-2"
                         >
                             <span className="text-lg">+</span>
-                            <span>{isSubmitting ? "Saving..." : " Save"}</span>
+                            <span>{isSubmitting ? "Saving..." : "Submit Registration"}</span>
                         </Button>
                     )}
                 </div>

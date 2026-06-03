@@ -268,7 +268,7 @@ export default function HeroSection({ highlights }) {
                 }}
             >
                 {/* ── Overlays & Atmospheric Effects ── */}
-                <div className="absolute inset-0 bg-white/70 dark:bg-slate-950/70" />
+                <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/70" />
 
                 {/* Warm glow top */}
                 <div className="absolute top-0 left-1/3 w-[700px] h-[500px]

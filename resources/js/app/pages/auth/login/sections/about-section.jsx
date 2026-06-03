@@ -16,7 +16,7 @@ export default function AboutSection() {
         <section
             id="about"
             aria-labelledby="about-heading"
-            className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+            className="relative min-h-screen py-20 md:py-32 overflow-hidden bg-yellow-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100"
         >
             {/* Background Effects */}
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-20 -z-10" />
