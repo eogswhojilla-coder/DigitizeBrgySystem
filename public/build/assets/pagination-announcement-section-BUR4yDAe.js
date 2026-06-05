@@ -1,0 +1,1 @@
+import{a as e,j as n}from"./app-Dboe8SV_.js";import{P as a}from"./pagination-_2N78pQb.js";import"./search-lib-CTV8JQIM.js";function m(){const{announcements:o}=e(t=>t.announcements);return console.log("announcements",o),n.jsx(n.Fragment,{children:n.jsx(a,{data:o})})}export{m as default};

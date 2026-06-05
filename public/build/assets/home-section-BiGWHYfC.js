@@ -1,18 +1,4 @@
-import HeaderSection from "./header-section";
-import HeroSection from "./hero-section";
-import ServicesSection from "./services-section";
-import AboutSection from "./about-section";
-import AnnouncementsSection from "./announcements-section";
-import StatsSection from "./stats-section";
-import ContactSection from "./contact-section";
-import FooterSection from "./footer-section";
-import DevelopersSection from "./developers-sections";
-import Page from "@/app/pages/chat_bot/page";
-
-export default function BarangayLanding({ announcements, highlights }) {
-    return (
-        <div className="font-serif bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 overflow-x-hidden">
-            <style>{`
+import{j as r}from"./app-Dboe8SV_.js";import t from"./hero-section-7z2BSVNX.js";import i from"./services-section-3VORgM2d.js";import a from"./about-section-BGl9TiF7.js";import n from"./announcements-section-BcB08s9o.js";import s from"./stats-section-CTGc7t6I.js";import p from"./contact-section-Dju4tlJZ.js";import d from"./footer-section-lrnEj242.js";import l from"./developers-sections-Dtxlqed-.js";import c from"./page-BXTM3LH7.js";import"./XMarkIcon-Eyg47BD9.js";import"./index-CPYBOx3V.js";import"./iconBase-CAmB6AYD.js";import"./createLucideIcon-DypyT53I.js";import"./x-DRG8-3WL.js";function M({announcements:o,highlights:e}){return r.jsxs("div",{className:"font-serif bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 overflow-x-hidden",children:[r.jsx("style",{children:`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:wght@300;400;600&family=DM+Mono:wght@400;500&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
@@ -159,17 +145,4 @@ export default function BarangayLanding({ announcements, highlights }) {
           .hidden-mobile { display: none !important; }
           .mobile-menu-btn { display: block !important; }
         }
-      `}</style>
-            <Page />
-            <HeroSection highlights={highlights} />
-            <AboutSection />
-            <ServicesSection />
-
-            <AnnouncementsSection announcements={announcements} />
-            <StatsSection />
-            <ContactSection />
-            <DevelopersSection />
-            <FooterSection />
-        </div>
-    );
-}
+      `}),r.jsx(c,{}),r.jsx(t,{highlights:e}),r.jsx(a,{}),r.jsx(i,{}),r.jsx(n,{announcements:o}),r.jsx(s,{}),r.jsx(p,{}),r.jsx(l,{}),r.jsx(d,{})]})}export{M as default};
