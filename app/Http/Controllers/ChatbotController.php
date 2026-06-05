@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\ChatbotMessage;
 use App\Models\CertificateType;
 use App\Models\Announcement;
+use App\Services\GeminiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ChatbotController extends Controller
 {
@@ -106,6 +108,61 @@ class ChatbotController extends Controller
      * Generate intelligent response based on user message
      */
     private function generateResponse($message)
+    {
+        $message = trim($message);
+        
+        // Check for extreme profanity/abuse and handle immediately
+        if ($this->containsProfanity($message)) {
+            Log::warning('Chatbot received inappropriate message', [
+                'message' => $message,
+                'ip' => request()->ip()
+            ]);
+            
+            return "I understand you may be frustrated. I'm here to help with barangay services.\n\n" .
+                   "How can I assist you with:\n" .
+                   "• Certificate requests\n" .
+                   "• Equipment borrowing\n" .
+                   "• Barangay information\n\n" .
+                   "Please let me know what you need.";
+        }
+        
+        // Try AI first if enabled and API key is configured
+        if (config('services.gemini.api_key') && env('CHATBOT_USE_AI', true)) {
+            try {
+                $gemini = new GeminiService();
+                
+                // Get context (latest announcements)
+                $announcements = Announcement::orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->pluck('title')
+                    ->toArray();
+                
+                $context = [
+                    'announcements' => $announcements
+                ];
+                
+                $aiResponse = $gemini->generateResponse($message, $context);
+                
+                if ($aiResponse) {
+                    Log::info('Using AI response for chatbot');
+                    return $aiResponse;
+                }
+                
+                Log::warning('AI response failed, falling back to keyword matching');
+            } catch (\Exception $e) {
+                Log::error('AI generation error', ['error' => $e->getMessage()]);
+            }
+        }
+        
+        // Fall back to keyword-based responses
+        Log::info('Using keyword-based response for chatbot');
+        return $this->getKeywordResponse($message);
+    }
+
+    /**
+     * Get keyword-based response (fallback method)
+     */
+    private function getKeywordResponse($message)
     {
         $message = strtolower(trim($message));
 
@@ -299,8 +356,8 @@ class ChatbotController extends Controller
         }
 
         // Greeting responses
-        if ($this->containsKeywords($message, ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening'])) {
-            return "Hello! 👋 Welcome to the Barangay AI Assistant.\n\n" .
+        if ($this->containsKeywords($message, ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'kumusta', 'kamusta', 'maayong', 'musta'])) {
+            return "Hello! 👋 Kumusta! Welcome to the Barangay AI Assistant.\n\n" .
                    "I can help you with:\n" .
                    "• Certificate requests\n" .
                    "• Equipment borrowing\n" .
@@ -308,28 +365,29 @@ class ChatbotController extends Controller
                    "• Operating hours\n" .
                    "• Requirements\n" .
                    "• General inquiries\n\n" .
-                   "How can I assist you today?";
+                   "How can I assist you today? / Unsaon nako pagtabang?";
         }
 
         // Thank you
-        if ($this->containsKeywords($message, ['thank', 'thanks', 'salamat'])) {
-            return "You're welcome! 😊\n\n" .
+        if ($this->containsKeywords($message, ['thank', 'thanks', 'salamat', 'daghang salamat'])) {
+            return "You're welcome! / Walay sapayan! 😊\n\n" .
                    "If you have any other questions, feel free to ask. " .
                    "I'm here to help!\n\n" .
                    "Have a great day!";
         }
 
-        // Default response with suggestions
-        return "I'd be happy to help you! 🤖\n\n" .
-               "I can assist you with:\n" .
-               "• Certificate requests (Clearance, Indigency, etc.)\n" .
-               "• Equipment borrowing and inventory\n" .
+        // Default response - unclear or off-topic
+        return "I'm specifically designed to help with **barangay services only**. 🏛️\n\n" .
+               "I can't answer general questions (like math, homework, or trivia).\n\n" .
+               "**What I CAN help you with:**\n" .
+               "• Certificate requests (Clearance, Indigency, Residency)\n" .
+               "• Equipment borrowing procedures\n" .
                "• Barangay services and programs\n" .
-               "• Operating hours\n" .
-               "• Requirements and procedures\n" .
-               "• Latest announcements\n" .
+               "• Operating hours and schedules\n" .
+               "• Requirements for documents\n" .
+               "• Latest barangay announcements\n" .
                "• Contact information\n\n" .
-               "Could you please rephrase your question or select from the suggested prompts below?";
+               "Please ask a question about our barangay services, or select from the suggested prompts.";
     }
 
     /**
@@ -342,6 +400,29 @@ class ChatbotController extends Controller
                 return true;
             }
         }
+        return false;
+    }
+
+    /**
+     * Check if message contains profanity or inappropriate content
+     */
+    private function containsProfanity($message)
+    {
+        $message = strtolower($message);
+        
+        // Common profanity list (English and Filipino)
+        $profanityList = [
+            'fuck', 'shit', 'damn', 'bitch', 'asshole', 'bastard',
+            'putang ina', 'tangina', 'gago', 'tarantado', 'bobo',
+            'tanga', 'ulol', 'leche', 'puta', 'punyeta'
+        ];
+        
+        foreach ($profanityList as $word) {
+            if (Str::contains($message, $word)) {
+                return true;
+            }
+        }
+        
         return false;
     }
 
