@@ -1,1 +1,0 @@
-import{g as e}from"./barangay-resident-service-VMP_7G6v.js";import{f as n}from"./app-Dboe8SV_.js";function o(){return async function(t,s){const a=await e();t(n.actions.setResidents(a.data))}}export{o as g};

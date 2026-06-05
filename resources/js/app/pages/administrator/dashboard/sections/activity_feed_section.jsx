@@ -24,7 +24,7 @@ export default function ActivityFeedSection({ data }) {
     return (
         <ChartCardSection
             title="Recent Activity"
-            subtitle="Live system updates"
+            subtitle="Live system updates"  
             icon={<Activity className="w-5 h-5 text-green-600" />}
         >
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
