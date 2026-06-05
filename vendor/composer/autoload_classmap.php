@@ -1426,8 +1426,6 @@ return array(
     'Database\\Seeders\\AdminLogSeeder' => $baseDir . '/database/seeders/AdminLogSeeder.php',
     'Database\\Seeders\\AssignAdminRolesSeeder' => $baseDir . '/database/seeders/AssignAdminRolesSeeder.php',
     'Database\\Seeders\\BarangayHighlightSeeder' => $baseDir . '/database/seeders/BarangayHighlightSeeder.php',
-    'Database\\Seeders\\BarangayInventorySeeder' => $baseDir . '/database/seeders/BarangayInventorySeeder.php',
-    'Database\\Seeders\\BarangayPositionsSeeder' => $baseDir . '/database/seeders/BarangayPositionsSeeder.php',
     'Database\\Seeders\\BarangayResidentsSeeder' => $baseDir . '/database/seeders/BarangayResidentsSeeder.php',
     'Database\\Seeders\\DatabaseSeeder' => $baseDir . '/database/seeders/DatabaseSeeder.php',
     'Database\\Seeders\\RolesAndPermissionsSeeder' => $baseDir . '/database/seeders/RolesAndPermissionsSeeder.php',

@@ -90,7 +90,7 @@ export default function ChatWidget() {
   return (
     <>
       {/* Floating Chat Button with Custom Image */}
-      <div className="fixed bottom-6 right-6 z-[9999]">
+      <div className="fixed bottom-4 right-4 z-[9999] sm:bottom-6 sm:right-6">
         <button
           onClick={() => setIsOpen((o) => !o)}
           aria-label="Toggle chat"
@@ -106,7 +106,7 @@ export default function ChatWidget() {
             <img 
               src="/images/chatbot.png" 
               alt="Ask for Help - Chat Bot"
-              className="w-auto h-24 object-contain drop-shadow-2xl animate-bounce [animation-duration:2s]"
+              className="w-auto h-16 sm:h-24 object-contain drop-shadow-2xl animate-bounce [animation-duration:2s]"
             />
           )}
         </button>
@@ -114,11 +114,11 @@ export default function ChatWidget() {
 
       {isOpen && (
         <div
-          className="fixed bottom-24 right-6 z-[9998]
-            w-[380px] flex flex-col rounded-2xl overflow-hidden
+          className="fixed inset-x-4 bottom-24 z-[9998] mx-auto max-w-[calc(100vw-2rem)]
+            sm:right-6 sm:left-auto sm:w-[380px] flex flex-col rounded-2xl overflow-hidden
             border border-gray-200 dark:border-gray-700
             bg-white dark:bg-gray-900 shadow-xl"
-          style={{ height: 550 }}
+          style={{ height: 'min(90vh, 550px)' }}
         >
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-3 flex items-center gap-3">
@@ -205,7 +205,7 @@ export default function ChatWidget() {
                 <p className="text-xs text-gray-500 dark:text-gray-400 font-medium px-1">
                   Quick Questions:
                 </p>
-                <div className="grid grid-cols-1 gap-2">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {prompts.slice(0, 6).map((prompt) => (
                     <button
                       key={prompt.id}
@@ -229,7 +229,7 @@ export default function ChatWidget() {
           {/* Input Area */}
           <div className="p-3 border-t border-gray-200
             dark:border-gray-700 bg-white dark:bg-gray-900">
-            <div className="flex gap-2 items-center">
+            <div className="flex flex-col gap-2 items-stretch sm:flex-row sm:items-center">
               <input
                 type="text"
                 value={input}
@@ -244,7 +244,7 @@ export default function ChatWidget() {
                   placeholder:text-gray-400 dark:placeholder:text-gray-500
                   outline-none focus:ring-2 focus:ring-blue-500
                   disabled:opacity-50 disabled:cursor-not-allowed
-                  transition-all"
+                  transition-all min-h-[44px]"
               />
               <button
                 onClick={() => send()}

@@ -2209,8 +2209,6 @@ class ComposerStaticInit5970ac86c1e0a60a5f9200c8b8a1f850
         'Database\\Seeders\\AdminLogSeeder' => __DIR__ . '/../..' . '/database/seeders/AdminLogSeeder.php',
         'Database\\Seeders\\AssignAdminRolesSeeder' => __DIR__ . '/../..' . '/database/seeders/AssignAdminRolesSeeder.php',
         'Database\\Seeders\\BarangayHighlightSeeder' => __DIR__ . '/../..' . '/database/seeders/BarangayHighlightSeeder.php',
-        'Database\\Seeders\\BarangayInventorySeeder' => __DIR__ . '/../..' . '/database/seeders/BarangayInventorySeeder.php',
-        'Database\\Seeders\\BarangayPositionsSeeder' => __DIR__ . '/../..' . '/database/seeders/BarangayPositionsSeeder.php',
         'Database\\Seeders\\BarangayResidentsSeeder' => __DIR__ . '/../..' . '/database/seeders/BarangayResidentsSeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\RolesAndPermissionsSeeder' => __DIR__ . '/../..' . '/database/seeders/RolesAndPermissionsSeeder.php',
