@@ -34,6 +34,36 @@ export default function TabsSection() {
         { id: "account", label: "Account", icon: "4" },
     ];
 
+    // Define fields for each step
+    const stepFields = {
+        basic: [
+            "voters",
+            "dateOfBirth",
+            "placeOfBirth",
+            "pwd",
+            "singleParent",
+            "firstName",
+            "middleName",
+            "lastName",
+            "suffix",
+            "gender",
+            "civilStatus",
+            "religion",
+            "nationality",
+        ],
+        other: [
+            "residencyStatus",
+            "dateStartedLiving",
+            "zone",
+            "street",
+            "houseNumber",
+            "contactNumber",
+            "emailAddress",
+        ],
+        guardian: ["fatherName", "motherName", "guardian", "contact"],
+        account: ["username", "password", "confirmPassword"],
+    };
+
     const getStepIndex = (tabId) => tabs.findIndex((tab) => tab.id === tabId);
     const currentStepIndex = getStepIndex(activeTab);
     const progressPercentage = Math.round(((currentStepIndex + 1) / tabs.length) * 100);
@@ -46,6 +76,22 @@ export default function TabsSection() {
         if (targetIndex < currentIndex) {
             setActiveTab(tabId);
             return;
+        }
+
+        // If trying to move forward, validate current step first
+        if (targetIndex > currentIndex) {
+            const fieldsToValidate = stepFields[activeTab];
+            const isValid = await trigger(fieldsToValidate);
+
+            if (!isValid) {
+                await Swal.fire({
+                    icon: "error",
+                    title: "Validation Error",
+                    text: "Please fill in all required fields correctly before proceeding.",
+                    confirmButtonColor: "#ef4444",
+                });
+                return;
+            }
         }
 
         // Check if the target step is unlocked
@@ -70,6 +116,22 @@ export default function TabsSection() {
     };
 
     const handleNext = async () => {
+        // Validate current step fields
+        const fieldsToValidate = stepFields[activeTab];
+        const isValid = await trigger(fieldsToValidate);
+
+        if (!isValid) {
+            // Show validation error alert
+            await Swal.fire({
+                icon: "error",
+                title: "Validation Error",
+                text: "Please fill in all required fields correctly before proceeding.",
+                confirmButtonColor: "#ef4444",
+            });
+            return;
+        }
+
+        // Proceed to next step
         const currentIndex = getStepIndex(activeTab);
         if (currentIndex < tabs.length - 1) {
             const nextTab = tabs[currentIndex + 1];
