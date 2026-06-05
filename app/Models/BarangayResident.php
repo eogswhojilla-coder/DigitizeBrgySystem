@@ -68,7 +68,41 @@ class BarangayResident extends Model
     protected $casts = [
         'isOfficial' => 'boolean',
         'is_archived' => 'boolean',
+        'dateOfBirth' => 'date',
     ];
+
+    /**
+     * Accessor to convert string 'YES'/'NO' to boolean for voters
+     */
+    public function getVotersAttribute($value)
+    {
+        if ($value === null) {
+            return false;
+        }
+        return strtoupper($value) === 'YES';
+    }
+
+    /**
+     * Accessor to convert string 'YES'/'NO' to boolean for pwd
+     */
+    public function getPwdAttribute($value)
+    {
+        if ($value === null) {
+            return false;
+        }
+        return strtoupper($value) === 'YES';
+    }
+
+    /**
+     * Accessor to convert string 'YES'/'NO' to boolean for singleParent
+     */
+    public function getSingleParentAttribute($value)
+    {
+        if ($value === null) {
+            return false;
+        }
+        return strtoupper($value) === 'YES';
+    }
 
     /**
      * Get the full URL for the profile image

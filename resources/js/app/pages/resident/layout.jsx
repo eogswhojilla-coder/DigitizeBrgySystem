@@ -1,5 +1,7 @@
 import SidebarSection from "@/app/_sections/sidebar-section";
 import ResidentTopbarSection from "./_sections/resident-topbar-section";
+
+import Page from "@/app/pages/chat_bot/page";
 import { 
     Home, 
     FileText, 
@@ -70,6 +72,7 @@ export default function Layout({ children }) {
                     <div>{children}</div>
                 </main>
             </div>
+            <Page />    
         </>
     );
 }

@@ -3,6 +3,8 @@ import TopbarSection from "@/app/_sections/topbar-section";
 
 import "react-toastify/dist/ReactToastify.css"; // <- global CSS for react-toastify
 import { MdOutlineFamilyRestroom } from "react-icons/md";
+
+import Page from "@/app/pages/chat_bot/page";
 import {
     FcAdvertising,
     FcCalendar,
@@ -157,7 +159,7 @@ export default function Layout({ children }) {
                 {
                     name: "Certificate Request",
                     href: "/administrator/certificate/certificate_pending",
-                    icon: < DocumentCheckIcon  className="h-6 w-6" />,
+                    icon: <DocumentCheckIcon className="h-6 w-6" />,
                     current: isCurrentSub == "certificate_pending",
                     show: hasPermission("certificates.view"),
                 },
@@ -413,6 +415,7 @@ export default function Layout({ children }) {
             </div>
             {/* mount the Toast provider once, globally */}
             <ToastProvider />
+            <Page />
         </>
     );
 }

@@ -11,7 +11,6 @@ export default function SearchTableSection({ onFilterChange }) {
         lastName: "",
         voters: "",
         age: "",
-        status: "",
         pwd: "",
         singleParent: "",
         senior: "",
@@ -128,27 +127,13 @@ export default function SearchTableSection({ onFilterChange }) {
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option value="">---SELECT VOTERS---</option>
+                        <option value="">SELECT STATUS</option>
                         <option value="YES">YES</option>
                         <option value="NO">NO</option>
                     </select>
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium mb-1">Status</label>
-                    <select
-                        value={filters.status}
-                        onChange={(e) =>
-                            handleFilterChange("status", e.target.value)
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="">---SELECT STATUS---</option>
-                        <option value="ACTIVE">ACTIVE</option>
-                        <option value="INACTIVE">INACTIVE</option>
-                    </select>
-                </div>
-
+               
                 {/* Third Row */}
                 <div>
                     <label className="block text-sm font-medium mb-1">PWD</label>
@@ -159,7 +144,7 @@ export default function SearchTableSection({ onFilterChange }) {
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option value="">---SELECT PWD---</option>
+                        <option value="">SELECT STATUS</option>
                         <option value="YES">YES</option>
                         <option value="NO">NO</option>
                     </select>
@@ -175,7 +160,7 @@ export default function SearchTableSection({ onFilterChange }) {
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option value="">---SELECT PARENT STATUS---</option>
+                        <option value="">SELECT STATUS</option>
                         <option value="YES">YES</option>
                         <option value="NO">NO</option>
                     </select>
@@ -189,7 +174,7 @@ export default function SearchTableSection({ onFilterChange }) {
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option value="">---SELECT SENIOR---</option>
+                        <option value="">SELECT STATUS</option>
                         <option value="YES">YES</option>
                         <option value="NO">NO</option>
                     </select>

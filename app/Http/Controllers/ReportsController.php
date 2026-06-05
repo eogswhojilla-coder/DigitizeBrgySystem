@@ -12,7 +12,8 @@ class ReportsController extends Controller
 {
     public function index(Request $request)
     {
-        $query = BarangayResident::query();
+        // Query only non-archived residents
+        $query = BarangayResident::where('is_archived', false);
 
         // Apply filters
         $filters = [
@@ -25,43 +26,36 @@ class ReportsController extends Controller
 
         // Filter by voters
         if ($request->filled('voters')) {
-            if ($request->voters === 'YES') {
-                $query->where('voters', true);
-            } elseif ($request->voters === 'NO') {
-                $query->where('voters', false);
-            }
+            $query->where('voters', $request->voters);
         }
 
         // Filter by age
         if ($request->filled('age')) {
             $age = (int)$request->age;
-            $query->whereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) = ?', [$age]);
+            $query->whereNotNull('dateOfBirth')
+                  ->whereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) = ?', [$age]);
         }
 
         // Filter by PWD
         if ($request->filled('pwd')) {
-            if ($request->pwd === 'YES') {
-                $query->where('pwd', true);
-            } elseif ($request->pwd === 'NO') {
-                $query->where('pwd', false);
-            }
+            $query->where('pwd', $request->pwd);
         }
 
         // Filter by Single Parent
         if ($request->filled('singleParent')) {
-            if ($request->singleParent === 'YES') {
-                $query->where('singleParent', true);
-            } elseif ($request->singleParent === 'NO') {
-                $query->where('singleParent', false);
-            }
+            $query->where('singleParent', $request->singleParent);
         }
 
         // Filter by Senior (60+ years old)
         if ($request->filled('senior')) {
             if ($request->senior === 'YES') {
-                $query->whereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) >= 60');
+                $query->whereNotNull('dateOfBirth')
+                      ->whereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) >= 60');
             } elseif ($request->senior === 'NO') {
-                $query->whereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) < 60');
+                $query->where(function($q) {
+                    $q->whereNull('dateOfBirth')
+                      ->orWhereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) < 60');
+                });
             }
         }
 
@@ -98,43 +92,37 @@ class ReportsController extends Controller
 
     public function generatePdf(Request $request)
     {
-        $query = BarangayResident::query();
+        // Query only non-archived residents
+        $query = BarangayResident::where('is_archived', false);
 
         // Apply the same filters as index
         if ($request->filled('voters')) {
-            if ($request->voters === 'YES') {
-                $query->where('voters', true);
-            } elseif ($request->voters === 'NO') {
-                $query->where('voters', false);
-            }
+            $query->where('voters', $request->voters);
         }
 
         if ($request->filled('age')) {
             $age = (int)$request->age;
-            $query->whereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) = ?', [$age]);
+            $query->whereNotNull('dateOfBirth')
+                  ->whereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) = ?', [$age]);
         }
 
         if ($request->filled('pwd')) {
-            if ($request->pwd === 'YES') {
-                $query->where('pwd', true);
-            } elseif ($request->pwd === 'NO') {
-                $query->where('pwd', false);
-            }
+            $query->where('pwd', $request->pwd);
         }
 
         if ($request->filled('singleParent')) {
-            if ($request->singleParent === 'YES') {
-                $query->where('singleParent', true);
-            } elseif ($request->singleParent === 'NO') {
-                $query->where('singleParent', false);
-            }
+            $query->where('singleParent', $request->singleParent);
         }
 
         if ($request->filled('senior')) {
             if ($request->senior === 'YES') {
-                $query->whereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) >= 60');
+                $query->whereNotNull('dateOfBirth')
+                      ->whereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) >= 60');
             } elseif ($request->senior === 'NO') {
-                $query->whereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) < 60');
+                $query->where(function($q) {
+                    $q->whereNull('dateOfBirth')
+                      ->orWhereRaw('TIMESTAMPDIFF(YEAR, dateOfBirth, CURDATE()) < 60');
+                });
             }
         }
 

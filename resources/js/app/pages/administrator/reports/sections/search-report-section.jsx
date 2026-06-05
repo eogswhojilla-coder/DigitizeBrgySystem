@@ -18,7 +18,7 @@ export default function SearchReportSection({ filters, onFilterChange, onFilter,
                             value={filters.voters}
                             onChange={(e) => onFilterChange('voters', e.target.value)}
                         >
-                            <option value="">--SELECT VOTERS--</option>
+                            <option value="">SELECT STATUS</option>
                             <option value="YES">YES</option>
                             <option value="NO">NO</option>
                         </select>
@@ -48,7 +48,7 @@ export default function SearchReportSection({ filters, onFilterChange, onFilter,
                             value={filters.pwd}
                             onChange={(e) => onFilterChange('pwd', e.target.value)}
                         >
-                            <option value="">--SELECT PWD--</option>
+                            <option value="">SELECT STATUS</option>
                             <option value="YES">YES</option>
                             <option value="NO">NO</option>
                         </select>
@@ -64,7 +64,7 @@ export default function SearchReportSection({ filters, onFilterChange, onFilter,
                             value={filters.singleParent}
                             onChange={(e) => onFilterChange('singleParent', e.target.value)}
                         >
-                            <option value="">--SELECT PARENT STATUS--</option>
+                            <option value="">SELECT STATUS</option>
                             <option value="YES">YES</option>
                             <option value="NO">NO</option>
                         </select>
@@ -80,7 +80,7 @@ export default function SearchReportSection({ filters, onFilterChange, onFilter,
                             value={filters.senior}
                             onChange={(e) => onFilterChange('senior', e.target.value)}
                         >
-                            <option value="">--SELECT SENIOR--</option>
+                            <option value="">SELECT STATUS</option>
                             <option value="YES">YES</option>
                             <option value="NO">NO</option>
                         </select>
