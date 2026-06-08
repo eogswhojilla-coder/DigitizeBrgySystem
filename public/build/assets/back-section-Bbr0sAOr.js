@@ -1,0 +1,1 @@
+import{j as e,W as t}from"./app-DJgVNCKy.js";import{F as a}from"./index-BsD_E_0h.js";import"./iconBase-C_3hyan3.js";function i(){return e.jsx("div",{children:e.jsx(t,{href:"/auth/login/page?page=1",className:" flex gap-3 text-2xl font-semibold text-gray-900 my-3",children:e.jsx(a,{})})})}export{i as default};

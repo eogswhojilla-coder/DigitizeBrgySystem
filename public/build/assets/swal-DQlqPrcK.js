@@ -1,0 +1,1 @@
+import"./app-DJgVNCKy.js";import{S as f}from"./sweetalert2.esm.all-DQLCl2xK.js";function l({type:e,title:n="Your work has been saved",text:t,showCancelButton:i,confirmButtonText:r,...s}){const o={icon:e,title:n,...s};return t&&(o.text=t),i?(o.showCancelButton=!0,o.showConfirmButton=!0,r&&(o.confirmButtonText=r)):(o.showConfirmButton=!1,o.timer=1500),f.fire(o)}export{l as S};
