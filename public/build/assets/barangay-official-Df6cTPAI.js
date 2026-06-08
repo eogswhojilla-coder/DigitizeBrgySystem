@@ -1,0 +1,1 @@
+import{b as n}from"./app-DOhVQua4.js";function s(r){try{const i=new FormData;for(const e in r)e==="profileImage"?r[e]&&r[e][0]&&i.append(e,r[e][0]):r[e]!==null&&r[e]!==void 0&&i.append(e,r[e]);return n.post("/api/barangay_officials",i)}catch{}}async function c(){try{return n.get("/api/barangay_officials"+window.location.search)}catch{}}export{s as c,c as g};
