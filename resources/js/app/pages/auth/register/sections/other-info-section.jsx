@@ -263,20 +263,20 @@ export default function OtherInfoSection({
                             </div>
                         </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mt-6">
-                                <div className="space-y-2">
-                                    <Input
-                                        register={register("zip", {
-                                            required: "Zip code is required",
-                                        })}
-                                        error={errors?.zip?.message}
-                                        label="Zip Code"
-                                        type="number"
-                                        name="zip"
-                                        placeholder="e.g., 6127"
-                                    />
-                                </div>
+                        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mt-6">
+                            <div className="space-y-2">
+                                <Input
+                                    register={register("zip", {
+                                        required: "Zip code is required",
+                                    })}
+                                    error={errors?.zip?.message}
+                                    label="Zip Code"
+                                    type="number"
+                                    name="zip"
+                                    placeholder="e.g., 6127"
+                                />
                             </div>
+                        </div>
                     </div>
 
                     {/* Residency Information */}

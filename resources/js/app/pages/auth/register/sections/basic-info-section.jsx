@@ -50,9 +50,7 @@ export default function BasicInfoSection({ register, errors }) {
                             </div>
                             <div className="space-y-2">
                                 <Input
-                                    register={register("suffix", {
-                                        required: "Field is required",
-                                    })}
+                                    register={register("suffix")}
                                     error={errors?.suffix?.message}
                                     label="Suffix"
                                     type="text"
@@ -89,7 +87,10 @@ export default function BasicInfoSection({ register, errors }) {
                                         { value: "", label: "Select Status" },
                                         { value: "Single", label: "Single" },
                                         { value: "Married", label: "Married" },
-                                         { value: "Separated", label: "Separated" },
+                                        {
+                                            value: "Separated",
+                                            label: "Separated",
+                                        },
                                         {
                                             value: "Divorced",
                                             label: "Divorced",

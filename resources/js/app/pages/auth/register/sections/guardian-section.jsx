@@ -81,9 +81,7 @@ export default function GuardianSection({ register, errors }) {
                     </div>
                     <div className="space-y-2">
                         <Input
-                            register={register("guardian", {
-                                required: "Field is required",
-                            })}
+                            register={register("guardian")}
                             error={errors?.guardian?.message}
                             label="Guardian Name"
                             type="text"

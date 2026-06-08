@@ -10,6 +10,7 @@ import Button from "@/app/_components/button";
 import NewResidentLayout from "../layout-resident";
 import { ArrowLeft } from "lucide-react";
 import { router } from "@inertiajs/react";
+import DarkModeToggle from "@/app/_components/dark-mode-toggle";
 
 export default function TabsSection() {
     const [activeTab, setActiveTab] = useState("basic");
@@ -206,10 +207,10 @@ export default function TabsSection() {
         <div className="min-h-screen px-4 py-4 md:px-6 md:py-6 bg-gray-50">
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="max-w-[95%] xl:max-w-[1600px] mx-auto"
+                className="max-w-[95%] xl:max-w-[1600px] mx-auto bg-gray-100 rounded-2xl shadow-lg p-6 md:p-10"
             >
                 {/* Back to Login Button */}
-                <div className="mb-4">
+                <div className="mb-4 flex items-center gap-1">
                     <button
                         type="button"
                         onClick={handleBackToLogin}
@@ -218,6 +219,7 @@ export default function TabsSection() {
                         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                         <span>Back to Login</span>
                     </button>
+                    <DarkModeToggle />
                 </div>
 
                 {/* Modern Stepper Progress */}
