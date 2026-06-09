@@ -106,7 +106,7 @@ export default function ChatWidget() {
             <img 
               src="/images/chatbot.png" 
               alt="Ask for Help - Chat Bot"
-              className="w-auto h-16 sm:h-24 object-contain drop-shadow-2xl animate-bounce [animation-duration:2s]"
+              className="w-auto h-16 sm:h-24 object-contain drop-shadow-2xl "
             />
           )}
         </button>

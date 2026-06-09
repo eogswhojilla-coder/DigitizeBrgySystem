@@ -12,7 +12,6 @@ export default function OtherInfoSection({
     const dateStartedLiving = watch ? watch("dateStartedLiving") : "";
     const selectedZone = watch ? watch("zone") : "";
 
-    // Zone and street data for Barangay 2
     const zoneStreets = {
         "Don Juan Subdivision": [
             "Pres. Ramon Magsaysay St.",
